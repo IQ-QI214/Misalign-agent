@@ -1,0 +1,29 @@
+{
+  "schema_version": "milestone-records-archive-v1",
+  "date": "2026-11-06",
+  "status": "archive_verified_both_remote_and_local",
+  "n_records": 140,
+  "n_archive_members": 144,
+  "archive_bytes": 2108914,
+  "archive_sha256": "bae4933ceef9603792768102c63d9ac973d5f579e3b2dce1f643860f244805aa",
+  "manifest_sha256": "bc307fbe719a8b53c3ff34dd2d12ea767ad1ad8dae2981d5e318c354cd2aee2c",
+  "source_git_commit": "1a1e29a774258d8608bc9bbc9269a491b1db10cf",
+  "training_weights_included": false,
+  "source_files_unchanged": true,
+  "n_record_hashes_verified_local": 140,
+  "record_bytes": 10091571,
+  "archive_scope": [
+    "constructed judge calibration and preserved analyzer failure",
+    "two-GPU tiny F0 milestones",
+    "two-GPU Qwen3.5-9B F0 milestones",
+    "original wrapper failure and completed judge continuation",
+    "historical runtime scripts and project/upstream Git bundles"
+  ],
+  "raw_records_publicly_committed": false,
+  "archive_is_private": true,
+  "reloadable_trained_student_included": false,
+  "optimizer_resume_possible": false,
+  "recovery_boundary": "Recompute preserved results or rebuild a fresh run from pinned inputs and source; no checkpoint resume or bitwise reproduction guarantee.",
+  "verification": "All 140 source record/script hashes matched archived members and unchanged remote sources; local copy archive hash and all 140 members independently verified.",
+  "scientific_conclusion": null
+}
