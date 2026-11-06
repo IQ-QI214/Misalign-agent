@@ -1,0 +1,753 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-06",
+  "status": "qwen35_9b_corrected_eos_two_step_gpu_pipeline_verified",
+  "scope": "Engineering validation only; not paper reproduction or safety transfer evidence.",
+  "scientific_conclusion": null,
+  "hardware": {
+    "gpus": "2 x NVIDIA H100 80GB HBM3",
+    "container_ram_limit_bytes": 429496729600
+  },
+  "model": {
+    "repository": "Qwen/Qwen3.5-9B",
+    "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+    "text_parameter_count": 8953803264,
+    "weights": {
+      "model.safetensors-00001-of-00004.safetensors": {
+        "bytes": 5276436216,
+        "sha256": "db6f444b43d318c92f360a13a25561a6a65b10c0631b8ed305a426dbaa6c380e"
+      },
+      "model.safetensors-00002-of-00004.safetensors": {
+        "bytes": 5335161512,
+        "sha256": "31c7d7e2dd5d207840b31cc59083c8f4c4718959149e0358c0364052bb9a0330"
+      },
+      "model.safetensors-00003-of-00004.safetensors": {
+        "bytes": 5368717440,
+        "sha256": "7ec36ba3a4176a44c3c0876ad80c56a2f70c84bf008d82e9501df642f17dadec"
+      },
+      "model.safetensors-00004-of-00004.safetensors": {
+        "bytes": 3325995712,
+        "sha256": "b62b0c4cd7e44edee103ee8f4fe225f246d5e768e07bfd5f25b63a8aa1fdd0c6"
+      }
+    },
+    "source_verification": "Official ModelScope bytes match pinned Hugging Face LFS SHA256"
+  },
+  "training": {
+    "git_commit": "6b7cb591537cfb34d13587fa794a705116c4d43f",
+    "upstream_commit": "ae7d2519e94920c4eb6206c0c26de46d9c50abae",
+    "optimizer_steps": 2,
+    "world_size": 2,
+    "effective_global_batch": 2,
+    "config": {
+      "model_name_or_path": "Qwen/Qwen3.5-9B",
+      "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "run_name": "R0",
+      "teacher_mode": "recursive",
+      "trajectory_mode": "on_policy",
+      "kl_direction": "reverse",
+      "feedback_mode": "neutral",
+      "context_mode": "feedback_only",
+      "context_placement": "user",
+      "training_seed": 0,
+      "expected_world_size": 2,
+      "per_device_train_batch_size": 1,
+      "gradient_accumulation_steps": 1,
+      "max_steps": 2,
+      "learning_rate": 3e-06,
+      "max_grad_norm": 30.0,
+      "max_prompt_length": 1024,
+      "max_completion_length": 64,
+      "max_length": 1536,
+      "generation_temperature": 1.0,
+      "loss_chunk_size": 32,
+      "save_steps": 2,
+      "save_total_limit": 1,
+      "deepspeed": "configs/rsd/zero2_cpu.json",
+      "save_strategy": "no"
+    },
+    "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c",
+    "generation_policy": {
+      "version": "tokenizer_eos_v1",
+      "eos_token_id_source": "tokenizer.eos_token_id",
+      "completion_mask": "through_first_eos_inclusive"
+    },
+    "trainer_reported_metrics": {
+      "train_runtime": 32.5293,
+      "train_samples_per_second": 0.123,
+      "train_steps_per_second": 0.061,
+      "train_loss": 0.7660714685916901,
+      "epoch": 0.0625
+    },
+    "measured_flops": null,
+    "process_wall_seconds": 174.85427594184875,
+    "parameter_probe": {
+      "method": "all_trainable_tensors_evenly_spaced_v1",
+      "samples_per_parameter": 1024,
+      "trainable_tensors": 427,
+      "trainable_coordinates": 8953803264,
+      "sampled_coordinates": 355840,
+      "changed_coordinates": 30736,
+      "changed_tensors": 316,
+      "nonfinite_coordinates": 0,
+      "l2_delta": 0.0010799077160813099,
+      "max_abs_delta": 7.62939453125e-06,
+      "evidence_scope": "Sampled model weights only; excludes optimizer master weights and unsampled coordinates.",
+      "zero_delta_interpretation": "No visible change in these samples; BF16 rounding or changes elsewhere may hide optimizer updates.",
+      "baseline": "model_loaded_before_optional_resume",
+      "resume_requested": false
+    },
+    "trace_rows_per_rank": {
+      "0": 2,
+      "1": 2
+    },
+    "valid_completion_tokens_per_rank": {
+      "0": [
+        2,
+        3
+      ],
+      "1": [
+        6,
+        4
+      ]
+    },
+    "all_four_completions_end_at_tokenizer_eos": true,
+    "n_training_completions_without_eos_at_token_limit": 0,
+    "periodic_optimizer_checkpoint_saved": false,
+    "final_weights_reloaded_for_evaluation": true,
+    "final_export_bytes": 17927672852,
+    "real_9b_checkpoint_resume_tested": false
+  },
+  "resources": {
+    "rank_receipts": [
+      {
+        "status": "training_and_export_completed",
+        "rank": 0,
+        "effective_world_size": 2,
+        "global_step": 2,
+        "attempt_id": "0a72af6e8da24af2860b202a18dab1ba",
+        "resume_requested": false,
+        "device": "cuda:0",
+        "device_name": "NVIDIA H100 80GB HBM3",
+        "max_memory_allocated_bytes": 35815241728,
+        "max_memory_reserved_bytes": 52961476608,
+        "memory_scope": "PyTorch CUDA allocator only; excludes other processes, non-PyTorch allocations and host RAM.",
+        "memory_peak_window": "Since process start or last allocator peak reset; this receipt does not reset counters.",
+        "train_and_periodic_checkpoints_seconds": 103.96470950171351,
+        "final_export_and_trainer_state_seconds": 27.984629056416452,
+        "timing_scope": "Rank-local monotonic wall clock without added barriers or CUDA synchronization; excludes loading and parameter probes."
+      },
+      {
+        "status": "training_and_export_completed",
+        "rank": 1,
+        "effective_world_size": 2,
+        "global_step": 2,
+        "attempt_id": "326d52e35dec4477bb20ca9c045bfa34",
+        "resume_requested": false,
+        "device": "cuda:1",
+        "device_name": "NVIDIA H100 80GB HBM3",
+        "max_memory_allocated_bytes": 35815241728,
+        "max_memory_reserved_bytes": 52961476608,
+        "memory_scope": "PyTorch CUDA allocator only; excludes other processes, non-PyTorch allocations and host RAM.",
+        "memory_peak_window": "Since process start or last allocator peak reset; this receipt does not reset counters.",
+        "train_and_periodic_checkpoints_seconds": 103.9700192604214,
+        "final_export_and_trainer_state_seconds": 11.496074121445417,
+        "timing_scope": "Rank-local monotonic wall clock without added barriers or CUDA synchronization; excludes loading and parameter probes."
+      }
+    ],
+    "system_sample_interval_seconds": 3,
+    "observed_container_ram_max_bytes": 317628280832,
+    "observed_gpu_max_mib": {
+      "0": 58011,
+      "1": 58013
+    },
+    "scope": "System observations are sampled, not guaranteed peaks; cgroup RAM includes file cache and other container usage."
+  },
+  "evaluation": {
+    "base": {
+      "n_predictions": 16,
+      "n_reached_token_limit": 2,
+      "summary": {
+        "schema_version": "rsd-eval-v1",
+        "checkpoint_id": "hf:Qwen/Qwen3.5-9B@c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+        "dataset_sha256": "f6a944795b248406b788252f453ba68216ecab91ed0ac9fbf53b632ea60d20c7",
+        "protocol_sha256": "9ed83137e86934c01492c4d023fb32d4bcbe97024319c4884efef29dd1ee97b4",
+        "protocol": {
+          "version": "rsd-eval-v1",
+          "answer_extraction": "explicit_marker_or_whole_answer_v1",
+          "judge_ids": [],
+          "generation_protocol_hash": "a0df5e85f82cc6e45f3711ed1c2f99c2179cf93c48eeca3448cd8cf7f0c5147b",
+          "external_protocol": null
+        },
+        "n_planned": 16,
+        "n_predictions": 16,
+        "n_judgments": 0,
+        "groups": [
+          {
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.75
+          },
+          {
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.25
+          },
+          {
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.0
+          },
+          {
+            "metric": "exact_match",
+            "family": "units/volume",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.0
+          }
+        ],
+        "records": [
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/000/ordinary",
+            "source_id": "rsd-pilot-v1/amount_count/courier/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/000/premise_error",
+            "source_id": "rsd-pilot-v1/amount_count/courier/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/000/ordinary",
+            "source_id": "rsd-pilot-v1/units/volume/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/000/premise_error",
+            "source_id": "rsd-pilot-v1/units/volume/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/000/ordinary",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/000/premise_error",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/000/ordinary",
+            "source_id": "rsd-pilot-v1/time/arrival/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/000/premise_error",
+            "source_id": "rsd-pilot-v1/time/arrival/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/001/ordinary",
+            "source_id": "rsd-pilot-v1/amount_count/courier/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/001/premise_error",
+            "source_id": "rsd-pilot-v1/amount_count/courier/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/001/ordinary",
+            "source_id": "rsd-pilot-v1/units/volume/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/001/premise_error",
+            "source_id": "rsd-pilot-v1/units/volume/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/001/ordinary",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/001/premise_error",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/001/ordinary",
+            "source_id": "rsd-pilot-v1/time/arrival/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/001/premise_error",
+            "source_id": "rsd-pilot-v1/time/arrival/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          }
+        ],
+        "status": "complete",
+        "interpretation": "Separate descriptive metrics only; no combined safety/utility score."
+      }
+    },
+    "R0": {
+      "n_predictions": 16,
+      "n_reached_token_limit": 1,
+      "summary": {
+        "schema_version": "rsd-eval-v1",
+        "checkpoint_id": "sha256:ac5ad9c089070295031ae8739bcee6b1e5f316e77e107f1fe733c7f1f58dc72e",
+        "dataset_sha256": "f6a944795b248406b788252f453ba68216ecab91ed0ac9fbf53b632ea60d20c7",
+        "protocol_sha256": "9ed83137e86934c01492c4d023fb32d4bcbe97024319c4884efef29dd1ee97b4",
+        "protocol": {
+          "version": "rsd-eval-v1",
+          "answer_extraction": "explicit_marker_or_whole_answer_v1",
+          "judge_ids": [],
+          "generation_protocol_hash": "a0df5e85f82cc6e45f3711ed1c2f99c2179cf93c48eeca3448cd8cf7f0c5147b",
+          "external_protocol": null
+        },
+        "n_planned": 16,
+        "n_predictions": 16,
+        "n_judgments": 0,
+        "groups": [
+          {
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.75
+          },
+          {
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.0
+          },
+          {
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.0
+          },
+          {
+            "metric": "exact_match",
+            "family": "units/volume",
+            "split": "dev",
+            "direction": "higher_is_better",
+            "n_planned": 4,
+            "n_sources": 2,
+            "n_valid": 4,
+            "n_invalid": 0,
+            "n_missing": 0,
+            "value": 0.25
+          }
+        ],
+        "records": [
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/000/ordinary",
+            "source_id": "rsd-pilot-v1/amount_count/courier/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/000/premise_error",
+            "source_id": "rsd-pilot-v1/amount_count/courier/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/000/ordinary",
+            "source_id": "rsd-pilot-v1/units/volume/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/000/premise_error",
+            "source_id": "rsd-pilot-v1/units/volume/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/000/ordinary",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/000/premise_error",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/000/ordinary",
+            "source_id": "rsd-pilot-v1/time/arrival/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/000/premise_error",
+            "source_id": "rsd-pilot-v1/time/arrival/000",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/001/ordinary",
+            "source_id": "rsd-pilot-v1/amount_count/courier/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/amount_count/courier/001/premise_error",
+            "source_id": "rsd-pilot-v1/amount_count/courier/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "amount_count/courier",
+            "status": "valid",
+            "value": 1.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/001/ordinary",
+            "source_id": "rsd-pilot-v1/units/volume/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/units/volume/001/premise_error",
+            "source_id": "rsd-pilot-v1/units/volume/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "units/volume",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/001/ordinary",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/sets/registered_ids/001/premise_error",
+            "source_id": "rsd-pilot-v1/sets/registered_ids/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "sets/registered_ids",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/001/ordinary",
+            "source_id": "rsd-pilot-v1/time/arrival/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          },
+          {
+            "id": "rsd-pilot-v1/time/arrival/001/premise_error",
+            "source_id": "rsd-pilot-v1/time/arrival/001",
+            "split": "dev",
+            "metric": "exact_match",
+            "family": "time/arrival",
+            "status": "valid",
+            "value": 0.0,
+            "reason": null
+          }
+        ],
+        "status": "complete",
+        "interpretation": "Separate descriptive metrics only; no combined safety/utility score."
+      }
+    },
+    "comparison": {
+      "schema_version": "rsd-eval-v1",
+      "dataset_sha256": "f6a944795b248406b788252f453ba68216ecab91ed0ac9fbf53b632ea60d20c7",
+      "protocol_sha256": "9ed83137e86934c01492c4d023fb32d4bcbe97024319c4884efef29dd1ee97b4",
+      "baseline_checkpoint": "hf:Qwen/Qwen3.5-9B@c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "candidate_checkpoint": "sha256:ac5ad9c089070295031ae8739bcee6b1e5f316e77e107f1fe733c7f1f58dc72e",
+      "groups": [
+        {
+          "metric": "exact_match",
+          "family": "amount_count/courier",
+          "split": "dev",
+          "baseline": 0.75,
+          "candidate": 0.75,
+          "delta": 0.0,
+          "direction": "higher_is_better",
+          "descriptive_change": "unchanged",
+          "same_valid_ids": true,
+          "n_valid_baseline": 4,
+          "n_valid_candidate": 4
+        },
+        {
+          "metric": "exact_match",
+          "family": "sets/registered_ids",
+          "split": "dev",
+          "baseline": 0.25,
+          "candidate": 0.0,
+          "delta": -0.25,
+          "direction": "higher_is_better",
+          "descriptive_change": "worsened",
+          "same_valid_ids": true,
+          "n_valid_baseline": 4,
+          "n_valid_candidate": 4
+        },
+        {
+          "metric": "exact_match",
+          "family": "time/arrival",
+          "split": "dev",
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "delta": 0.0,
+          "direction": "higher_is_better",
+          "descriptive_change": "unchanged",
+          "same_valid_ids": true,
+          "n_valid_baseline": 4,
+          "n_valid_candidate": 4
+        },
+        {
+          "metric": "exact_match",
+          "family": "units/volume",
+          "split": "dev",
+          "baseline": 0.0,
+          "candidate": 0.25,
+          "delta": 0.25,
+          "direction": "higher_is_better",
+          "descriptive_change": "improved",
+          "same_valid_ids": true,
+          "n_valid_baseline": 4,
+          "n_valid_candidate": 4
+        }
+      ],
+      "interpretation": "Descriptive changes, not significance or a positive-transfer claim."
+    },
+    "baseline_reused": true,
+    "baseline_predictions_sha256": "bbc1c135e8dff80efef05e1d89c1d5360162ae5f5086985baae618162867d257",
+    "base_strict_em_diagnostics": {
+      "correct": 4,
+      "numeric_error": 8,
+      "format_only_failure": 2,
+      "truncated_without_final_answer": 2
+    },
+    "safety_judge": "not_run",
+    "safety_transfer": null,
+    "overrefusal": null,
+    "interpretation": "Frozen strict scores include format and truncation failures; n_valid is labeled outputs, not all complete final answers. No significance or transfer conclusion."
+  },
+  "preserved_legacy_attempt": {
+    "training_git_commit": "8fef885e6b5fcaddb5aab254ca3eaea92e4e28c9",
+    "optimizer_steps": 2,
+    "training_eos": 248044,
+    "tokenizer_eos": 248046,
+    "extra_tail_tokens_in_loss": 8,
+    "sampled_trajectory_count": 4,
+    "full_checkpoint_bytes": 143281158637,
+    "final_export_bytes": 17927672852,
+    "initial_comparison": "rejected due to generation protocol mismatch",
+    "paired_v2_eval": "completed but belongs to legacy-EOS training; not the corrected run",
+    "artifacts_preserved": true
+  },
+  "cpu_regression": {
+    "passed": 130,
+    "subtests_passed": 5,
+    "seconds": 6.49,
+    "command": "python -m pytest -q tests/test_rsd_*.py"
+  },
+  "private_receipt_sha256": {
+    "corrected/R0/environment.json": "3958e02f91e70be3bab1e4779afb78abec1ef07f41060d56d957312ba27c1bbc",
+    "corrected/R0/progress.json": "c498739b2a98f8343cd6d4ec7b6365e6a0779bc894890e113628cc045d95fbbb",
+    "corrected/R0/resources_rank0.json": "8dd9bc7134178ae55208d06c16c19dd978d09c1e6f745058ebf768b492a1f09a",
+    "corrected/R0/resources_rank1.json": "f6602bb401fc99c6654614a58662699b13e1527c64a7ceefef69dce388b68698",
+    "corrected/R0/result.json": "39de841faec060ef8797ce30dd680b4a57dbbbc8a1bb2a024198c2378668aeb8",
+    "corrected/R0/run_contract.json": "e60cdc8248add2fd598bf1126e844d578984dfe3b6b4d3c0e90ab3acced0ec55",
+    "corrected/R0/trainer_state.json": "2a8205d1f01969120ab1ecef0292382e723f11cf40754b174768cd4cfc507095",
+    "corrected/R0-summary.json": "a5589134770642f2035fc47661096fee2395308ee8a92a9e6220b1897905b943",
+    "corrected/base-summary.json": "6767280ce3fd88b989a83f26c3011a9ef279dd50dea415c11cff724f0cc2b3a1",
+    "corrected/comparison.json": "7f0bb275bd7e7e81a6a5537257dc41a0803ff188f8c2c2e158b9cdb08fc19508",
+    "corrected/config.json": "8cbd56a0a777567dfcbb6673e282ddcb981a12ece0008d76a33be081ed84bee6",
+    "corrected/pipeline_receipt.json": "f0db09a8b42def786f490ccd45ff209e309d48d217ed39c7c5e3dcc309184ddc",
+    "legacy/R0-summary.json": "df88657c3e01ffaa13796d35c3bf05645d5af28929c4227e81f0d3cc191a5891",
+    "legacy/base-summary.json": "7bdb55e7a7e10f3b26963cfb6249eb57838e8421ab47c4676be9d96862efc86f",
+    "legacy/config.json": "3c9d02656efd533677e006beaa3052245006d630ec922cb4b32d2ef717741f31",
+    "legacy/pipeline_receipt.json": "7bfcad389b01f99bdde3d42b386d21fda6fba9429ae71440283cee30856f127d",
+    "legacy_paired_eval/R0-summary.json": "36676c5919a9c25f7189828e653a721be57f915ba287d4cce1626ae965a1497f",
+    "legacy_paired_eval/base-summary.json": "6767280ce3fd88b989a83f26c3011a9ef279dd50dea415c11cff724f0cc2b3a1",
+    "legacy_paired_eval/comparison.json": "ee76dae0673c11f4af8c8abdabec2ff03c1e5e4e602af002a591c8de2d1c0184",
+    "legacy_paired_eval/receipt.json": "5022d4e6c34e80b6102b0f280558209c3eaa7470d696f09dd7bc654f6cffd44a",
+    "model_mirror_download.json": "14dc09fa53d5235244597ef278c9accd73f5326fdd86727b27ae89943d78fc63",
+    "model_download_small.json": "1e2b5b8fce1a470d09c9dae537c678a79e58316812434b719482e5e569f652df",
+    "preflight_final.json": "d871fa1c36be30ae433d3587b177e8ab1cdfce79a87ce07cb04600100c103e66"
+  }
+}

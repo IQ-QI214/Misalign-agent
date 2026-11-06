@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-06",
+  "status": "random_tiny_gpu_pipeline_verified",
+  "hardware": {
+    "gpus": "2 x NVIDIA H100 80GB HBM3",
+    "container_ram_limit_bytes": 429496729600
+  },
+  "full_qwen35_9b_verified": false,
+  "scientific_conclusion": null,
+  "packages": {
+    "torch": "2.8.0a0+5228986c39.nv25.6",
+    "transformers": "5.21.0",
+    "trl": "0.26.0",
+    "accelerate": "1.15.0",
+    "peft": "0.21.2",
+    "datasets": "5.1.0",
+    "deepspeed": "0.19.9",
+    "flash-linear-attention": "0.6.0",
+    "causal-conv1d": "1.7.0",
+    "flash-attn": "2.7.4.post1",
+    "ninja": "1.11.1.4",
+    "packaging": "26.3",
+    "safetensors": "0.8.0",
+    "numpy": "1.26.4",
+    "pyarrow": "24.0.0",
+    "pandas": "2.2.3"
+  },
+  "preflight": {
+    "torch_cuda": "passed",
+    "data_stack": "passed",
+    "kernels": "passed",
+    "cpu_adam": "passed",
+    "tiny_qwen_cuda": "passed"
+  },
+  "preflight_code_commit": "8fef885",
+  "training": {
+    "model": "random_tiny_gpt2",
+    "code_commit": "d77c11a",
+    "world_size": 2,
+    "deepspeed": "stage2_cpu_optimizer_offload",
+    "optimizer_steps": 2,
+    "trace_rows_per_rank": 2,
+    "saved_optimizer_shards": 2,
+    "loss": 0.0031717533711344004,
+    "runtime_seconds": 3.8107,
+    "sampled_changed_coordinates": 4329,
+    "sampled_coordinates": 5360
+  },
+  "checkpoint_resume": {
+    "status": "resume_completed",
+    "global_step_before": 1,
+    "global_step_after": 2,
+    "same_contract": true,
+    "final_tensors_exactly_equal_to_uninterrupted": true,
+    "tensor_count": 17,
+    "rank_trace_steps": {
+      "0": [
+        0,
+        1
+      ],
+      "1": [
+        0,
+        1
+      ]
+    },
+    "rank_attempt_counts": {
+      "0": 2,
+      "1": 2
+    },
+    "scope": "random tiny GPT2 on actual 2H100 ZeRO2 CPU offload; not a9B or research result"
+  },
+  "evaluation": {
+    "base": {
+      "n_planned": 16,
+      "n_predictions": 16,
+      "n_judgments": 0,
+      "n_valid": 4,
+      "n_invalid": 12,
+      "interpretation": "Random model and four-token outputs; software flow only; not task or safety performance evidence."
+    },
+    "R0": {
+      "n_planned": 16,
+      "n_predictions": 16,
+      "n_judgments": 0,
+      "n_valid": 4,
+      "n_invalid": 12,
+      "interpretation": "Random model and four-token outputs; software flow only; not task or safety performance evidence."
+    }
+  },
+  "failed_attempts": [
+    {
+      "stage": "gpu_direct_package_install",
+      "reason": "network timeout; retried via existing CPU proxy"
+    },
+    {
+      "stage": "first_tiny_distributed_launch",
+      "reason": "PyArrow26 requires NumPy2; image has NumPy1.26.4; exited before training"
+    },
+    {
+      "stage": "numpy2_interoperability_probe",
+      "reason": "image Torch built against NumPy1 ABI; restored NumPy1.26.4 and pinned PyArrow24.0.0"
+    }
+  ],
+  "private_receipt_sha256": {
+    "tiny_base_eval.json": "7b44712d4cae65d8a10a5c366bc15c7bb138e62d94abc3518482b3724e821175",
+    "tiny_train_result.json": "1567edb602464b17630a36fbc18e593a577388159628f7ca06b0127378231e8d",
+    "tiny_resume_receipt.json": "aa09b3d949231e296789023ee30affdecaccd453d95c4e2ebaf736e91eadc84a",
+    "tiny_R0_eval.json": "0d63521d0ad0ab5a582bffce177fd181e27dade937e006813b7553cec24201de",
+    "preflight_final.json": "d871fa1c36be30ae433d3587b177e8ab1cdfce79a87ce07cb04600100c103e66"
+  }
+}

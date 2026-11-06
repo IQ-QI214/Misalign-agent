@@ -2,7 +2,7 @@
 
 研究良性任务学习中的安全迁移，以及迁移方向如何受到教师递归更新的影响。
 
-第一版面向 **Qwen3.5-9B、2×H100**，基于公开 [OPSD](https://github.com/siyan-zhao/OPSD) 的固定版本独立适配。当前完成本地 CPU pipeline 和随机小模型的双 H100 ZeRO-2 两步更新及保存；真实 9B 训练与安全迁移结论仍待验证。
+第一版面向 **Qwen3.5-9B、2×H100**，基于公开 [OPSD](https://github.com/siyan-zhao/OPSD) 的固定版本独立适配。2026-11-06 已完成真实 9B 的双 H100 ZeRO-2 两步更新、最终模型重载和16条任务成对评测。首次联测暴露的训练/评测EOS问题已修复，并从初始模型重新完成两步验证；安全迁移和论文现象仍未验证。
 
 ## 研究问题
 
@@ -57,9 +57,13 @@ python -m rsd.smoke --output-dir runs/cpu_pipeline_smoke
 
 ## 两卡运行
 
-先安装与节点 CUDA 匹配的 PyTorch/DeepSpeed，运行 `ds_report` 并核验 CPUAdam 编译及 Qwen3.5 fast kernels。当前配置 ZeRO-2 + CPU optimizer offload，学生权重每卡完整保留；冻结教师每卡另占一份。建议约256GB以上可用RAM、0.5—1TB空闲盘，实际按峰值核验。完整9B训练尚未验收，不要原样使用上游旧 environment.yml。
+先安装与节点 CUDA 匹配的 PyTorch/DeepSpeed，运行 `ds_report` 并核验 CPUAdam 编译及 Qwen3.5 fast kernels。当前配置 ZeRO-2 + CPU optimizer offload，学生权重每卡完整保留；冻结教师每卡另占一份。不要原样使用上游旧 environment.yml。
 
-已通过小模型双卡测试的镜像为 NVIDIA Torch 2.8.0a0 / CUDA 12.9 / Python 3.12。该镜像可额外使用 `-c configs/rsd/constraints-nvidia25.06.txt` 安装项目依赖：其 Torch 使用 NumPy 1 ABI，必须配套 NumPy 1.26.4、PyArrow 24.0.0；直接安装最新 PyArrow 26 或改用 NumPy 2 均在实际检查中失败。此约束不适用于其他 Torch 镜像，实际二进制兼容性由 preflight 的数据转换、CPUAdam 和 CUDA 小模型检查确认。
+修复EOS后的真实 R0 两步 smoke 已在 2×H100 80GB、400 GiB 容器 RAM 限额下通过。每卡 PyTorch 峰值 allocated 为 33.36 GiB、reserved 为 49.32 GiB；3秒间隔的系统采样观测到每卡最高约 56.7 GiB，容器内存最高约 295.8 GiB（包含容器内其他用量和页缓存，不是进程独占 RAM）。本次训练completion上限64，实际四条仅2—6 token。建议该短输出配置预留至少约384 GiB RAM；更长回答、冻结教师和512-token配置仍需实测。
+
+首轮旧EOS运行的单个完整 step-2 checkpoint 为143.28 GB，最终权重另占17.93 GB；二者合计161.21 GB，不含原始模型、依赖和缓存。修复后的运行使用 `save_strategy="no"`，另存最终权重，保留首轮文件。按首轮完整checkpoint尺寸估算，主配置100步、每20步保存，5个完整checkpoint加最终权重约734 GB；若更长运行达到保留上限6个，则约878 GB，并另留模型缓存和运行余量。当前短 smoke 的成功不能作为100步、长输出或四组实验的容量验收。
+
+已通过真实9B双卡 smoke 的镜像为 NVIDIA Torch 2.8.0a0 / CUDA 12.9 / Python 3.12。该镜像可额外使用 `-c configs/rsd/constraints-nvidia25.06.txt` 安装项目依赖：其 Torch 使用 NumPy 1 ABI，必须配套 NumPy 1.26.4、PyArrow 24.0.0；直接安装最新 PyArrow 26 或改用 NumPy 2 均在实际检查中失败。此约束不适用于其他 Torch 镜像，实际二进制兼容性由 preflight 的数据转换、CPUAdam 和 CUDA 小模型检查确认。
 
 ```bash
 # 离线检查数据栈ABI、真实 CUDA、实际 kernel 导入、CPUAdam 更新和随机 tiny Qwen3.5 前后向。
@@ -77,7 +81,11 @@ bash scripts/rsd_launch.sh --config configs/rsd/qwen35_9b_2h100.json --arm R0
 
 100步、全局batch2对应200次样本曝光，不是200个独立任务。主配置每20步保存；恢复用 `--resume-from-checkpoint` 指定该运行自己的 checkpoint。训练、模型生成与judge按阶段执行，减少同时驻留。v1未启用vLLM，也没有自动根据安全分数选点或启动下一组的控制器。
 
+配置默认 `save_strategy="steps"`，保存可恢复的完整checkpoint。显式设置 `save_strategy="no"` 时不保存周期checkpoint，训练结束仍导出 `final/` 权重与tokenizer；这种运行不能作为优化器断点续训验收。短工程验证可以采用该策略，正式长训练应先确定恢复需求与存储预算。
+
 参数更新回执对每个可训练张量分散抽样，记录变化坐标数与逐张量差异。这只反映抽样模型权重，不覆盖优化器master weights或未抽样位置；BF16零差异不能证明没有更新。两步配置只保存step 2，从该点恢复到同一max_steps不会新增更新，不能算断点续训验收。
+
+实际断点续训验收使用随机 tiny GPT2，在同一双 H100/ZeRO-2 配置下从step 1恢复至step 2，最终17个权重张量与不间断运行逐元素相同；9B尚未执行断点续训。脱敏回执见 [`validation/gpu_tiny_v1.json`](validation/gpu_tiny_v1.json)。
 
 ## 评测
 
@@ -99,6 +107,10 @@ python -m rsd.evaluation score \
 ```
 
 远程Hub模型必须提供固定 `--revision`。本地真实checkpoint ID由权重/配置内容SHA计算，generate的 `--checkpoint-id` 只是可读标签，不要再用它覆盖score身份。
+
+生成协议 `rsd-text-eval-v2` 对所有 checkpoint 显式使用 `tokenizer.eos_token_id`，避免原模型默认配置与Trainer保存配置的EOS差异改变停止条件。旧v1运行确实在比较阶段因协议不一致被拒绝；旧记录保留，修复后必须重新生成base与candidate两侧。v1/v2结果不能混用。任务判分与冻结答案没有随修复改变；严格格式失分与达到生成长度上限的情况应单独审阅。
+
+训练也显式固定到同一tokenizer EOS，采样与loss mask使用同一值，并在运行合同和轨迹记录版本。初次9B smoke的上游独立采样配置仍使用旧EOS，使4条回答各多计入2个尾部token；该尝试及其完整checkpoint保留为历史工程记录。评测修复不能追溯改变旧训练目标，修复后的训练必须从初始模型另开运行。
 
 对基准dev/test同样先generate，然后判分：
 
@@ -134,4 +146,8 @@ python -m rsd.train --config configs/rsd/dce_inspired_probe.json --dry-run
 
 ## 当前状态
 
-本地CPU软件、数据契约、基准题目准备、CUDA小Qwen3.5前后向和随机小模型的双H100 ZeRO-2更新/保存已完成。真实Qwen3.5-9B权重加载、9B峰值/吞吐、真实judge、论文现象和正负安全迁移仍未验证。
+本地CPU软件、数据契约、基准题目准备、CUDA小Qwen3.5前后向、随机小模型双卡更新/保存/续训，以及修复EOS后的真实Qwen3.5-9B两步R0更新/最终模型导出/重载/评测均已完成。修复后9B抽样覆盖355,840个坐标，其中30,736个发生变化，316/427个可训练张量至少一个抽样位置改变，抽样非有限值为0。四条训练轨迹均在tokenizer EOS结束，没有多计尾部token。训练进程耗时约175秒，含初始化与最终导出，不保存周期checkpoint；该值不能外推为稳态吞吐。
+
+统一v2协议下，dev严格匹配为4/16 → 4/16：金额3/4 → 3/4，集合1/4 → 0/4，时间0/4 → 0/4，单位0/4 → 1/4。生成达到128-token上限的回答为base 2条、R0 1条。基线12条严格失分中，8条为数值错误、2条为计算正确但格式不符、2条为截断后无最终答案；这是诊断，未改变冻结分数。不能把这些小样本变化解释为统计显著、安全正迁移或负迁移。回执见 [`validation/gpu_qwen35_9b_v1.json`](validation/gpu_qwen35_9b_v1.json)。本地全套回归为130项测试和5个子测试通过。
+
+这轮只验证R0（recursive / on-policy / reverse KL / neutral），不是DCE设置的精确复现。真实安全judge、固定教师9B、长输出、9B续训、论文现象和正负安全迁移仍未验证。下一阶段先审查基线能力、输出格式与数据难度并冻结评测，再做同起点F0/R0对照；前提纠正F1/R1作为后续独立因素接入。
