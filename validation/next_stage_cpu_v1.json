@@ -1,0 +1,109 @@
+{
+  "schema_version": "rsd-next-stage-cpu-v1",
+  "date": "2026-11-07",
+  "status": "PASS_CPU_PREPARATION_REAL_BASELINE_AND_VALIDATION_PENDING",
+  "base_git_commit": "d77608d0af43e3a77a7ee5456c422bc3bb764f68",
+  "gpu_executions": 0,
+  "remote_compute_connections": 0,
+  "new_pretrained_model_inference_calls": 0,
+  "new_judge_model_calls": 0,
+  "actual_human_labels_created": 0,
+  "training_enabled": false,
+  "tests": {
+    "passed": 747,
+    "subtests_passed": 52,
+    "junit_cases_including_subtests": 799,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "warning": "Existing upstream TRLExperimentalWarning",
+    "elapsed_seconds": 41.3,
+    "log_sha256": "e865ca9a11e97b3cef58729acdf007144f252bfd78ea275da49c65601f4b2845",
+    "junit_sha256": "9fa52a52653dbd87577c5267ef5a6becedac8aead251de965534beba914898fc",
+    "scope": "CPU fixtures, including untrained tiny-model tests; not pretrained model behavior or real human gold"
+  },
+  "schema_validation": {
+    "status": "PASS",
+    "validator": "jsonschema==4.25.1 Draft202012Validator",
+    "plan_sha256": "43647abd6472e9f2f238fdbf7356964f88936378cb5d90491fcc0f5a7cf91144",
+    "training_environment_modified": false,
+    "temporary_dependencies_deleted_on_exit": true
+  },
+  "dev_baseline": {
+    "state": "PREPARED_EXECUTION_DISABLED",
+    "purpose": "research",
+    "n_planned": 366,
+    "counts": {
+      "gsm8k": 128,
+      "arc_challenge": 128,
+      "strongreject": 65,
+      "xstest_safe": 45
+    },
+    "actual_responses": 0,
+    "model": {
+      "repository": "Qwen/Qwen3.5-9B",
+      "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+    },
+    "manifest_sha256": "2b110a3bdf65ae633bbc985d5ba32682c1475030d39cf0f746f5614a72dc0e17",
+    "source_plan_sha256": "29831cdf3625ca07da2792c2b39026c18dcd5e8c921f0cc7c820f89956394b7f",
+    "private_bundle": ".runtime/dev_baseline_20261107/prepared_v1",
+    "bundle_reloaded": true,
+    "no_tensor_runtime_imported_by_prepare_or_check": true,
+    "default_disabled_execution": {
+      "status": "PASS_EXPECTED_REJECTION",
+      "message": "Baseline execution is disabled; explicit execution_enabled=True is required",
+      "output_not_created": true
+    },
+    "no_optimizer_or_weight_export": true,
+    "real_cuda_capacity_and_throughput": "UNKNOWN"
+  },
+  "power_scenarios": {
+    "recomputed_receipt_matches": true,
+    "source_plan_sha256": "29831cdf3625ca07da2792c2b39026c18dcd5e8c921f0cc7c820f89956394b7f",
+    "input_scope": "Plan counts and hypotheses only; no confirmation answers or scores",
+    "binary_n205_q020_delta005_power": 0.30661392640854573,
+    "binary_n205_q020_delta010_power": 0.8844051285352766,
+    "actual_primary_bootstrap_power": null,
+    "actual_F0_R0_paired_variance": null,
+    "scientific_target_selected": null,
+    "formal_mde_selected": null,
+    "single_base_baseline_does_not_estimate_F0_R0_difference_variance": true
+  },
+  "workload": {
+    "formal_training_completions": 24576,
+    "formal_evaluation_completions": 27474,
+    "formal_student_completions": 52050,
+    "formal_judge_calls": 12114,
+    "all_completion_jobs_with_development_and_optional_baseline_judge": 65600,
+    "not_independent_question_or_forward_counts": true,
+    "gpu_hours": null,
+    "current_remote_disk_ram_vram_available": null
+  },
+  "existing_materials": {
+    "previous_private_material_hashes_unchanged": true,
+    "actual_human_gold": 0,
+    "B_real_answers": 0,
+    "complete_judge_200_panel": false
+  },
+  "previous_tracked_rsd_code_unchanged": true,
+  "previous_tracked_rsd_files_checked": 31,
+  "code_plan_and_receipt_sha256": {
+    "rsd/dev_baseline.py": "d79927c8bcfc1e50abf632c4a6c397124175efd706d0f343c8ecd3efbf768207",
+    "rsd/power_planning.py": "8a3a773b572ae52b2124e2ad62534762ca27652015171f05bb70d97df8690373",
+    "tests/test_rsd_dev_baseline.py": "4a66ccd442ab3588f28039d1bf0579f7e2b9cdfee4e3c976d01551e9f3efea43",
+    "tests/test_rsd_power_planning.py": "016a33fb6c0a21a06127249b58e3541ac62ad7c10c83b2360fd4c1d2eccda4e7",
+    "configs/rsd/exploration_v2.plan.json": "29831cdf3625ca07da2792c2b39026c18dcd5e8c921f0cc7c820f89956394b7f",
+    "configs/rsd/judge_validation_v3.plan.json": "43647abd6472e9f2f238fdbf7356964f88936378cb5d90491fcc0f5a7cf91144",
+    "validation/power_planning_cpu_v1.json": "a1020b413c80a9a33e6222175ead0147483ef80f033842bb06bea48e5a935314",
+    "validation/workload_accounting_v2.json": "7f8e096c8832e4baa809fa1ae8dc58252417637c61ef79f1547f2f67292f6fa4"
+  },
+  "remaining": [
+    "Current QZ public model, disk, RAM and GPU preflight when resources resume",
+    "Full 366-dev real base-model inference and output diagnostics",
+    "Two fixed B generator identities, 96 real responses and independent human review",
+    "Independent judge validation and applicable error sensitivity",
+    "Scientifically meaningful targets and paired-variance evidence before research freeze",
+    "Long-output accumulation4 CUDA/DeepSpeed capacity and throughput"
+  ],
+  "scientific_conclusion": null
+}

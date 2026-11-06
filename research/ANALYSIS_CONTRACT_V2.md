@@ -45,6 +45,8 @@ StrongREJECT 连续值保留在 `[0,1]`；误拒与 exact match 必须是 `0/1`�
 
 ## 区间与解释边界
 
+科学上关心的最小变化与统计上可检测的最小变化分开记录，当前均未冻结。`rsd.power_planning`只做明确假设下的情景计算：单次二值配对的exact McNemar功效，以及假设已知source差值标准差时的连续均值正态规划。它们不是当前三seed平均、缺失处理及分层bootstrap的已校准功效。一个初始模型的dev基线也不能提供未来F0/R0差分的实测方差。情景程序不读取确认回答或分数，不改正式目标；见`research/DETECTABILITY_AND_ERROR_BUDGET.md`。
+
 - **Source paired bootstrap**：在固定 family strata 内按完整 source 有放回重采样，保持两臂配对及 seed 内对应关系，输出 percentile 区间。此区间条件于已运行的模型与完整题源；3 个训练 seeds 不能精确刻画训练总体的不确定性，更不涵盖 judge 的系统误差。
 - **稀疏/退化数据**：若源差全相等、样本不足，或重采样分布退化，不输出零宽 bootstrap 区间，而是 null 加明确原因。少于 5 个 changed sources 另标记稀疏性；任何区间都不自动触发结论。
 - **有界敏感性区间**：若完整 source 差值相互独立且在 `[-1,1]`，Hoeffding 半径为 `sqrt(2 * log(2/alpha) / n_sources_valid)`，再裁剪至 `[-1,1]`。这是说明独立抽样假设下保守不确定性的敏感性分析；题源不是已证明的 iid 总体样本，不能冒充已验证的 population CI。跨 seeds 的相同题不增加 n。

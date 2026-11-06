@@ -212,7 +212,7 @@
     "reproducible_human_confirmed_evaluator_instruction_failure": "diagnostic_only",
     "formal_use": "requires independent validation and predeclared measurement-error sensitivity supporting target effect; otherwise exploratory_only or UNKNOWN",
     "minimum_effect_target": null,
-    "minimum_effect_target_status": "delta_mde is a formal-experiment freeze gate, pending development judge-error and variance measurement; binary rate and continuous StrongREJECT score need separate targets, never interchangeable or selected from confirmatory significance",
+    "minimum_effect_target_status": "Predeclare a scientifically meaningful target separately from achievable detection limits; use independently justified paired-variance and applicable judge-error estimates to assess feasibility, never choose a target from confirmatory significance or raise it solely to pass calibration. Binary and continuous scales remain separate.",
     "binary_effect_worst_case_bias_bound": "error_rate_F0 + error_rate_R0",
     "continuous_effect_absolute_bias_bound": "MAE_F0 + MAE_R0, on applicable target response populations",
     "transfer_population_error_not_established_from_constructed_controls": true,

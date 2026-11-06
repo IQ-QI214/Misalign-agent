@@ -1,0 +1,251 @@
+{
+  "schema_version": "rsd-detectability-scenarios-v1",
+  "status": "CPU_PLANNING_SCENARIOS_NOT_OBSERVED_RESULTS",
+  "source_plan_sha256": "29831cdf3625ca07da2792c2b39026c18dcd5e8c921f0cc7c820f89956394b7f",
+  "implementation_sha256": "8a3a773b572ae52b2124e2ad62534762ca27652015171f05bb70d97df8690373",
+  "planned_counts": {
+    "strongreject_sources": 248,
+    "xstest_safe_sources": 205,
+    "fixed_training_seeds": [
+      0,
+      1,
+      2
+    ],
+    "training_seeds_do_not_multiply_source_n": true
+  },
+  "actual_primary": {
+    "benchmark": "strongreject",
+    "split": "test",
+    "step": 512,
+    "contrast": "R0 minus F0",
+    "metric": "continuous original StrongREJECT judge score in [0,1]",
+    "direction": "higher is worse",
+    "pairing": "same source across arms; average fixed training seeds within source, then average sources",
+    "tail": "two-sided",
+    "alpha": 0.05,
+    "delta_mde": null,
+    "scope": "conditional on these three training seeds; judge validity required",
+    "minimum_scientifically_meaningful_effect": null,
+    "detectability_planning": "scenario-only; base dev baseline cannot estimate F0/R0 paired variance; no target selected from observed significance"
+  },
+  "formal_mde_selected_by_this_tool": null,
+  "scientific_target_effect_selected_by_this_tool": null,
+  "binary_illustration_scope": "one binary pair per independent source, one prespecified two-sided test; not the three-seed averaged actual estimator",
+  "binary_scenarios": [
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.05,
+      "hypothetical_net_difference": 0.05,
+      "alpha": 0.05,
+      "status": "SCENARIO",
+      "exact_test_rejection_probability": 0.946178700834865
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.05,
+      "hypothetical_net_difference": 0.1,
+      "alpha": 0.05,
+      "status": "INFEASIBLE_DELTA_EXCEEDS_DISCORDANCE",
+      "exact_test_rejection_probability": null
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.1,
+      "hypothetical_net_difference": 0.05,
+      "alpha": 0.05,
+      "status": "SCENARIO",
+      "exact_test_rejection_probability": 0.5552450554660394
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.1,
+      "hypothetical_net_difference": 0.1,
+      "alpha": 0.05,
+      "status": "SCENARIO",
+      "exact_test_rejection_probability": 0.9999742719570016
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.2,
+      "hypothetical_net_difference": 0.05,
+      "alpha": 0.05,
+      "status": "SCENARIO",
+      "exact_test_rejection_probability": 0.30661392640854573
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.2,
+      "hypothetical_net_difference": 0.1,
+      "alpha": 0.05,
+      "status": "SCENARIO",
+      "exact_test_rejection_probability": 0.8844051285352766
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.4,
+      "hypothetical_net_difference": 0.05,
+      "alpha": 0.05,
+      "status": "SCENARIO",
+      "exact_test_rejection_probability": 0.17323808612166747
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.4,
+      "hypothetical_net_difference": 0.1,
+      "alpha": 0.05,
+      "status": "SCENARIO",
+      "exact_test_rejection_probability": 0.5808031862987194
+    }
+  ],
+  "historical_document_scenario_reproduction": [
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.2,
+      "hypothetical_net_difference": 0.05,
+      "exact_test_rejection_probability": 0.30661392640854573
+    },
+    {
+      "n_source_pairs": 205,
+      "hypothetical_discordance": 0.2,
+      "hypothetical_net_difference": 0.1,
+      "exact_test_rejection_probability": 0.8844051285352766
+    },
+    {
+      "n_source_pairs": 658,
+      "hypothetical_discordance": 0.2,
+      "hypothetical_net_difference": 0.05,
+      "exact_test_rejection_probability": 0.8006133243696928
+    }
+  ],
+  "continuous_primary_planning": [
+    {
+      "n_independent_sources": 248,
+      "hypothetical_sd_of_seed_averaged_source_differences": 0.1,
+      "target_power": 0.8,
+      "alpha": 0.05,
+      "normal_approx_detectable_shift": 0.017790083925110167,
+      "normal_approx_sampling_half_width": 0.012445783747619309,
+      "illustrative_target_shift": 0.05,
+      "normal_model_power_at_target_shift": 0.9999999983309557,
+      "normal_approx_required_sources_at_target_shift": 32,
+      "empirical_variance_measured": false,
+      "scope": "known hypothetical source-level SD; normal model; not calibrated power of the actual bootstrap procedure"
+    },
+    {
+      "n_independent_sources": 248,
+      "hypothetical_sd_of_seed_averaged_source_differences": 0.2,
+      "target_power": 0.8,
+      "alpha": 0.05,
+      "normal_approx_detectable_shift": 0.035580167850220334,
+      "normal_approx_sampling_half_width": 0.024891567495238617,
+      "illustrative_target_shift": 0.05,
+      "normal_model_power_at_target_shift": 0.9759814446821544,
+      "normal_approx_required_sources_at_target_shift": 126,
+      "empirical_variance_measured": false,
+      "scope": "known hypothetical source-level SD; normal model; not calibrated power of the actual bootstrap procedure"
+    },
+    {
+      "n_independent_sources": 248,
+      "hypothetical_sd_of_seed_averaged_source_differences": 0.3,
+      "target_power": 0.8,
+      "alpha": 0.05,
+      "normal_approx_detectable_shift": 0.053370251775330495,
+      "normal_approx_sampling_half_width": 0.037337351242857926,
+      "illustrative_target_shift": 0.05,
+      "normal_model_power_at_target_shift": 0.7468827744661811,
+      "normal_approx_required_sources_at_target_shift": 283,
+      "empirical_variance_measured": false,
+      "scope": "known hypothetical source-level SD; normal model; not calibrated power of the actual bootstrap procedure"
+    },
+    {
+      "n_independent_sources": 248,
+      "hypothetical_sd_of_seed_averaged_source_differences": 0.5,
+      "target_power": 0.8,
+      "alpha": 0.05,
+      "normal_approx_detectable_shift": 0.08895041962555084,
+      "normal_approx_sampling_half_width": 0.06222891873809655,
+      "illustrative_target_shift": 0.05,
+      "normal_model_power_at_target_shift": 0.3502626143630819,
+      "normal_approx_required_sources_at_target_shift": 785,
+      "empirical_variance_measured": false,
+      "scope": "known hypothetical source-level SD; normal model; not calibrated power of the actual bootstrap procedure"
+    }
+  ],
+  "measurement_error_examples": [
+    {
+      "observed_interval": [
+        0.03,
+        0.07
+      ],
+      "per_arm_mae_upper_bounds": {
+        "F0": 0.02,
+        "R0": 0.02
+      },
+      "applicable_to_target_population_assumed": true,
+      "combined_error_bound": 0.04,
+      "sensitivity_envelope": [
+        -0.010000000000000002,
+        0.11000000000000001
+      ],
+      "conditional_direction": "includes_zero",
+      "scope": "sensitivity envelope, not a calibrated confidence interval",
+      "scientific_conclusion": null,
+      "status": "CONDITIONAL_ILLUSTRATION_ONLY"
+    },
+    {
+      "observed_interval": [
+        0.03,
+        0.07
+      ],
+      "per_arm_mae_upper_bounds": {
+        "F0": 0.005,
+        "R0": 0.005
+      },
+      "applicable_to_target_population_assumed": true,
+      "combined_error_bound": 0.01,
+      "sensitivity_envelope": [
+        0.019999999999999997,
+        0.08
+      ],
+      "conditional_direction": "positive_only",
+      "scope": "sensitivity envelope, not a calibrated confidence interval",
+      "scientific_conclusion": null,
+      "status": "CONDITIONAL_ILLUSTRATION_ONLY"
+    },
+    {
+      "observed_interval": [
+        0.03,
+        0.07
+      ],
+      "per_arm_mae_upper_bounds": {
+        "F0": null,
+        "R0": null
+      },
+      "applicable_to_target_population_assumed": false,
+      "combined_error_bound": null,
+      "sensitivity_envelope": null,
+      "conditional_direction": "UNKNOWN",
+      "scope": "sensitivity envelope, not a calibrated confidence interval",
+      "scientific_conclusion": null,
+      "status": "UNKNOWN_MISSING_OR_INAPPLICABLE_ERROR_BOUND"
+    }
+  ],
+  "assumptions_not_verified": [
+    "Source independence and representativeness",
+    "Actual paired discordance or source-level SD",
+    "Validity/transportability of per-arm judge error bounds",
+    "Power of the actual clustered bootstrap and UNKNOWN handling",
+    "Generalization across training randomness beyond the three fixed seeds"
+  ],
+  "baseline_variance_boundary": "One untrained-model dev baseline cannot estimate the future F0/R0 paired difference SD or discordance; separate development-pilot evidence is needed before confirmation unsealing.",
+  "model_calls": 0,
+  "gpu_calls": 0,
+  "confirmation_answers_or_scores_read": false,
+  "research_plan_modified": false,
+  "scientific_result": null,
+  "sources": {
+    "mcnemar": "https://www.statsmodels.org/stable/generated/statsmodels.stats.contingency_tables.mcnemar.html",
+    "mcnemar_implementation": "https://www.statsmodels.org/stable/_modules/statsmodels/stats/contingency_tables.html#mcnemar",
+    "normal_mean_planning": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc222.htm"
+  }
+}

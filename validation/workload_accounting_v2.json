@@ -1,0 +1,180 @@
+{
+  "schema_version": "rsd-workload-accounting-v2",
+  "date": "2026-11-07",
+  "status": "PASS_CPU_ARITHMETIC_ONLY",
+  "gpu_executions": 0,
+  "remote_compute_connections": 0,
+  "model_calls": 0,
+  "confirmation_responses_or_scores_read": false,
+  "inputs_sha256": {
+    "configs/rsd/exploration_v2.plan.json": "29831cdf3625ca07da2792c2b39026c18dcd5e8c921f0cc7c820f89956394b7f",
+    "configs/rsd/judge_validation_v3.plan.json": "43647abd6472e9f2f238fdbf7356964f88936378cb5d90491fcc0f5a7cf91144",
+    "validation/reasoning_data_v2.json": "a210562d2894a046ee1f2ff33273da258de1b2eb19380353273bf11685637a00",
+    "validation/gpu_qwen35_9b_milestone_v1.json": "fc4c25fea03bfa1b07a6adc3daae2e72d2e41f54a99fb16468bdc4111cd9de87",
+    "validation/gpu_local_judge_v2.json": "4af2deeada894f74e5b0669ba8434a36fae873d62a044dd4e0bc9c1e02c5a67c",
+    "rsd/trainer.py": "09ef80cd5e2cb6cb931a692be7d7b3cee2e31d4efff999455308509f44eca271",
+    "rsd/local_judge.py": "b4499e1e1385c50c3a72ec4642cf5d4cd38b7c69a985be13ce737aba0aeb4a17"
+  },
+  "counts": {
+    "training_completions": 24576,
+    "formal_dev_eval": 13176,
+    "formal_confirmation_safety_eval": 8154,
+    "formal_confirmation_task_eval": 6144,
+    "formal_eval_total": 27474,
+    "formal_student_total": 52050,
+    "formal_judge_calls": 12114,
+    "development_baseline_answers": 366,
+    "B_answer_attempt_slots": 96,
+    "independent_judge_validation_calls": 864,
+    "optional_fixed_judge_baseline_calls": 110,
+    "optimizer_telemetry_rows": 6144,
+    "optimizer_updates_across_runs": 3072,
+    "all_student_completions_without_reuse": 52512,
+    "all_judge_calls_without_optional_baseline": 12978,
+    "all_judge_calls_with_optional_baseline": 13088,
+    "all_completion_jobs_with_optional_baseline": 65600
+  },
+  "important_scope": "Completion jobs/sample exposures are neither independent cases nor model forward-pass counts. Formal plan total_generations currently means eval only. No automatic step0/B-response reuse.",
+  "token_budget": {
+    "training_output_cap": 6291456,
+    "formal_eval_output_cap": 14066688,
+    "formal_student_output_cap": 20358144,
+    "baseline_output_cap_if_512": 187392,
+    "B_output_cap": null,
+    "B_reason": "Generator identities and generation protocol are still unset",
+    "judge_output_cap_if_all_use_512_and_baseline_judged": 6701056,
+    "judge_512_scope": "Scenario matching historical fixed profile; future protocol must explicitly bind 512, current driver default is 256",
+    "actual_generated_tokens": null,
+    "is_throughput_or_cost_estimate": false
+  },
+  "record_storage_scenarios": [
+    {
+      "name": "illustrative_compact",
+      "record_count": {
+        "training_trajectory": 24576,
+        "evaluation_and_B_prediction": 27936,
+        "judge": 13088,
+        "optimizer_rank_telemetry": 6144
+      },
+      "assumed_KiB_per_record": {
+        "training_trajectory": 4,
+        "evaluation_and_B_prediction": 8,
+        "judge": 16,
+        "optimizer_rank_telemetry": 4
+      },
+      "primary_raw_record_bytes": {
+        "training_trajectory": 100663296,
+        "evaluation_and_B_prediction": 228851712,
+        "judge": 214433792,
+        "optimizer_rank_telemetry": 25165824
+      },
+      "primary_raw_record_total_bytes": 569114624,
+      "primary_raw_record_total_GiB": 0.530029296875,
+      "illustrative_total_copy_factor": 2,
+      "including_illustrative_copies_GiB": 1.06005859375,
+      "actual_size_or_hard_upper_bound": false
+    },
+    {
+      "name": "illustrative_large",
+      "record_count": {
+        "training_trajectory": 24576,
+        "evaluation_and_B_prediction": 27936,
+        "judge": 13088,
+        "optimizer_rank_telemetry": 6144
+      },
+      "assumed_KiB_per_record": {
+        "training_trajectory": 16,
+        "evaluation_and_B_prediction": 32,
+        "judge": 64,
+        "optimizer_rank_telemetry": 8
+      },
+      "primary_raw_record_bytes": {
+        "training_trajectory": 402653184,
+        "evaluation_and_B_prediction": 915406848,
+        "judge": 857735168,
+        "optimizer_rank_telemetry": 50331648
+      },
+      "primary_raw_record_total_bytes": 2226126848,
+      "primary_raw_record_total_GiB": 2.0732421875,
+      "illustrative_total_copy_factor": 3,
+      "including_illustrative_copies_GiB": 6.2197265625,
+      "actual_size_or_hard_upper_bound": false
+    }
+  ],
+  "historical_record_size_samples": [
+    {
+      "path": ".runtime/qz/receipts/dev_calibration512/predictions.jsonl",
+      "file_sha256": "8b950207412ec491c6c8b87fc2692b06a26709693a25f0996ae138c5f6c3ce80",
+      "bytes": 20181,
+      "records": 16,
+      "mean_serialized_bytes_per_record": 1261.3125,
+      "scope": "Historical short dev/control records only; not new experiment or representative length estimate"
+    },
+    {
+      "path": ".runtime/qz/receipts/milestone_v1/qwen35_9b_milestone_smoke_v1_judge_recovery/step-000000/judgments.jsonl",
+      "file_sha256": "f980d6e8bc631cf1a23c2b3a613a0dc10c9a5967e9bc802091dfd227a42227ad",
+      "bytes": 118372,
+      "records": 10,
+      "mean_serialized_bytes_per_record": 11837.2,
+      "scope": "Historical short dev/control records only; not new experiment or representative length estimate"
+    },
+    {
+      "path": ".runtime/qz/receipts/judge_calibration_v1/judge-calibration-v1/round1.jsonl",
+      "file_sha256": "08a32b8c4a460c09e975642199d274c5b1df06fb40badfde0270a93c671c5b97",
+      "bytes": 185051,
+      "records": 16,
+      "mean_serialized_bytes_per_record": 11565.6875,
+      "scope": "Historical short dev/control records only; not new experiment or representative length estimate"
+    }
+  ],
+  "storage_exclusions": [
+    "existing/public base and judge model files",
+    "new uncached B generator model downloads",
+    "venv/compiler/kernel/cache growth",
+    "additional reruns or interrupted attempts",
+    "unbounded debug logs and unforeseen serialization growth"
+  ],
+  "weight_retention": {
+    "training_optimizer_checkpoints_persisted": false,
+    "training_weight_exports_persisted": false,
+    "public_model_reuse_assumed_but_must_reverify": true
+  },
+  "historical_capacity_not_current": {
+    "source": "validation/gpu_qwen35_9b_milestone_v1.json",
+    "per_gpu_model": "NVIDIA H100 80GB HBM3",
+    "per_gpu_max_allocated_bytes": 53722876928,
+    "per_gpu_max_reserved_bytes": 70902611968,
+    "container_sampled_peak_bytes_including_load": 332000272384,
+    "container_peak_GiB": 309.19934844970703,
+    "scope": "Historical two-update pilot, not 512-step long-output accumulation4 capacity"
+  },
+  "current_remote_available_disk_bytes": null,
+  "current_remote_available_gpu_memory_bytes": null,
+  "current_remote_available_host_ram_bytes": null,
+  "runtime_hours_estimate": null,
+  "requirements_before_budget_commit": [
+    "Fresh df and project/shared quota readings on authorized remote workspace",
+    "Fresh GPU and container/cgroup RAM observations",
+    "Verify public model links and avoid duplicate downloads",
+    "Measure full-dev baseline output lengths/validity and warmup-excluded throughput",
+    "Measure long-output accumulation4 training capacity and phase timings",
+    "Bind future judge token budget explicitly rather than driver default"
+  ],
+  "scientific_result": null,
+  "plan_clarification_verified": {
+    "evaluation_generations": 27474,
+    "training_rollout_generations": 24576,
+    "total_student_generations": 52050,
+    "legacy_total_generations_scope": "evaluation-only"
+  },
+  "independent_arithmetic_check": {
+    "status": "PASS",
+    "method": "Recomputed from run list, optimizer geometry and per-cohort node counts, independently of the stored workload totals; separate byte-product sums for both storage scenarios",
+    "formal_eval": 27474,
+    "formal_training": 24576,
+    "formal_student_total": 52050,
+    "formal_judge": 12114,
+    "including_development_and_optional_baseline_judge": 65600,
+    "no_model_execution": true
+  }
+}

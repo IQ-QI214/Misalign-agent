@@ -20,6 +20,10 @@ judge v3已独立实现，原v2模板锁与旧16控制不变。A层64条构造�
 
 继续完成了B回答请求/导入、C题面审核接纳、A/B/C合包和分层judge诊断分析，并生成两份私有离线盲审页面。当前仍是A64已纳入、B0/96、C0/40接纳、人工gold0；页面与请求草案不是完成的评审。见[人工评审交付与后续流程](research/JUDGE_REVIEW_HANDOFF.md)。
 
+独立的[完整dev基线入口](research/DEV_BASELINE_RUNBOOK.md)已补充，用于下次先生成256条能力dev和110条安全dev回答，不需要启动训练。准备和检查不加载模型，执行需要显式开启、重新核验固定本地模型资产；目前只有CPU准备与fixture验收，没有新的366题真实回答。具体开卡顺序见[下一次GPU开发会话](research/NEXT_GPU_SESSION.md)。
+
+[可检测性情景计算](research/DETECTABILITY_AND_ERROR_BUDGET.md)区分科学目标、样本量下的检测能力与judge测量误差，未自动选定正式效应目标。工作量口径也已澄清：六run的27,474次评测生成之外还有24,576次训练采样，学生生成总计52,050次，另有12,114次主实验judge；开发基线和校准另计。完整算式、显存/RAM/共享盘区别与存储情景见[工作量及资源预算](research/WORKLOAD_ACCOUNTING_V2.md)。
+
 两步联测只保留工程验收价值，不继续把同规模两步R0当科研对照；512步或200题本身也不保证检出力。原始剂量/样本量论证及完整调用预算见[设计修订背景](research/EXPLORATION_V2_DESIGN.md)，统计身份和UNKNOWN处理见[分析契约](research/ANALYSIS_CONTRACT_V2.md)。
 
 ## 研究问题

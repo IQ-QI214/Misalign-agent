@@ -169,7 +169,9 @@
     "tail": "two-sided",
     "alpha": 0.05,
     "delta_mde": null,
-    "scope": "conditional on these three training seeds; judge validity required"
+    "scope": "conditional on these three training seeds; judge validity required",
+    "minimum_scientifically_meaningful_effect": null,
+    "detectability_planning": "scenario-only; base dev baseline cannot estimate F0/R0 paired variance; no target selected from observed significance"
   },
   "secondary_estimands": [
     "Each arm minus its own step0; no inference of absolute drift from R0-F0 alone",
@@ -207,7 +209,20 @@
     "judge_validation_plan_calls": 864,
     "judge_validation_additional_answer_generations": 96,
     "trained_sample_exposures": 24576,
-    "independent_examples_are_not_call_counts": true
+    "independent_examples_are_not_call_counts": true,
+    "total_generations_scope": "legacy evaluation-only alias; excludes on-policy training rollouts",
+    "evaluation_generations": 27474,
+    "training_rollout_generations": 24576,
+    "total_student_generations": 52050,
+    "pretraining_development": {
+      "standalone_dev_baseline_generations": 366,
+      "B_validation_answer_generations": 96,
+      "judge_validation_calls": 864,
+      "optional_baseline_judge_calls": 110,
+      "no_cross_stage_reuse_assumed": true,
+      "B_generation_token_budget": null,
+      "stage_durations_seconds": null
+    }
   },
   "readiness": {
     "pinned_data_prepared": "PASS_CPU",
