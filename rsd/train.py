@@ -108,6 +108,85 @@ def prepare_contract(output, identity, resume=None):
         temp.replace(contract)
 
 
+def capture_parameter_probe(model, samples_per_parameter=1024):
+    """Snapshot evenly spaced coordinates of every trainable tensor on CPU.
+
+    Includes each tensor's first and last coordinate. This observes model
+    weights, not optimizer master weights, and deliberately avoids a full copy.
+    """
+    import torch
+
+    if not isinstance(samples_per_parameter, int) or samples_per_parameter < 1:
+        raise ValueError("samples_per_parameter must be a positive integer")
+    tensors = {}
+    for name, parameter in model.named_parameters():
+        if not parameter.requires_grad or parameter.numel() == 0:
+            continue
+        count = min(samples_per_parameter, parameter.numel())
+        indices = torch.arange(count, device=parameter.device, dtype=torch.int64)
+        if count > 1:
+            indices = indices * (parameter.numel() - 1) // (count - 1)
+        values = parameter.detach().reshape(-1).index_select(0, indices)
+        tensors[name] = {
+            "shape": list(parameter.shape), "dtype": str(parameter.dtype),
+            "numel": parameter.numel(), "indices": indices.cpu(),
+            "values": values.to(device="cpu", dtype=torch.float32).clone(),
+        }
+    if not tensors:
+        raise ValueError("Parameter probe requires nonempty trainable tensors")
+    return {"samples_per_parameter": samples_per_parameter, "tensors": tensors}
+
+
+def compare_parameter_probes(initial, final):
+    """Return sampled model-weight changes; zero is not proof of no update."""
+    import math
+    import torch
+
+    if initial["samples_per_parameter"] != final["samples_per_parameter"] or initial["tensors"].keys() != final["tensors"].keys():
+        raise ValueError("Parameter probe tensor identity differs")
+    details = {}
+    squared_delta = 0.0
+    largest_delta = 0.0
+    total_samples = total_changed = total_nonfinite = total_numel = 0
+    for name, before in initial["tensors"].items():
+        after = final["tensors"][name]
+        if any(before[key] != after[key] for key in ("shape", "dtype", "numel")) or not torch.equal(before["indices"], after["indices"]):
+            raise ValueError(f"Parameter probe coordinates differ: {name}")
+        a, b = before["values"], after["values"]
+        finite = torch.isfinite(a) & torch.isfinite(b)
+        nonfinite = int((~finite).sum())
+        changed = int(((a != b) & finite).sum())
+        delta = b.double() - a.double()
+        norm_squared = float(delta.square().sum()) if not nonfinite else None
+        max_delta = float(delta.abs().max()) if not nonfinite else None
+        details[name] = {
+            "numel": before["numel"], "sampled_coordinates": a.numel(),
+            "changed_coordinates": changed, "nonfinite_coordinates": nonfinite,
+            "l2_delta": math.sqrt(norm_squared) if norm_squared is not None else None,
+            "max_abs_delta": max_delta,
+        }
+        total_numel += before["numel"]
+        total_samples += a.numel()
+        total_changed += changed
+        total_nonfinite += nonfinite
+        if norm_squared is not None:
+            squared_delta += norm_squared
+            largest_delta = max(largest_delta, max_delta)
+    return {
+        "method": "all_trainable_tensors_evenly_spaced_v1",
+        "samples_per_parameter": initial["samples_per_parameter"],
+        "trainable_tensors": len(details), "trainable_coordinates": total_numel,
+        "sampled_coordinates": total_samples, "changed_coordinates": total_changed,
+        "changed_tensors": sum(row["changed_coordinates"] > 0 for row in details.values()),
+        "nonfinite_coordinates": total_nonfinite,
+        "l2_delta": math.sqrt(squared_delta) if not total_nonfinite else None,
+        "max_abs_delta": largest_delta if not total_nonfinite else None,
+        "evidence_scope": "Sampled model weights only; excludes optimizer master weights and unsampled coordinates.",
+        "zero_delta_interpretation": "No visible change in these samples; BF16 rounding or changes elsewhere may hide optimizer updates.",
+        "tensors": details,
+    }
+
+
 def run(config, resume=None, use_cpu=False):
     import torch
     from datasets import Dataset
@@ -152,7 +231,7 @@ def run(config, resume=None, use_cpu=False):
     tokenizer = load_tokenizer(model_path, revision)
     model = load_text_model(model_path, revision, dtype=dtype)
     teacher = load_text_model(model_path, revision, dtype=dtype) if config["teacher_mode"] == "frozen" else None
-    initial_probe = next(model.parameters()).detach().flatten()[:1024].float().clone().cpu()
+    initial_probe = capture_parameter_probe(model)
     trainer = TransferTrainer(
         model=model, args=args, train_dataset=Dataset.from_list(rows), processing_class=tokenizer,
         data_collator=TransferCollator(tokenizer, config["max_prompt_length"], config["feedback_mode"], False,
@@ -174,10 +253,14 @@ def run(config, resume=None, use_cpu=False):
     result = trainer.train(resume_from_checkpoint=resume)
     trainer.save_model(str(output / "final"))
     trainer.save_state()
-    final_probe = next(trainer.accelerator.unwrap_model(trainer.model).parameters()).detach().flatten()[:1024].float().cpu()
+    final_probe = capture_parameter_probe(trainer.accelerator.unwrap_model(trainer.model))
     if rank == 0:
+        probe_report = compare_parameter_probes(initial_probe, final_probe)
+        probe_report["baseline"] = "model_loaded_before_optional_resume"
+        probe_report["resume_requested"] = resume is not None
         report = {"status": "training_completed", "global_step": trainer.state.global_step,
-                  "metrics": result.metrics, "parameter_probe_l2_delta": float((final_probe - initial_probe).norm()),
+                  "metrics": result.metrics, "parameter_probe_l2_delta": probe_report["l2_delta"],
+                  "parameter_probe": probe_report,
                   "evaluation_status": "not_run", "scientific_conclusion": None}
         (output / "result.json").write_text(json.dumps(report, indent=2) + "\n")
     return trainer

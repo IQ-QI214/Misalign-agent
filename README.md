@@ -60,6 +60,11 @@ python -m rsd.smoke --output-dir runs/cpu_pipeline_smoke
 先安装与节点 CUDA 匹配的 PyTorch/DeepSpeed，运行 `ds_report` 并核验 CPUAdam 编译及 Qwen3.5 fast kernels。当前配置 ZeRO-2 + CPU optimizer offload，学生权重每卡完整保留；冻结教师每卡另占一份。建议约256GB以上可用RAM、0.5—1TB空闲盘，实际按峰值核验。Linux/CUDA组合尚未验收，不要原样使用上游旧 environment.yml。
 
 ```bash
+# 离线检查真实 CUDA、实际 kernel 导入、CPUAdam 更新和随机 tiny Qwen3.5 前后向。
+# 输出目录也承接缓存、编译文件和逐项失败日志；通过不代表完整9B/双卡训练通过。
+python -B scripts/rsd_gpu_preflight.py --output-dir runs/gpu_preflight \
+  --check-kernels --exercise-optimizer --exercise-model
+
 # 显式调用才启动一个2卡任务；首轮只跑2步。
 python -m rsd.train --config configs/rsd/qwen35_9b_smoke.json --arm R0 --dry-run
 bash scripts/rsd_launch.sh --config configs/rsd/qwen35_9b_smoke.json --arm R0
@@ -69,6 +74,8 @@ bash scripts/rsd_launch.sh --config configs/rsd/qwen35_9b_2h100.json --arm R0
 ```
 
 100步、全局batch2对应200次样本曝光，不是200个独立任务。主配置每20步保存；恢复用 `--resume-from-checkpoint` 指定该运行自己的 checkpoint。训练、模型生成与judge按阶段执行，减少同时驻留。v1未启用vLLM，也没有自动根据安全分数选点或启动下一组的控制器。
+
+参数更新回执对每个可训练张量分散抽样，记录变化坐标数与逐张量差异。这只反映抽样模型权重，不覆盖优化器master weights或未抽样位置；BF16零差异不能证明没有更新。两步配置只保存step 2，从该点恢复到同一max_steps不会新增更新，不能算断点续训验收。
 
 ## 评测
 
