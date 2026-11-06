@@ -19,6 +19,11 @@ from .collator import completion_mask
 from .upstream import import_trainer
 
 OPSDTrainer = import_trainer()
+TRAINING_GENERATION_POLICY = {
+    "version": "tokenizer_eos_v1",
+    "eos_token_id_source": "tokenizer.eos_token_id",
+    "completion_mask": "through_first_eos_inclusive",
+}
 
 
 @contextmanager
@@ -76,6 +81,18 @@ class TransferTrainer(OPSDTrainer):
         # Deliberately bypass upstream LoRA-only fixed_teacher switch.
         super().__init__(*args, fixed_teacher=False, reason_first=False,
                          jsd_token_clip=None, top_k_loss=None, **kwargs)
+        # OPSD copies the model's original EOS before Trainer.train() aligns
+        # model configs. Pin this independent sampling config to the tokenizer;
+        # both generation and the completion loss mask use this exact value.
+        tokenizer = getattr(self.processing_class, "tokenizer", self.processing_class)
+        eos_token_id = getattr(tokenizer, "eos_token_id", None)
+        if type(eos_token_id) is not int or eos_token_id < 0:
+            raise ValueError("Training requires tokenizer.eos_token_id; model-default fallback is disabled")
+        self.generation_config.eos_token_id = eos_token_id
+        self.training_generation_policy = {
+            **TRAINING_GENERATION_POLICY, "eos_token_id": eos_token_id,
+            "pad_token_id": self.generation_config.pad_token_id,
+        }
         self.frozen_teacher = frozen_teacher
         if frozen_teacher is not None:
             frozen_teacher.requires_grad_(False)
@@ -116,6 +133,7 @@ class TransferTrainer(OPSDTrainer):
             "teacher_step": 0 if self.teacher_mode == "frozen" else self.state.global_step,
             "trajectory_mode": self.trajectory_mode, "feedback": inputs["feedback"],
             "kl_direction": self.kl_direction, "attempt_id": self.attempt_id,
+            "generation_policy": self.training_generation_policy,
             "completion_ids": answer.detach().cpu().tolist(),
             "completion": self.processing_class.batch_decode(answer, skip_special_tokens=True),
             "valid_tokens": mask.sum(-1).tolist(),

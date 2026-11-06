@@ -11,8 +11,16 @@ import time
 from .upstream import ROOT, verify_upstream
 
 
+def normalize_save_strategy(config):
+    config = dict(config)
+    config.setdefault("save_strategy", "steps")
+    if config["save_strategy"] not in ("steps", "no"):
+        raise ValueError("save_strategy must be steps or no")
+    return config
+
+
 def load_config(path, arm=None):
-    config = json.loads(Path(path).read_text())
+    config = normalize_save_strategy(json.loads(Path(path).read_text()))
     if arm:
         matrix = json.loads((ROOT / "configs/rsd/matrix.json").read_text())
         from .data import validate_matrix
@@ -60,6 +68,7 @@ def inspect_training_data(path):
 
 def make_training_args(config, output_dir, use_cpu=False):
     from trl.experimental.gold import GOLDConfig
+    config = normalize_save_strategy(config)
     return GOLDConfig(
         output_dir=str(output_dir), max_steps=config["max_steps"],
         per_device_train_batch_size=1, gradient_accumulation_steps=1,
@@ -74,7 +83,7 @@ def make_training_args(config, output_dir, use_cpu=False):
         beta=1.0 if config["kl_direction"] == "reverse" else 0.0,
         dataset_kwargs={"skip_prepare_dataset": True}, remove_unused_columns=False,
         dataloader_num_workers=0, dataloader_drop_last=True, packing=False,
-        logging_steps=1, save_strategy="steps", save_steps=config["save_steps"],
+        logging_steps=1, save_strategy=config["save_strategy"], save_steps=config.get("save_steps", 500),
         save_total_limit=config.get("save_total_limit", 3), save_only_model=False,
         report_to="none", seed=config["training_seed"], data_seed=config["training_seed"],
         use_vllm=False, log_completions=False, disable_dropout=True,
@@ -195,8 +204,9 @@ def run(config, resume=None, use_cpu=False):
     from accelerate import PartialState
     from .modeling import load_text_model, load_tokenizer
     from .collator import TransferCollator
-    from .trainer import TransferTrainer, ReceiptCallback
+    from .trainer import TransferTrainer, ReceiptCallback, TRAINING_GENERATION_POLICY
 
+    config = normalize_save_strategy(config)
     verify_upstream()
     world = int(os.environ.get("WORLD_SIZE", "1"))
     if not use_cpu and world != config["expected_world_size"]:
@@ -210,6 +220,7 @@ def run(config, resume=None, use_cpu=False):
                 "upstream": verify_upstream(), "world_size": world,
                 "deepspeed_sha256": hashlib.sha256((ROOT / config["deepspeed"]).read_bytes()).hexdigest(),
                 "effective_global_batch": world, "profile": "independent_qwen35_rsd_v1",
+                "generation_policy": dict(TRAINING_GENERATION_POLICY),
                 "template": {"version": "explicit_privileged_prefix_v1", "thinking": False,
                              "context_mode": config.get("context_mode", "feedback_only"),
                              "placement": config.get("context_placement", "user")}}
@@ -250,7 +261,10 @@ def run(config, resume=None, use_cpu=False):
                 versions[package] = version(package)
             except PackageNotFoundError:
                 versions[package] = None
-        (output / "environment.json").write_text(json.dumps({"packages": versions, "load_report": model.load_report}, indent=2) + "\n")
+        (output / "environment.json").write_text(json.dumps({
+            "packages": versions, "load_report": model.load_report,
+            "training_generation_policy": trainer.training_generation_policy,
+        }, indent=2) + "\n")
     training_started = time.monotonic()
     result = trainer.train(resume_from_checkpoint=resume)
     training_finished = time.monotonic()

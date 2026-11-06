@@ -7,11 +7,12 @@ import torch
 from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import Whitespace
-from transformers import GPT2Config, GPT2LMHeadModel, PreTrainedTokenizerFast, set_seed
+from transformers import GPT2Config, GPT2LMHeadModel, PreTrainedTokenizerFast, Trainer, set_seed
+from transformers.trainer_utils import align_special_tokens
 
 from rsd.collator import TransferCollator, completion_mask
-from rsd.trainer import TransferTrainer, masked_distillation_loss
-from rsd.train import make_training_args, run, prepare_contract
+from rsd.trainer import TransferTrainer, masked_distillation_loss, TRAINING_GENERATION_POLICY
+from rsd.train import load_config, make_training_args, run, prepare_contract
 
 
 def tiny_assets(path):
@@ -54,6 +55,55 @@ def test_eos_is_trained_even_if_pad_equals_eos():
     assert completion_mask(ids, 1).tolist() == [[True, True, False, False], [True] * 4]
 
 
+def test_qwen_tokenizer_eos_excludes_the_legacy_endoftext_tail():
+    ids = torch.tensor([[20, 248046, 198, 248044]])
+    assert completion_mask(ids, 248046).tolist() == [[True, True, False, False]]
+
+
+@pytest.mark.parametrize("missing_eos", [False, True])
+def test_training_pins_tokenizer_eos_for_sampling_and_mask(tmp_path, monkeypatch, missing_eos):
+    from datasets import Dataset
+    model, tokenizer = tiny_assets(tmp_path / "model")
+    model.config._name_or_path = str(tmp_path / "model")
+    model.config.eos_token_id = model.generation_config.eos_token_id = 2
+    if missing_eos:
+        tokenizer.eos_token = None
+    config = json.loads(Path("configs/rsd/qwen35_9b_2h100.json").read_text())
+    config.update(max_steps=1, max_completion_length=4, max_length=64)
+    row = {"id": "x", "source_id": "x", "prompt": "How many two plus one?"}
+    collator = TransferCollator(tokenizer)
+    kwargs = dict(model=model, args=make_training_args(config, tmp_path / "run", True),
+                  train_dataset=Dataset.from_list([row]), processing_class=tokenizer,
+                  data_collator=collator, student_thinking=False, teacher_thinking=False)
+    if missing_eos:
+        with pytest.raises(ValueError, match="Training requires tokenizer.eos_token_id"):
+            TransferTrainer(**kwargs)
+        return
+    trainer = TransferTrainer(**kwargs)
+    assert trainer.generation_config.eos_token_id == 1
+    align_special_tokens(model, tokenizer)  # Trainer.train later performs this alignment.
+    assert 1 in model.generation_config.eos_token_id
+    assert trainer.generation_config.eos_token_id == 1
+    captured = {}
+
+    def generate(**kwargs):
+        captured["sampling_eos"] = kwargs["generation_config"].eos_token_id
+        return torch.cat([kwargs["input_ids"], torch.tensor([[3, 1, 4, 2]])], dim=1)
+
+    def training_step(self, model, inputs, num_items_in_batch=None):
+        captured["mask"] = inputs["completion_mask"].tolist()
+        return torch.tensor(0.5)
+
+    monkeypatch.setattr(model, "generate", generate)
+    monkeypatch.setattr(Trainer, "training_step", training_step)
+    trainer.training_step(model, collator([row]))
+    assert captured == {"sampling_eos": 1, "mask": [[True, True, False, False]]}
+    trace = json.loads((tmp_path / "run/trajectory_rank0.jsonl").read_text())
+    assert trace["generation_policy"]["eos_token_id"] == 1
+    assert trace["generation_policy"]["version"] == "tokenizer_eos_v1"
+    assert trace["valid_tokens"] == [2]
+
+
 def test_prompt_gold_never_visible_and_long_prompt_fails(tmp_path):
     _, tokenizer = tiny_assets(tmp_path / "model")
     row = {"id": "x", "source_id": "x", "prompt": "How many two plus one?", "expected_answer": "SECRET_GOLD"}
@@ -94,6 +144,9 @@ def test_real_training_saves_updates_and_fixed_teacher(tmp_path, teacher_mode, t
     output = Path(config["output_dir"])
     assert (output / "checkpoint-1" / "optimizer.pt").exists()
     assert (output / "final" / "model.safetensors").exists()
+    contract = json.loads((output / "run_contract.json").read_text())
+    assert contract["config"]["save_strategy"] == "steps"
+    assert contract["generation_policy"] == TRAINING_GENERATION_POLICY
     traces = [json.loads(x) for x in (output / "trajectory_rank0.jsonl").read_text().splitlines()]
     assert len(traces) == 2
     assert {x["trajectory_mode"] for x in traces} == {trajectory_mode}
@@ -115,6 +168,61 @@ def test_resume_cannot_cross_experiment(tmp_path):
         prepare_contract(a, {"arm": "R0"}, checkpoint)
     with pytest.raises(ValueError, match="different"):
         prepare_contract(a, {"arm": "F0"})
+
+
+def test_legacy_eos_contract_cannot_resume_with_corrected_policy(tmp_path):
+    legacy = {"arm": "R0"}
+    output = tmp_path / "run"
+    prepare_contract(output, legacy)
+    checkpoint = output / "checkpoint-1"
+    checkpoint.mkdir()
+    (checkpoint / "run_contract.json").write_text(json.dumps(legacy))
+    (checkpoint / "trainer_state.json").write_text(json.dumps({"global_step": 1}))
+    corrected = {**legacy, "generation_policy": TRAINING_GENERATION_POLICY}
+    with pytest.raises(ValueError, match="different experiment contract"):
+        prepare_contract(output, corrected, checkpoint)
+
+
+@pytest.mark.parametrize("strategy", [None, "steps", "no", "epoch"])
+def test_save_strategy_configuration(tmp_path, strategy):
+    config = json.loads(Path("configs/rsd/qwen35_9b_2h100.json").read_text())
+    if strategy is not None:
+        config["save_strategy"] = strategy
+    path = tmp_path / "config.json"
+    path.write_text(json.dumps(config))
+    if strategy == "epoch":
+        with pytest.raises(ValueError, match="save_strategy"):
+            load_config(path)
+        with pytest.raises(ValueError, match="save_strategy"):
+            make_training_args(config, tmp_path / "run", True)
+    else:
+        loaded = load_config(path)
+        assert loaded["save_strategy"] == (strategy or "steps")
+        assert make_training_args(loaded, tmp_path / "run", True).save_strategy.value == (strategy or "steps")
+
+
+def test_no_periodic_checkpoints_still_exports_final_weights(tmp_path):
+    from rsd.modeling import load_text_model
+    model_path = tmp_path / "model"
+    tiny_assets(model_path)
+    train = tmp_path / "train.jsonl"
+    train.write_text("".join(json.dumps({"id": f"x{i}", "source_id": f"x{i}", "split": "train",
+                                       "prompt": "How many two plus one?"}) + "\n" for i in range(2)))
+    output = tmp_path / "run"
+    config = json.loads(Path("configs/rsd/qwen35_9b_2h100.json").read_text())
+    config.update(model_name_or_path=str(model_path), model_revision=None, train_file=str(train),
+                  output_dir=str(output), max_steps=2, save_steps=1, save_strategy="no",
+                  max_completion_length=4, max_prompt_length=48, max_length=64,
+                  learning_rate=1e-3, loss_chunk_size=2)
+    trainer = run(config, use_cpu=True)
+    assert trainer.state.global_step == 2
+    assert not list(output.glob("checkpoint-*"))
+    assert not list(output.rglob("optimizer.pt"))
+    assert (output / "trainer_state.json").exists()
+    assert json.loads((output / "run_contract.json").read_text())["config"]["save_strategy"] == "no"
+    reloaded = load_text_model(output / "final", dtype="float32")
+    for name, value in trainer.model.state_dict().items():
+        torch.testing.assert_close(reloaded.state_dict()[name], value, rtol=0, atol=0)
 
 
 def test_reference_is_opt_in_and_only_in_teacher(tmp_path):
