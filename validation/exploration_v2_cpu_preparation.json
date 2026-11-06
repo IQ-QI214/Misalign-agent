@@ -1,0 +1,102 @@
+{
+  "schema_version": "rsd-exploration-v2-cpu-preparation",
+  "status": "PASS_CPU_PREPARATION_ONLY",
+  "gpu_state": "OFF_BY_USER",
+  "remote_connections_this_batch": 0,
+  "new_model_generations": 0,
+  "new_training_updates": 0,
+  "new_judge_calls": 0,
+  "new_model_weights_downloaded": 0,
+  "data_actual": {
+    "train": 1024,
+    "dev": 256,
+    "test": 512
+  },
+  "validated_prompt_bindings": 1792,
+  "validated_gold_bindings": 768,
+  "training_prompt_gold_fields": 0,
+  "artifacts_verified_sha256": true,
+  "native_split_and_source_disjointness_verified": true,
+  "selected_order_verified": true,
+  "judge_plan_schema_validated": true,
+  "training_plan_disabled_verified": true,
+  "tokenizer_all_input_budgets_pass": true,
+  "environment": {
+    "python": "3.13.9",
+    "pyarrow": "26.0.0",
+    "transformers": "5.21.0",
+    "pytest": "9.2.0"
+  },
+  "cpu_tests": {
+    "command": "PYTHONPATH=.runtime/trl026 PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python -m pytest -q tests/test_rsd_*.py",
+    "passed": 419,
+    "subtests_passed": 52,
+    "warnings": 1,
+    "warning_note": "Existing upstream TRLExperimentalWarning",
+    "elapsed_seconds": 17.82
+  },
+  "files_sha256": {
+    "rsd/reasoning_data.py": "f92813e761beeff758213b42e8fce6fc35130a8be86f05111e4df489976d19c1",
+    "rsd/task_evaluation.py": "b063ad30791fc3402920b66360720931fe069b2da6c7eb7720d629d98c2d7e38",
+    "rsd/paired_analysis.py": "929a7d700df3143e2ced608c9c2e726cff58bb9d4f763017327496b72d11c580",
+    "scripts/rsd_reasoning_token_audit.py": "9847e87eeccfa358da31dcd91ec5b74a787ffcf29a5c589af8fec2a16076c31b",
+    "configs/rsd/exploration_v2.plan.json": "68200196eeed4691d5a2065e26c6b1153d8af16df42c70634c494107e0bc2800",
+    "configs/rsd/reasoning_sources_v2.lock.json": "dc33ec8ac41eba4854e19c0b440aa6579742d76aec769fda93b4a9b06d22fba3",
+    "configs/rsd/judge_validation_v3.plan.json": "47aa4e4e69e2023772a945ac031925906de5d50bcf9dd33d7f9cdf6ca59acf27",
+    "tests/test_rsd_reasoning_data.py": "ac56388c4df95d7fcb0aaa4c9d93d3e2ade45c0747d7801d018144dc120e1113",
+    "tests/test_rsd_task_evaluation.py": "7d179e0614b1b5dc78d940a232807ec46757100cc37a918abddb1a80322c2311",
+    "tests/test_rsd_paired_analysis.py": "654ad06b942cdc88b8144b36ded3514a537ec811284be3256004ac79cbb5daf2"
+  },
+  "source_bytes": 3175093,
+  "derived_artifact_bytes": 2132490,
+  "tokenizer_support_asset_bytes": 12836803,
+  "private_data_manifest_sha256": "d8b1ae3adb487969c02a21101b903b5b261d1914c5f14b2b4d85b0fabb4a9b0f",
+  "data_preparation_attempts": {
+    "first": "preserved privately; same-native-file near-duplicate check added",
+    "second": "preserved privately; one actual missing-table dependency excluded",
+    "final": "current manifest; no model outputs used in selection"
+  },
+  "verification_attempts": [
+    {
+      "status": "DEPENDENCY_MISSING_BEFORE_VALIDATION",
+      "dependency": "jsonschema",
+      "environment": "training_venv",
+      "action": "left training environment unchanged; validate schema separately"
+    },
+    {
+      "status": "PASS",
+      "scope": "source and artifact hashes, raw prompt/gold binding, splits, plan and tokenizer identity"
+    },
+    {
+      "status": "PASS",
+      "scope": "judge plan Draft 2020-12 schema",
+      "isolated_dependency_environment": true
+    }
+  ],
+  "unresolved": {
+    "pinned_data_prepared": "PASS_CPU",
+    "task_gold_isolation": "PASS_CPU",
+    "source_binding_and_split_review": "PASS_CPU",
+    "prompt_length_audit": "PASS_CPU",
+    "capability_scorer": "CPU_TESTED_NOT_INTEGRATED",
+    "paired_safety_analysis": "CPU_TESTED_NOT_RESEARCH_EVIDENCE",
+    "accumulation4_loss_and_teacher_timing": "NOT_IMPLEMENTED",
+    "new_capability_callback": "NOT_IMPLEMENTED",
+    "test_response_seal_and_release_controller": "NOT_IMPLEMENTED",
+    "judge_v3_profile": "DESIGN_ONLY",
+    "independent_judge_validation_records": "0_OF_200",
+    "independent_judge_gold": "0_OF_200",
+    "judge_error_and_per_metric_mde": "UNKNOWN_NOT_FROZEN",
+    "gpu_capacity_long_output_accum4": "UNVERIFIED",
+    "output_length_distribution": "UNKNOWN",
+    "warmup_excluded_throughput": "UNKNOWN"
+  },
+  "scientific_conclusion": null,
+  "judge_plan_schema_validation": {
+    "validator": "jsonschema==4.25.1 Draft202012Validator.check_schema + validate",
+    "environment": "system Python, isolated temporary --target library; deleted on exit",
+    "training_venv_modified": false,
+    "plan_sha256": "47aa4e4e69e2023772a945ac031925906de5d50bcf9dd33d7f9cdf6ca59acf27",
+    "exit_code": 0
+  }
+}

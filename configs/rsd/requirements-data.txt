@@ -1,0 +1,3 @@
+# CPU data preparation only; no model weights or GPU runtime needed.
+# Version used for the pinned Parquet preparation receipts.
+pyarrow==26.0.0

@@ -1,0 +1,164 @@
+{
+  "version": "rsd-reasoning-data-v2",
+  "state": "DATA_PREPARED_NO_MODEL_EXECUTION",
+  "implementation_sha256": "f92813e761beeff758213b42e8fce6fc35130a8be86f05111e4df489976d19c1",
+  "source_lock_sha256": "4262949c4d3d6f5815f3ecf2dd74903b074354923a9ec556294ace3950ae9330",
+  "policy": {
+    "selection_salt": "rsd-reasoning-v2-selection-20261106",
+    "quota_per_split": {
+      "train": {
+        "gsm8k": 512,
+        "arc_challenge": 512
+      },
+      "dev": {
+        "gsm8k": 128,
+        "arc_challenge": 128
+      },
+      "test": {
+        "gsm8k": 256,
+        "arc_challenge": 256
+      }
+    },
+    "topic_screen_regex": "\\b(?:weapons?|guns?|bombs?|explosives?|suicid\\w*|poisons?|gambl\\w*|cigarettes?|alcohol|drugs?|murders?|kills?|killing|firearms?|pistols?|rifles?|knives|knife)\\b",
+    "missing_visual_regex": "\\b(?:diagram|figure|picture|graph|illustration|table (?:below|above)|shown (?:below|above)|(?:in|from|using) the (?:table|chart))\\b",
+    "filter_applies_to": [
+      "train",
+      "dev",
+      "test"
+    ],
+    "deduplication": "Quarantine every row sharing a normalized question stem, across all native files, even if choices differ.",
+    "near_duplicate_screen": "Quarantine both ends of question-stem token-set Jaccard >= 0.85, including the same native file; no semantic-independence claim.",
+    "selection": "Hash rank per benchmark; GSM dev first then train from native train; ARC native splits preserved; final order hash-ranked.",
+    "teacher_cue": "Please use the information provided in the question and follow the requested answer format.",
+    "scoring_protocol": "final-answer-v1",
+    "human_benign_review": "NOT_PERFORMED",
+    "pretraining_contamination": "UNKNOWN"
+  },
+  "source_files": [
+    {
+      "file": "gsm8k_train.parquet",
+      "sha256": "ea82612ea9582142387730c793eb67d3b12849002bc0b7fa6f8efafa7351419d",
+      "rows": 7473,
+      "bytes": 2306545
+    },
+    {
+      "file": "gsm8k_test.parquet",
+      "sha256": "ee7b8da9e381df27b9e3f7758a159ab2bdaa4dbaa910546cbbc47e0cb44e4f59",
+      "rows": 1319,
+      "bytes": 419088
+    },
+    {
+      "file": "arc_challenge_train.parquet",
+      "sha256": "e488c1587ffdcfc8443f916c53488a95cd471c5790e0746c6bfe4cecf20962cb",
+      "rows": 1119,
+      "bytes": 189909
+    },
+    {
+      "file": "arc_challenge_validation.parquet",
+      "sha256": "395a5c88d1580d69855fbaee9450270578df1ad5af6259771cd0a42c20e99f05",
+      "rows": 299,
+      "bytes": 55743
+    },
+    {
+      "file": "arc_challenge_test.parquet",
+      "sha256": "62f03257e737aed263f55c6abf87c7bb0028a44a6bdd2a26eb1279eb42c1d1e9",
+      "rows": 1172,
+      "bytes": 203808
+    }
+  ],
+  "raw_rows": 11382,
+  "eligible_rows": 11227,
+  "excluded_rows": 155,
+  "exclusion_reasons_nonexclusive": {
+    "conservative_topic_screen": 50,
+    "possible_missing_visual": 73,
+    "lexical_near_duplicate": 35,
+    "duplicate_question_stem": 21
+  },
+  "near_duplicate_pairs": 19,
+  "splits": {
+    "train": {
+      "rows": 1024,
+      "unique_source_ids": 1024,
+      "benchmarks": {
+        "arc_challenge": 512,
+        "gsm8k": 512
+      },
+      "native_splits": {
+        "arc_challenge/train": 512,
+        "gsm8k/train": 512
+      },
+      "ordered_id_sha256": "aec0219f8ac19ca06598a0677a9a2c46cbc6f7e4a4b92a5ec8ce78cecbcf2c53"
+    },
+    "dev": {
+      "rows": 256,
+      "unique_source_ids": 256,
+      "benchmarks": {
+        "gsm8k": 128,
+        "arc_challenge": 128
+      },
+      "native_splits": {
+        "gsm8k/train": 128,
+        "arc_challenge/validation": 128
+      },
+      "ordered_id_sha256": "c6ef4fc391a45880f1953ece3fe8c1010ad23f298c9a26ef439814a94924d82e"
+    },
+    "test": {
+      "rows": 512,
+      "unique_source_ids": 512,
+      "benchmarks": {
+        "arc_challenge": 256,
+        "gsm8k": 256
+      },
+      "native_splits": {
+        "arc_challenge/test": 256,
+        "gsm8k/test": 256
+      },
+      "ordered_id_sha256": "1b9addfcdb60894369d8d1492e691583923ec9fff2501ef619a0fc9794034f17"
+    }
+  },
+  "artifacts": {
+    "train.prompts.jsonl": {
+      "sha256": "0b313a9daf26dad6932b63518e337e0dd761200d72fb7ac89bb79ad1c5224a35",
+      "bytes": 926707
+    },
+    "dev.prompts.jsonl": {
+      "sha256": "10f158ed8500d1f66c30c3f823ae1e566306fc12ee03d7d240158211382352e8",
+      "bytes": 206053
+    },
+    "dev.gold.jsonl": {
+      "sha256": "f9f6d61c24cb438b92d5f6121736020fb0449d0f8ed88a1057f942c860c252c0",
+      "bytes": 84596
+    },
+    "sealed/test.prompts.jsonl": {
+      "sha256": "caf0dba6bafe4c5e9419770f7dd2e376c544c47c27411ab42d9be0007b4f41af",
+      "bytes": 407884
+    },
+    "sealed/test.gold.jsonl": {
+      "sha256": "04ab787059b038d982fc2dd7e4422ffa4a97b5546aba49860979076d6ef5509e",
+      "bytes": 167579
+    },
+    "lineage.json": {
+      "sha256": "4c857e3b71a82a907a004f581c61c16acf90a63ccac81f514662c1fe11e5b911",
+      "bytes": 339671
+    }
+  },
+  "checks": {
+    "selected_source_ids_unique_across_splits": true,
+    "selected_question_stems_unique_across_splits": true,
+    "training_file_contains_no_gold_or_solution_fields": true,
+    "explicit_neutral_teacher_cue_on_every_train_row": true,
+    "safety_benchmark_rows_checked": 563,
+    "safety_benchmark_canonical_sha256": "d07be9006dc1d85765e8411de4447a3f113e0f45bfb1c5372f0e668faa1480dd",
+    "safety_exact_stem_overlap": 0
+  },
+  "limitations": [
+    "No human harmlessness certification; conservative lexical screen only.",
+    "Exact stem and specified near-duplicate rules do not prove semantic independence.",
+    "Paraphrases below the lexical threshold may remain, including within GSM native train.",
+    "Public benchmark pretraining contamination unknown.",
+    "This filtered balanced subset is not an official benchmark result.",
+    "sealed/ is an operational separation, not cryptographic access control.",
+    "No model performance or output-length distribution measured."
+  ]
+}

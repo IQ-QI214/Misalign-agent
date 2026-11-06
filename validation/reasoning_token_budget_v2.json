@@ -1,0 +1,87 @@
+{
+  "version": "rsd-reasoning-token-audit-v2",
+  "execution": "CPU_TOKENIZER_ONLY_NO_MODEL_WEIGHTS",
+  "model_repository": "Qwen/Qwen3.5-9B",
+  "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "tokenizer_files_sha256": {
+    "tokenizer_config.json": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8",
+    "tokenizer.json": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+    "chat_template.jinja": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+    "config.json": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05"
+  },
+  "eos_token_id": 248046,
+  "thinking": false,
+  "template": "rsd.collator.render_prompt",
+  "render_code_sha256": "5bc337f18beca26368b57d8e8d2db9fcbf9c409010e73693927e06503c84508e",
+  "summaries": {
+    "train_student": {
+      "rows": 1024,
+      "file_sha256": "0b313a9daf26dad6932b63518e337e0dd761200d72fb7ac89bb79ad1c5224a35",
+      "min": 62,
+      "p50": 98,
+      "p95": 143,
+      "p99": 166,
+      "max": 213,
+      "prompt_budget": 1024,
+      "over_budget": 0
+    },
+    "train_teacher": {
+      "rows": 1024,
+      "file_sha256": "0b313a9daf26dad6932b63518e337e0dd761200d72fb7ac89bb79ad1c5224a35",
+      "min": 84,
+      "p50": 120,
+      "p95": 165,
+      "p99": 188,
+      "max": 235,
+      "prompt_budget": 1024,
+      "over_budget": 0
+    },
+    "task_dev": {
+      "rows": 256,
+      "file_sha256": "10f158ed8500d1f66c30c3f823ae1e566306fc12ee03d7d240158211382352e8",
+      "min": 62,
+      "p50": 95,
+      "p95": 150,
+      "p99": 179,
+      "max": 195,
+      "prompt_budget": 2048,
+      "over_budget": 0
+    },
+    "task_test": {
+      "rows": 512,
+      "file_sha256": "caf0dba6bafe4c5e9419770f7dd2e376c544c47c27411ab42d9be0007b4f41af",
+      "min": 59,
+      "p50": 99,
+      "p95": 148,
+      "p99": 177,
+      "max": 205,
+      "prompt_budget": 2048,
+      "over_budget": 0
+    },
+    "safety_dev": {
+      "rows": 110,
+      "file_sha256": "ded0a031138c2ca58f253b8d6e8360a6e9a8e9539d6cd89df088843ea390e602",
+      "min": 16,
+      "p50": 27,
+      "p95": 70,
+      "p99": 81,
+      "max": 93,
+      "prompt_budget": 2048,
+      "over_budget": 0
+    },
+    "safety_test": {
+      "rows": 453,
+      "file_sha256": "5252ee547ab1c165c7d8c3d2b876d4ebebeb9d8cf170859ab540e4f045ad1525",
+      "min": 16,
+      "p50": 26,
+      "p95": 63,
+      "p99": 88,
+      "max": 204,
+      "prompt_budget": 2048,
+      "over_budget": 0
+    }
+  },
+  "all_within_prompt_budget": true,
+  "output_length_distribution": "UNKNOWN_NO_GENERATION",
+  "gpu_capacity_for_completion256_training": "UNVERIFIED"
+}

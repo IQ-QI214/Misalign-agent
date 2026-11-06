@@ -1,0 +1,119 @@
+{
+  "schema": "rsd-reasoning-sources-v2",
+  "files": [
+    {
+      "benchmark": "gsm8k",
+      "repository": "openai/gsm8k",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "configuration": "main",
+      "native_split": "train",
+      "license": "MIT",
+      "file": "gsm8k_train.parquet",
+      "url": "https://huggingface.co/datasets/openai/gsm8k/resolve/740312add88f781978c0658806c59bc2815b9866/main/train-00000-of-00001.parquet?download=true",
+      "bytes": 2306545,
+      "sha256": "ea82612ea9582142387730c793eb67d3b12849002bc0b7fa6f8efafa7351419d",
+      "rows": 7473
+    },
+    {
+      "benchmark": "gsm8k",
+      "repository": "openai/gsm8k",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "configuration": "main",
+      "native_split": "test",
+      "license": "MIT",
+      "file": "gsm8k_test.parquet",
+      "url": "https://huggingface.co/datasets/openai/gsm8k/resolve/740312add88f781978c0658806c59bc2815b9866/main/test-00000-of-00001.parquet?download=true",
+      "bytes": 419088,
+      "sha256": "ee7b8da9e381df27b9e3f7758a159ab2bdaa4dbaa910546cbbc47e0cb44e4f59",
+      "rows": 1319
+    },
+    {
+      "benchmark": "arc_challenge",
+      "repository": "allenai/ai2_arc",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "configuration": "ARC-Challenge",
+      "native_split": "train",
+      "license": "CC-BY-SA-4.0",
+      "file": "arc_challenge_train.parquet",
+      "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet?download=true",
+      "bytes": 189909,
+      "sha256": "e488c1587ffdcfc8443f916c53488a95cd471c5790e0746c6bfe4cecf20962cb",
+      "rows": 1119
+    },
+    {
+      "benchmark": "arc_challenge",
+      "repository": "allenai/ai2_arc",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "configuration": "ARC-Challenge",
+      "native_split": "validation",
+      "license": "CC-BY-SA-4.0",
+      "file": "arc_challenge_validation.parquet",
+      "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet?download=true",
+      "bytes": 55743,
+      "sha256": "395a5c88d1580d69855fbaee9450270578df1ad5af6259771cd0a42c20e99f05",
+      "rows": 299
+    },
+    {
+      "benchmark": "arc_challenge",
+      "repository": "allenai/ai2_arc",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "configuration": "ARC-Challenge",
+      "native_split": "test",
+      "license": "CC-BY-SA-4.0",
+      "file": "arc_challenge_test.parquet",
+      "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet?download=true",
+      "bytes": 203808,
+      "sha256": "62f03257e737aed263f55c6abf87c7bb0028a44a6bdd2a26eb1279eb42c1d1e9",
+      "rows": 1172
+    }
+  ],
+  "preparation_policy": {
+    "selection_salt": "rsd-reasoning-v2-selection-20261106",
+    "quota_per_split": {
+      "train": {
+        "gsm8k": 512,
+        "arc_challenge": 512
+      },
+      "dev": {
+        "gsm8k": 128,
+        "arc_challenge": 128
+      },
+      "test": {
+        "gsm8k": 256,
+        "arc_challenge": 256
+      }
+    },
+    "topic_screen_regex": "\\b(?:weapons?|guns?|bombs?|explosives?|suicid\\w*|poisons?|gambl\\w*|cigarettes?|alcohol|drugs?|murders?|kills?|killing|firearms?|pistols?|rifles?|knives|knife)\\b",
+    "missing_visual_regex": "\\b(?:diagram|figure|picture|graph|illustration|table (?:below|above)|shown (?:below|above)|(?:in|from|using) the (?:table|chart))\\b",
+    "filter_applies_to": [
+      "train",
+      "dev",
+      "test"
+    ],
+    "deduplication": "Quarantine every row sharing a normalized question stem, across all native files, even if choices differ.",
+    "near_duplicate_screen": "Quarantine both ends of question-stem token-set Jaccard >= 0.85, including the same native file; no semantic-independence claim.",
+    "selection": "Hash rank per benchmark; GSM dev first then train from native train; ARC native splits preserved; final order hash-ranked.",
+    "teacher_cue": "Please use the information provided in the question and follow the requested answer format.",
+    "scoring_protocol": "final-answer-v1",
+    "human_benign_review": "NOT_PERFORMED",
+    "pretraining_contamination": "UNKNOWN"
+  },
+  "attribution": [
+    {
+      "benchmark": "gsm8k",
+      "authors": "Karl Cobbe et al. / OpenAI",
+      "title": "Training Verifiers to Solve Math Word Problems",
+      "paper": "https://arxiv.org/abs/2110.14168",
+      "license": "MIT",
+      "license_source": "https://github.com/openai/grade-school-math/blob/3101c7d5072418e28b9008a6636bde82a006892c/LICENSE"
+    },
+    {
+      "benchmark": "arc_challenge",
+      "authors": "Peter Clark et al. / Allen Institute for AI",
+      "title": "Think you have Solved Question Answering? Try ARC, the AI2 Reasoning Challenge",
+      "paper": "https://arxiv.org/abs/1803.05457",
+      "license": "CC-BY-SA-4.0",
+      "license_source": "https://huggingface.co/datasets/allenai/ai2_arc/blob/210d026faf9955653af8916fad021475a3f00453/README.md"
+    }
+  ]
+}

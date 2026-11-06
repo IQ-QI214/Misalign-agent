@@ -8,6 +8,7 @@ runs/
 *.log
 data/rsd_verified/
 data/rsd_benchmarks/
+data/rsd_reasoning_v2/
 .DS_Store
 .env
 references/cunning_reproduction/outputs/

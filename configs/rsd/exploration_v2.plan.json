@@ -1,0 +1,242 @@
+{
+  "schema_version": "rsd-exploration-v2-plan",
+  "status": "CPU_PREPARATION_DRAFT_NOT_FROZEN",
+  "training_enabled": false,
+  "executable_training_config": false,
+  "gpu_state": "OFF_BY_USER",
+  "arms": {
+    "F0": "initial frozen teacher",
+    "R0": "teacher is current student before each optimizer update; no teacher gradient"
+  },
+  "candidate_shared_recipe": {
+    "model": {
+      "repository": "Qwen/Qwen3.5-9B",
+      "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+    },
+    "train_file": "data/rsd_reasoning_v2/train.prompts.jsonl",
+    "train_file_sha256": "0b313a9daf26dad6932b63518e337e0dd761200d72fb7ac89bb79ad1c5224a35",
+    "teacher_context": "Please use the information provided in the question and follow the requested answer format.",
+    "context_mode": "feedback_only",
+    "context_placement": "user",
+    "trajectory_mode": "on_policy",
+    "kl_direction": "reverse",
+    "thinking": false,
+    "expected_world_size": 2,
+    "per_device_train_batch_size": 1,
+    "gradient_accumulation_steps": 4,
+    "effective_global_batch": 8,
+    "max_steps": 512,
+    "planned_exposures": 4096,
+    "learning_rate": 3e-06,
+    "lr_scheduler_type": "constant",
+    "max_grad_norm": 30.0,
+    "weight_decay": 0.01,
+    "adam_beta1": 0.9,
+    "adam_beta2": 0.999,
+    "adam_epsilon": 1e-08,
+    "max_prompt_length": 1024,
+    "max_completion_length": 256,
+    "max_length": 1280,
+    "generation_temperature": 1.0,
+    "loss_chunk_size": 32,
+    "save_strategy": "no",
+    "export_final_model": false,
+    "deepspeed": "configs/rsd/zero2_cpu.json",
+    "deepspeed_sha256": "657b28a48af525dc1d1c731eace92cc5714983b8f69210c4919fdd0a78e51ce2"
+  },
+  "candidate_shared_recipe_sha256": "890db89cac580b5f15187854214dd746e583fd21789ad206cc97057c52a887b5",
+  "training_seeds": [
+    0,
+    1,
+    2
+  ],
+  "planned_run_order": [
+    {
+      "run_id": "exploration-v2-f0-s0",
+      "arm": "F0",
+      "training_seed": 0,
+      "data_seed": 0
+    },
+    {
+      "run_id": "exploration-v2-r0-s0",
+      "arm": "R0",
+      "training_seed": 0,
+      "data_seed": 0
+    },
+    {
+      "run_id": "exploration-v2-r0-s1",
+      "arm": "R0",
+      "training_seed": 1,
+      "data_seed": 1
+    },
+    {
+      "run_id": "exploration-v2-f0-s1",
+      "arm": "F0",
+      "training_seed": 1,
+      "data_seed": 1
+    },
+    {
+      "run_id": "exploration-v2-f0-s2",
+      "arm": "F0",
+      "training_seed": 2,
+      "data_seed": 2
+    },
+    {
+      "run_id": "exploration-v2-r0-s2",
+      "arm": "R0",
+      "training_seed": 2,
+      "data_seed": 2
+    }
+  ],
+  "dev_nodes": [
+    0,
+    32,
+    64,
+    128,
+    256,
+    512
+  ],
+  "confirmation_safety_nodes": [
+    0,
+    256,
+    512
+  ],
+  "confirmation_task_nodes": [
+    0,
+    512
+  ],
+  "evaluation_generation": {
+    "do_sample": false,
+    "max_new_tokens": 512,
+    "max_prompt_tokens": 2048,
+    "seed": 0,
+    "thinking": false,
+    "eos": "explicit tokenizer eos_token_id 248046",
+    "final_controller_protocol_sha256": null
+  },
+  "datasets": {
+    "task_artifacts": {
+      "train.prompts.jsonl": {
+        "sha256": "0b313a9daf26dad6932b63518e337e0dd761200d72fb7ac89bb79ad1c5224a35",
+        "bytes": 926707
+      },
+      "dev.prompts.jsonl": {
+        "sha256": "10f158ed8500d1f66c30c3f823ae1e566306fc12ee03d7d240158211382352e8",
+        "bytes": 206053
+      },
+      "dev.gold.jsonl": {
+        "sha256": "f9f6d61c24cb438b92d5f6121736020fb0449d0f8ed88a1057f942c860c252c0",
+        "bytes": 84596
+      },
+      "sealed/test.prompts.jsonl": {
+        "sha256": "caf0dba6bafe4c5e9419770f7dd2e376c544c47c27411ab42d9be0007b4f41af",
+        "bytes": 407884
+      },
+      "sealed/test.gold.jsonl": {
+        "sha256": "04ab787059b038d982fc2dd7e4422ffa4a97b5546aba49860979076d6ef5509e",
+        "bytes": 167579
+      },
+      "lineage.json": {
+        "sha256": "4c857e3b71a82a907a004f581c61c16acf90a63ccac81f514662c1fe11e5b911",
+        "bytes": 339671
+      }
+    },
+    "source_lock": "configs/rsd/reasoning_sources_v2.lock.json",
+    "source_lock_file_sha256": "dc33ec8ac41eba4854e19c0b440aa6579742d76aec769fda93b4a9b06d22fba3",
+    "task_audit": "validation/reasoning_data_v2.json",
+    "task_audit_file_sha256": "a210562d2894a046ee1f2ff33273da258de1b2eb19380353273bf11685637a00",
+    "safety_dev": {
+      "file": "data/rsd_benchmarks/dev.jsonl",
+      "sha256": "ded0a031138c2ca58f253b8d6e8360a6e9a8e9539d6cd89df088843ea390e602",
+      "strongreject": 65,
+      "xstest_safe": 45
+    },
+    "safety_test": {
+      "file": "data/rsd_benchmarks/test.jsonl",
+      "sha256": "5252ee547ab1c165c7d8c3d2b876d4ebebeb9d8cf170859ab540e4f045ad1525",
+      "strongreject": 248,
+      "xstest_safe": 205
+    }
+  },
+  "primary_estimand": {
+    "benchmark": "strongreject",
+    "split": "test",
+    "step": 512,
+    "contrast": "R0 minus F0",
+    "metric": "continuous original StrongREJECT judge score in [0,1]",
+    "direction": "higher is worse",
+    "pairing": "same source across arms; average fixed training seeds within source, then average sources",
+    "tail": "two-sided",
+    "alpha": 0.05,
+    "delta_mde": null,
+    "scope": "conditional on these three training seeds; judge validity required"
+  },
+  "secondary_estimands": [
+    "Each arm minus its own step0; no inference of absolute drift from R0-F0 alone",
+    "GSM8K task accuracy and ARC-Challenge task accuracy separately",
+    "XSTest three classes and predeclared binary over-refusal",
+    "Step256 and dev trajectories; descriptive; no checkpoint selection"
+  ],
+  "analysis": {
+    "source_clusters": true,
+    "bootstrap_draws": 2000,
+    "analysis_seed": 0,
+    "incomplete_seed_policy": "No cross-seed estimate when a planned run is absent",
+    "unknown_policy": "Keep original denominators, nulls, complete-case estimate and finite-cohort bounds",
+    "degenerate_bootstrap": "null with reason; bounded sensitivity analysis, no zero population uncertainty claim",
+    "multiple_testing": "No secondary significance claim; predeclare Holm family before release if adding formal tests",
+    "task_score_protocol": "final-answer-v1",
+    "task_score_to_analysis_adapter": "PENDING"
+  },
+  "confirmation_release": {
+    "implemented": false,
+    "default": "sealed and unscored",
+    "required_runs": 6,
+    "requires_complete_manifest": true,
+    "no_interim_score_or_summary": true,
+    "failed_run_policy": "retain missing run and sealed responses; record recovery decision; no automatic unsealing",
+    "manual_flags_are_not_release_authorization": true
+  },
+  "planned_workload": {
+    "dev_generations": 13176,
+    "confirmation_safety_generations": 8154,
+    "confirmation_task_generations": 6144,
+    "total_generations": 27474,
+    "main_judge_calls": 12114,
+    "judge_validation_plan_calls": 864,
+    "judge_validation_additional_answer_generations": 96,
+    "trained_sample_exposures": 24576,
+    "independent_examples_are_not_call_counts": true
+  },
+  "readiness": {
+    "pinned_data_prepared": "PASS_CPU",
+    "task_gold_isolation": "PASS_CPU",
+    "source_binding_and_split_review": "PASS_CPU",
+    "prompt_length_audit": "PASS_CPU",
+    "capability_scorer": "CPU_TESTED_NOT_INTEGRATED",
+    "paired_safety_analysis": "CPU_TESTED_NOT_RESEARCH_EVIDENCE",
+    "accumulation4_loss_and_teacher_timing": "NOT_IMPLEMENTED",
+    "new_capability_callback": "NOT_IMPLEMENTED",
+    "test_response_seal_and_release_controller": "NOT_IMPLEMENTED",
+    "judge_v3_profile": "DESIGN_ONLY",
+    "independent_judge_validation_records": "0_OF_200",
+    "independent_judge_gold": "0_OF_200",
+    "judge_error_and_per_metric_mde": "UNKNOWN_NOT_FROZEN",
+    "gpu_capacity_long_output_accum4": "UNVERIFIED",
+    "output_length_distribution": "UNKNOWN",
+    "warmup_excluded_throughput": "UNKNOWN"
+  },
+  "stop_rules": [
+    "identity/hash mismatch",
+    "nonfinite loss/gradients",
+    "OOM or resource budget failure",
+    "missing required raw records or wrong denominator"
+  ],
+  "retention": {
+    "training_weights": "none persisted",
+    "raw_responses": "all planned nodes including invalid/unknown",
+    "resume": "no optimizer resume; preserve completed records and rebuild from fixed base if interrupted"
+  },
+  "final_protocol_sha256": null,
+  "scientific_result": null
+}

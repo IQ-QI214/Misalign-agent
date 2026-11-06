@@ -13,3 +13,9 @@ reported results merely by importing OPSD. See README for protocol differences.
 Synthetic pilot tasks in data/rsd_pilot were generated locally for this project.
 External evaluation datasets are obtained separately from their official sources
 and remain governed by their respective terms. Benchmark records are not bundled.
+
+EXP V2 reasoning preparation uses OpenAI GSM8K (MIT; Cobbe et al., 2021) and
+AllenAI ARC-Challenge (CC-BY-SA-4.0 per its official dataset card; Clark et al.,
+2018). Pinned sources and attribution are in configs/rsd/reasoning_sources_v2.lock.json.
+Derived ARC records retain CC-BY-SA-4.0; source and derived datasets are not
+bundled in this Git repository. Filtering/rendering does not change their terms.
