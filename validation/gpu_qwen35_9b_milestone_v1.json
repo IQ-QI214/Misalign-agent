@@ -1,0 +1,533 @@
+{
+  "schema_version": "gpu-qwen35-9b-milestone-validation-v1",
+  "status": "training_completed_judge_pending",
+  "scope": "Real Qwen3.5-9B frozen-teacher F0 smoke run on two H100 GPUs, two training updates, dev-only resident student evaluation at steps 0, 1 and 2. Final benchmark judging is pending.",
+  "scientific_conclusion": null,
+  "source_identity": {
+    "git_commit": "215180af707d6126e45ad35e32f7c36f830e5a4b",
+    "git_commit_evidence": "Launch revision supplied by the run operator; final wrapper receipt is pending. Training run artifacts do not themselves contain a Git revision.",
+    "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+    "run_contract_canonical_sha256": "32d61795ee2efdc865298f16cf23204bd091925888ba23dfcebf7415da550323",
+    "train_dataset_file_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c",
+    "task_dataset_file_sha256": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+    "benchmark_dataset_file_sha256": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+    "deepspeed_config_sha256": "657b28a48af525dc1d1c731eace92cc5714983b8f69210c4919fdd0a78e51ce2",
+    "implementation_sha256": {
+      "milestone_eval": "13bac0fd29e048439fba481d15e45142c99139b12960a2f52019e2a7db0df859",
+      "evaluation": "d2b4a7797eebf73a282d7ceb147a143c188a2a120420ab89d2bcfa5f789245f0",
+      "calibration": "2e959cd935cf3b7190ef98af08c235dd28e74243fc76c7ea80f49bf881e44cf5"
+    }
+  },
+  "hardware": {
+    "gpu_count": 2,
+    "gpu_model": "NVIDIA H100 80GB HBM3",
+    "world_size": 2
+  },
+  "model": {
+    "source_model_type": "qwen3_5",
+    "loaded_model_type": "qwen3_5_text",
+    "model_class": "Qwen3_5ForCausalLM",
+    "dtype": "torch.bfloat16",
+    "attention": "sdpa",
+    "observed_parameter_tensors": 427,
+    "observed_parameter_coordinates": 8953803264,
+    "strict_load_missing_keys": 0,
+    "strict_load_mismatched_keys": 0,
+    "strict_load_unexpected_keys": 0
+  },
+  "packages": {
+    "torch": "2.8.0a0+5228986c39.nv25.6",
+    "transformers": "5.21.0",
+    "trl": "0.26.0",
+    "accelerate": "1.15.0",
+    "datasets": "5.1.0",
+    "deepspeed": "0.19.9",
+    "flash-linear-attention": "0.6.0",
+    "causal-conv1d": "1.7.0"
+  },
+  "training": {
+    "status": "training_completed",
+    "teacher_mode": "frozen",
+    "feedback_mode": "neutral",
+    "trajectory_mode": "on_policy",
+    "kl_direction": "reverse",
+    "seed": 0,
+    "completed_global_step": 2,
+    "effective_global_batch": 2,
+    "microbatch_per_device": 1,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 3e-06,
+    "max_completion_length": 64,
+    "zero_stage": 2,
+    "optimizer_offload": "cpu",
+    "save_strategy": "no",
+    "final_model_exported": false,
+    "training_loss": 0.7611046135425568,
+    "trajectory_records_per_rank": [
+      2,
+      2
+    ],
+    "trajectory_step_before_update": [
+      0,
+      1
+    ],
+    "all_trajectory_teacher_steps_zero": true,
+    "trajectory_valid_tokens_by_rank": [
+      [
+        2,
+        3
+      ],
+      [
+        6,
+        4
+      ]
+    ],
+    "training_eos_token_id": 248046,
+    "training_eos_source": "tokenizer.eos_token_id",
+    "all_four_trajectories_end_at_first_tokenizer_eos": true
+  },
+  "milestone_evaluation": {
+    "steps": [
+      0,
+      1,
+      2
+    ],
+    "split": "dev",
+    "task_rows_per_step": 16,
+    "benchmark_rows_per_step": 10,
+    "benchmark_safety_rows_per_step": 5,
+    "benchmark_overrefusal_rows_per_step": 5,
+    "total_prediction_rows": 78,
+    "total_valid_generation_rows": 78,
+    "total_invalid_generation_rows": 0,
+    "generation_protocol": {
+      "profile": "rsd-text-eval-v2",
+      "enable_thinking": false,
+      "max_new_tokens": 512,
+      "max_prompt_tokens": 1024,
+      "temperature": 0.0,
+      "do_sample": false,
+      "top_p": 1.0,
+      "top_k": 0,
+      "num_beams": 1,
+      "repetition_penalty": 1.0,
+      "seed": 0,
+      "dtype": "bfloat16",
+      "pad_token_id": 248044,
+      "eos_token_id": 248046,
+      "eos_token_id_source": "tokenizer.eos_token_id",
+      "tokenizer_vocab_sha256": "467543819daf0b32f85b6b8e9097aa1ac1675affa59836c26acbc4a22eb83f0f",
+      "tokenizer_template_sha256": "12de9034d5269e8b1fe6012b3538374fcb3941bf93c95fc81b0cf5acf3f08ce4"
+    },
+    "identity_scope": {
+      "kind": "resident_student_sampled_fingerprint",
+      "full_model_sha256": null,
+      "reloadable_checkpoint": false,
+      "meaning": "Run contract, step and sampled model parameters; not a complete model weight hash."
+    },
+    "per_step": [
+      {
+        "global_step": 0,
+        "checkpoint_id": "in-memory:639861c63819eeec4b8de516a050662d4a4c5dc90e41688b07b22d27382ee45c",
+        "sampled_parameter_fingerprint_sha256": "0660076a65f758e15c4ab67dd63d8c03ded6f4e1e501206ead087da28728dd40",
+        "task_unique_rows": 16,
+        "benchmark_unique_rows": 10,
+        "task_predictions": 16,
+        "benchmark_predictions": 10,
+        "generation_valid": 26,
+        "generation_invalid": 0,
+        "task_budget_reached": 0,
+        "benchmark_budget_reached": 2,
+        "legacy_exact_match": {
+          "n_planned": 16,
+          "n_valid": 16,
+          "n_invalid": 0,
+          "n_missing": 0,
+          "n_correct": 4,
+          "groups": [
+            {
+              "metric": "exact_match",
+              "family": "amount_count/courier",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.75
+            },
+            {
+              "metric": "exact_match",
+              "family": "sets/registered_ids",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.25
+            },
+            {
+              "metric": "exact_match",
+              "family": "time/arrival",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.0
+            },
+            {
+              "metric": "exact_match",
+              "family": "units/volume",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.0
+            }
+          ]
+        },
+        "content_diagnostics": {
+          "scope": "development_calibration_only",
+          "confirmatory_metric": false,
+          "n_planned": 16,
+          "n_correct": 7,
+          "n_incorrect": 8,
+          "n_unknown": 1,
+          "answer_status_counts": {
+            "extracted": 15,
+            "no_final_answer": 1
+          },
+          "n_format_ok": 12,
+          "protocol_sha256": "00b2c692bc4c969c80fb861a7df9d1d927bcb8df08757d5378cab265498b5ca9",
+          "implementation_sha256": "2e959cd935cf3b7190ef98af08c235dd28e74243fc76c7ea80f49bf881e44cf5"
+        },
+        "benchmark_judge_status": "pending",
+        "benchmark_scores": null
+      },
+      {
+        "global_step": 1,
+        "checkpoint_id": "in-memory:74c307b6bd02d5502e791bc99bc20e9b59142c9df182534a8688143c072738ff",
+        "sampled_parameter_fingerprint_sha256": "f14a7924093046a2dac13eb18b84583540117be61d51a2a011eda56afad0cad1",
+        "task_unique_rows": 16,
+        "benchmark_unique_rows": 10,
+        "task_predictions": 16,
+        "benchmark_predictions": 10,
+        "generation_valid": 26,
+        "generation_invalid": 0,
+        "task_budget_reached": 0,
+        "benchmark_budget_reached": 2,
+        "legacy_exact_match": {
+          "n_planned": 16,
+          "n_valid": 16,
+          "n_invalid": 0,
+          "n_missing": 0,
+          "n_correct": 4,
+          "groups": [
+            {
+              "metric": "exact_match",
+              "family": "amount_count/courier",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.75
+            },
+            {
+              "metric": "exact_match",
+              "family": "sets/registered_ids",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.0
+            },
+            {
+              "metric": "exact_match",
+              "family": "time/arrival",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.0
+            },
+            {
+              "metric": "exact_match",
+              "family": "units/volume",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.25
+            }
+          ]
+        },
+        "content_diagnostics": {
+          "scope": "development_calibration_only",
+          "confirmatory_metric": false,
+          "n_planned": 16,
+          "n_correct": 8,
+          "n_incorrect": 8,
+          "n_unknown": 0,
+          "answer_status_counts": {
+            "extracted": 16
+          },
+          "n_format_ok": 12,
+          "protocol_sha256": "00b2c692bc4c969c80fb861a7df9d1d927bcb8df08757d5378cab265498b5ca9",
+          "implementation_sha256": "2e959cd935cf3b7190ef98af08c235dd28e74243fc76c7ea80f49bf881e44cf5"
+        },
+        "benchmark_judge_status": "pending",
+        "benchmark_scores": null
+      },
+      {
+        "global_step": 2,
+        "checkpoint_id": "in-memory:ee926259cf77c86ca2b05c6f782b8c44830fbe26a5bf53189350764f01acf428",
+        "sampled_parameter_fingerprint_sha256": "f0750647b511d1b0cd992886a8856c5dc93e7390bd59d09337ac601d6a3c3e21",
+        "task_unique_rows": 16,
+        "benchmark_unique_rows": 10,
+        "task_predictions": 16,
+        "benchmark_predictions": 10,
+        "generation_valid": 26,
+        "generation_invalid": 0,
+        "task_budget_reached": 0,
+        "benchmark_budget_reached": 2,
+        "legacy_exact_match": {
+          "n_planned": 16,
+          "n_valid": 16,
+          "n_invalid": 0,
+          "n_missing": 0,
+          "n_correct": 5,
+          "groups": [
+            {
+              "metric": "exact_match",
+              "family": "amount_count/courier",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 1.0
+            },
+            {
+              "metric": "exact_match",
+              "family": "sets/registered_ids",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.0
+            },
+            {
+              "metric": "exact_match",
+              "family": "time/arrival",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.0
+            },
+            {
+              "metric": "exact_match",
+              "family": "units/volume",
+              "split": "dev",
+              "direction": "higher_is_better",
+              "n_planned": 4,
+              "n_sources": 2,
+              "n_valid": 4,
+              "n_invalid": 0,
+              "n_missing": 0,
+              "value": 0.25
+            }
+          ]
+        },
+        "content_diagnostics": {
+          "scope": "development_calibration_only",
+          "confirmatory_metric": false,
+          "n_planned": 16,
+          "n_correct": 8,
+          "n_incorrect": 7,
+          "n_unknown": 1,
+          "answer_status_counts": {
+            "extracted": 15,
+            "no_final_answer": 1
+          },
+          "n_format_ok": 12,
+          "protocol_sha256": "00b2c692bc4c969c80fb861a7df9d1d927bcb8df08757d5378cab265498b5ca9",
+          "implementation_sha256": "2e959cd935cf3b7190ef98af08c235dd28e74243fc76c7ea80f49bf881e44cf5"
+        },
+        "benchmark_judge_status": "pending",
+        "benchmark_scores": null
+      }
+    ],
+    "diagnostic_interpretation": "Content diagnostics are local CPU derivatives using a frozen dev-only parser, not original training outputs or a new confirmatory primary metric. no_final_answer means the preset answer anchors were not recognized; it does not prove that the response contains no answer. Unknown remains null. Reaching the token budget alone does not prove semantic truncation."
+  },
+  "parameter_probes": {
+    "student_before_after": {
+      "method": "all_trainable_tensors_evenly_spaced_v1",
+      "parameter_scope": "trainable_only",
+      "samples_per_parameter": 1024,
+      "observed_tensors": 427,
+      "observed_coordinates": 8953803264,
+      "sampled_coordinates": 355840,
+      "changed_coordinates": 30966,
+      "changed_tensors": 315,
+      "nonfinite_coordinates": 0,
+      "l2_delta": 0.0010850065522035395,
+      "max_abs_delta": 7.62939453125e-06
+    },
+    "frozen_teacher_before_after_identical_on_both_ranks": {
+      "method": "all_parameters_evenly_spaced_v1",
+      "parameter_scope": "all_parameters_including_frozen",
+      "samples_per_parameter": 1024,
+      "observed_tensors": 427,
+      "observed_coordinates": 8953803264,
+      "sampled_coordinates": 355840,
+      "changed_coordinates": 0,
+      "changed_tensors": 0,
+      "nonfinite_coordinates": 0,
+      "l2_delta": 0.0,
+      "max_abs_delta": 0.0,
+      "requires_grad_all_false": true,
+      "gradients_all_none": true,
+      "eval_mode": true,
+      "storage_independent_from_student": true,
+      "teacher_parameters_in_optimizer": 0
+    },
+    "scope": "Sampled model parameters only, not a full-weight equality proof; optimizer master weights and unsampled coordinates are excluded. Teacher optimizer membership checks direct parameter objects only."
+  },
+  "resources": {
+    "rank_receipts": [
+      {
+        "rank": 0,
+        "effective_world_size": 2,
+        "global_step": 2,
+        "device_name": "NVIDIA H100 80GB HBM3",
+        "max_memory_allocated_bytes": 53722876928,
+        "max_memory_reserved_bytes": 70902611968,
+        "train_and_periodic_checkpoints_seconds": 460.7649431359023,
+        "final_export_and_trainer_state_seconds": 0.0012698350474238396
+      },
+      {
+        "rank": 1,
+        "effective_world_size": 2,
+        "global_step": 2,
+        "device_name": "NVIDIA H100 80GB HBM3",
+        "max_memory_allocated_bytes": 53722876928,
+        "max_memory_reserved_bytes": 70902611968,
+        "train_and_periodic_checkpoints_seconds": 460.7831957023591,
+        "final_export_and_trainer_state_seconds": 0.0012154839932918549
+      }
+    ],
+    "allocator_scope": "PyTorch CUDA allocator peaks since process start or last peak reset; excludes other processes, non-PyTorch allocations and host RAM.",
+    "rank_timing_scope": "Training interval includes scheduled resident evaluation; loading and post-training probes are excluded. Export means trainer state plus synchronization, not weights.",
+    "system_resources_status": "pending",
+    "system_resources": null,
+    "final_wrapper_receipt": null,
+    "wrapper_train_phase_seconds": null
+  },
+  "final_benchmark_judging": {
+    "status": "pending",
+    "judge_identity": null,
+    "n_judgments": null,
+    "summaries": null,
+    "safety_scores": null,
+    "overrefusal_scores": null
+  },
+  "artifact_verification": {
+    "status": "training_artifacts_verified",
+    "milestone_artifacts_checked_against_receipts": 24,
+    "milestone_receipts": 3,
+    "task_summaries_recomputed_exactly": 3,
+    "benchmark_pending_summaries_recomputed_exactly": 3,
+    "local_content_diagnostics_recomputed_exactly": 3,
+    "same_dataset_rows_order_and_generation_protocol_at_all_steps": true,
+    "prediction_id_prompt_and_checkpoint_binding_verified": true,
+    "both_rank_completion_receipts_consistent": true,
+    "no_weight_files_in_copied_run": true,
+    "final_weights_exported": false,
+    "original_training_record_count": 36,
+    "original_training_record_sha256": {
+      "environment.json": "3958e02f91e70be3bab1e4779afb78abec1ef07f41060d56d957312ba27c1bbc",
+      "milestones/step-000000/benchmark-dataset.jsonl": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+      "milestones/step-000000/benchmark-predictions.jsonl": "b7a3f38f7cbbf7aeb475dac3be8c1a6d29b29fbecd994f3f4a0b59453a19f6a9",
+      "milestones/step-000000/benchmark-summary-pending.json": "c9504712b9a2b0f85e10e6a3970583989f496771fdab0afb4b01db9fec9f45e7",
+      "milestones/step-000000/judge-pending.json": "3495e6a647c0a67de56097fd0e38fd891b2dd05f31ac8233b4a78635cf60431f",
+      "milestones/step-000000/manifest.json": "2e0e284b530c11bce1c9fca51be07703a741750d74dd141cd46c06c664e5124c",
+      "milestones/step-000000/receipt.json": "68d880fc31926920be287a1268234c43a7dc8e4b3af02b95ebd197f161c18c9c",
+      "milestones/step-000000/task-dataset.jsonl": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+      "milestones/step-000000/task-predictions.jsonl": "7cb39a2e00a6f408632405c509b07ebb29cb38e3068bd24212be881045d82722",
+      "milestones/step-000000/task-summary.json": "5d098a85c8bdeba88e77c10067f1b4f1ead7d2d2407704d61ccba0913c4593e2",
+      "milestones/step-000001/benchmark-dataset.jsonl": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+      "milestones/step-000001/benchmark-predictions.jsonl": "901962501d7f6118350387dcc2defef834bdf5d1ac94c23c06bbde4a35151bb5",
+      "milestones/step-000001/benchmark-summary-pending.json": "57cf7b410bef4995d8e29679cf9ea8aad91e43a16a33fc3e3e86207a677b2c35",
+      "milestones/step-000001/judge-pending.json": "cbb719b29ed590c5f705e7ca68a0ea6dc5e200de057535d73eb9cfa32c6ee957",
+      "milestones/step-000001/manifest.json": "4792e6617bec815946f628d979ba0fead30095deea0002710e4d86a6af30baaf",
+      "milestones/step-000001/receipt.json": "3b49a2787a5bb672b1e385330cbf520a254ce3ace8bbed07303a43a9c45aee5d",
+      "milestones/step-000001/task-dataset.jsonl": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+      "milestones/step-000001/task-predictions.jsonl": "eb18e25fb07e837a1a78546921133947acb0f88e2adeddc09999328417340a44",
+      "milestones/step-000001/task-summary.json": "f03d61807fd60e39c69a04574d8c66d99d01b730fcdd8f4d64a5038f36b0e293",
+      "milestones/step-000002/benchmark-dataset.jsonl": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+      "milestones/step-000002/benchmark-predictions.jsonl": "e0636202d568bdaf87c7de19c9f55f4d92e89c8268bcbabe918c2458c3225b07",
+      "milestones/step-000002/benchmark-summary-pending.json": "dad2ca575258c13abd9d84e7b38121a9cdf960b562bf7e6ee34b8a8f2ee92b9b",
+      "milestones/step-000002/judge-pending.json": "e582757913a5211b1c881cb7f8fddf5013a3e877523ef7c4f97b7152d60fd0de",
+      "milestones/step-000002/manifest.json": "5b5a283a904c31c9d71cf4275961d24e05a1d6e73dd9757e39c414d64675090d",
+      "milestones/step-000002/receipt.json": "beca0a313ac326a09c41eda63d8166406dec137f16fdfeb06c02a47a405ba4f0",
+      "milestones/step-000002/task-dataset.jsonl": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+      "milestones/step-000002/task-predictions.jsonl": "c609004b465e192ce4389b1c7da258bce0d11518f46644bc8ee038d69e55f0a2",
+      "milestones/step-000002/task-summary.json": "3f435c4dedfe01632f414961421d14e894588bb018b45d59a3a11dbfc21a2970",
+      "progress.json": "626f8f9f1e9665a6842b6dd0dd80fe685f9ce5e958d5889f3f6c92a14c38d712",
+      "resources_rank0.json": "30faac9c542043755ccf0db7e959e6aad72f60c3cde551c3f96e2427684ed856",
+      "resources_rank1.json": "3e5092f36fae60aae6ca4631c993955921d954774f6f951f24cc5e2dda424a58",
+      "result.json": "471f8117d9c89d566e5942b99197aa10a490db52f748f2408b934b84eda87dd6",
+      "run_contract.json": "39e9f8489e6ee72c9447a7dfbabebca518d969c400c31b1f67adf615e9211f77",
+      "trainer_state.json": "63a21981b3eba7924f211a0cbbf6b7b6d2eb08ff744060e868e97a7326dc0e84",
+      "trajectory_rank0.jsonl": "21725526dcf2b4f430bc09e139d33dc84320f0a78e0990a4727826c280ff5e45",
+      "trajectory_rank1.jsonl": "b66c8665db29295dbbc6b7ee66c0ad6c97debbde04bb0f4964ea84514f60261e"
+    },
+    "local_cpu_derived_diagnostic_count": 3,
+    "local_cpu_derived_diagnostic_sha256": {
+      "task-calibration-step-000000.json": "9a07b503f0111b6da12fa2b3bdf9bd044963bce1be83ce55e06d734a57bc9a08",
+      "task-calibration-step-000001.json": "c12f1514ae01737f00bf934cd07b0e9e0fb2c5953f8179d10010a967603a58ab",
+      "task-calibration-step-000002.json": "28dd572b6e07c03b262e650978234751bc33450e8151beab9181c249b296b3ee"
+    },
+    "hash_scope": "Individual copied evidence files only; local diagnostic derivatives are listed separately. No packed archive is claimed.",
+    "record_archive": {
+      "status": "pending",
+      "sha256": null
+    }
+  },
+  "limitations": [
+    "This is a two-update, single-seed F0 engineering smoke run; descriptive task changes do not establish transfer, misalignment or method superiority.",
+    "Safety and over-refusal conclusions remain pending until the fixed judge outputs and final evidence have been verified.",
+    "There is no paired no-callback GPU control in this receipt.",
+    "No trained weights or optimizer checkpoint were exported; result records and sampled fingerprints are not reloadable model checkpoints."
+  ]
+}
