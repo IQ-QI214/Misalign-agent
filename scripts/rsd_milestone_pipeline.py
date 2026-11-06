@@ -303,6 +303,31 @@ def validate_judgments(folder, output, expected_judge_id=None):
     return {"judge_id": judge_id, "n_planned": len(dataset), "n_valid": valid, "n_unknown": len(dataset) - valid}
 
 
+def validate_scored_summary(summary, dataset, checkpoint_id, judging):
+    """Use score_records' per-record statuses; it has no top-level n_valid."""
+    records = summary.get("records")
+    if not isinstance(records, list) or [r.get("id") for r in records] != [r["id"] for r in dataset]:
+        raise ValueError("Scored summary record coverage differs")
+    counts = {"n_" + status: sum(r.get("status") == status for r in records)
+              for status in ("valid", "invalid", "missing")}
+    n = len(dataset)
+    if (summary.get("checkpoint_id") != checkpoint_id
+            or summary.get("dataset_sha256") != digest(sorted(dataset, key=lambda r: r["id"]))
+            or any(summary.get(key) != n for key in ("n_planned", "n_predictions", "n_judgments"))
+            or sum(counts.values()) != n or counts["n_missing"] != 0
+            or judging["n_planned"] != n or counts["n_valid"] != judging["n_valid"]
+            or counts["n_invalid"] != judging["n_unknown"]):
+        raise ValueError("Scored summary identity/denominator differs")
+    for record in records:
+        value = record.get("value")
+        if record["status"] != "valid":
+            if value is not None:
+                raise ValueError("Invalid or missing score must remain null")
+        elif type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1:
+            raise ValueError("Valid score must be finite and within [0,1]")
+    return {"n_planned": n, **counts}
+
+
 def execute(plan):
     root, output = Path(plan["root"]), Path(plan["output_dir"])
     if checked_command(["git", "status", "--porcelain", "--untracked-files=no"], root):
@@ -355,12 +380,11 @@ def execute(plan):
             judge_id = record["judging"]["judge_id"]
             run_phase(f"score_step_{step:06d}", score, min(120, plan["timeouts"]["judge"]), plan, receipt)
             summary = read(target / "benchmark-summary.json")
-            if (summary.get("checkpoint_id") != record["checkpoint_id"]
-                    or summary.get("n_planned") != record["judging"]["n_planned"]
-                    or summary.get("n_valid") != record["judging"]["n_valid"]):
-                raise ValueError("Scored summary identity/denominator differs")
+            record["scoring"] = validate_scored_summary(summary, rows(source / "benchmark-dataset.jsonl"),
+                                                        record["checkpoint_id"], record["judging"])
             # Callback source files are immutable, including pending-status receipts.
-            if validate_milestone(source, step, contract, plan) != {k: v for k, v in record.items() if k != "judging"}:
+            if validate_milestone(source, step, contract, plan) != {k: v for k, v in record.items()
+                                                                  if k not in ("judging", "scoring")}:
                 raise ValueError("Source milestone changed while judging")
             record["judge_artifact_sha256"] = {p.name: sha(p) for p in target.iterdir() if p.is_file()}
         receipt["status"] = ("completed_with_unknown" if any(r["judging"]["n_unknown"] for r in receipt["milestones"])

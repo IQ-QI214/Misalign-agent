@@ -1,0 +1,384 @@
+{
+  "schema_version": "gpu-tiny-milestone-validation-v1",
+  "status": "verified_tiny_control_flow_completed",
+  "scope": "Real two-GPU tiny GPT2 frozen-teacher F0 training with resident student dev evaluation at steps 0, 1 and 2. Training and evaluation generation limits are both 4 tokens.",
+  "scientific_conclusion": null,
+  "source_identity": {
+    "git_commit": "215180af707d6126e45ad35e32f7c36f830e5a4b",
+    "runtime_script": "run_tiny_milestone_v1.py",
+    "runtime_script_sha256": "921755b3af9b26ee093780e9d3cda2cdf771aeddeb8bd88ffa5382a422da45f9",
+    "runtime_script_hash_scope": "Locally reviewed private launch script bytes.",
+    "config_file_sha256": "82596906748fc8a20024724fc58dce71888fd71041179f513d9dc14d85c913c6",
+    "run_contract_canonical_sha256": "e13714c2108062f8c5f2709ce58932c4bf780d853b60ed001a82d386820a1c4b",
+    "train_dataset_file_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c",
+    "task_dataset_file_sha256": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+    "benchmark_dataset_file_sha256": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+    "deepspeed_config_sha256": "657b28a48af525dc1d1c731eace92cc5714983b8f69210c4919fdd0a78e51ce2",
+    "implementation_sha256": {
+      "milestone_eval": "13bac0fd29e048439fba481d15e45142c99139b12960a2f52019e2a7db0df859",
+      "evaluation": "d2b4a7797eebf73a282d7ceb147a143c188a2a120420ab89d2bcfa5f789245f0",
+      "calibration": "2e959cd935cf3b7190ef98af08c235dd28e74243fc76c7ea80f49bf881e44cf5"
+    }
+  },
+  "hardware": {
+    "gpu_count": 2,
+    "gpu_model": "NVIDIA H100 80GB HBM3",
+    "reported_memory_mib_per_gpu": [
+      81559,
+      81559
+    ],
+    "world_size": 2
+  },
+  "model": {
+    "role": "untrained_random_tiny_input_fixture",
+    "loaded_model_type": "gpt2",
+    "model_class": "GPT2LMHeadModel",
+    "dtype": "torch.bfloat16",
+    "attention": "sdpa",
+    "observed_parameter_tensors": 16,
+    "observed_parameter_coordinates": 23248,
+    "strict_load_missing_keys": 0,
+    "strict_load_mismatched_keys": 0,
+    "strict_load_unexpected_keys": 0,
+    "not_qwen35_9b": true
+  },
+  "packages": {
+    "torch": "2.8.0a0+5228986c39.nv25.6",
+    "transformers": "5.21.0",
+    "trl": "0.26.0",
+    "accelerate": "1.15.0",
+    "datasets": "5.1.0",
+    "deepspeed": "0.19.9",
+    "flash-linear-attention": "0.6.0",
+    "causal-conv1d": "1.7.0"
+  },
+  "training": {
+    "teacher_mode": "frozen",
+    "feedback_mode": "neutral",
+    "trajectory_mode": "on_policy",
+    "kl_direction": "reverse",
+    "training_seed": 0,
+    "max_steps": 2,
+    "completed_global_step": 2,
+    "effective_global_batch": 2,
+    "microbatch_per_device": 1,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.001,
+    "max_completion_length": 4,
+    "zero_stage": 2,
+    "optimizer_offload": "cpu",
+    "save_strategy": "no",
+    "final_model_exported": false,
+    "trajectory_records_per_rank": [
+      2,
+      2
+    ],
+    "trajectory_step_before_update": [
+      0,
+      1
+    ],
+    "trajectory_valid_tokens": [
+      4,
+      4,
+      4,
+      4
+    ],
+    "training_loss": 0.0031779587734490633
+  },
+  "milestone_evaluation": {
+    "steps": [
+      0,
+      1,
+      2
+    ],
+    "split": "dev",
+    "task_rows_per_step": 16,
+    "benchmark_rows_per_step": 10,
+    "benchmark_safety_rows_per_step": 5,
+    "benchmark_overrefusal_rows_per_step": 5,
+    "total_prediction_rows": 78,
+    "total_invalid_generation_rows": 0,
+    "total_budget_reached_rows": 78,
+    "budget_reached_interpretation": "Reached the configured 4-token generation budget; this flag alone does not establish semantic truncation.",
+    "generation_protocol": {
+      "profile": "rsd-text-eval-v2",
+      "enable_thinking": false,
+      "max_new_tokens": 4,
+      "max_prompt_tokens": 1024,
+      "temperature": 0.0,
+      "do_sample": false,
+      "top_p": 1.0,
+      "top_k": 0,
+      "num_beams": 1,
+      "repetition_penalty": 1.0,
+      "seed": 0,
+      "dtype": "bfloat16",
+      "pad_token_id": 0,
+      "eos_token_id": 1,
+      "eos_token_id_source": "tokenizer.eos_token_id",
+      "tokenizer_vocab_sha256": "2ddb5853294d6036f88c8b45a248ea67a7cb63c216a01a23d8b53a6ebcf6a0df",
+      "tokenizer_template_sha256": "894a12be80dd9a733877510dfb15b9b798b5e3bd8969152215618136617eaa73"
+    },
+    "identity_scope": {
+      "kind": "resident_student_sampled_fingerprint",
+      "samples_per_parameter": 32,
+      "sampled_coordinates_per_step": 384,
+      "full_model_sha256": null,
+      "reloadable_checkpoint": false,
+      "meaning": "Identity binds run contract, global step and sampled model parameters; it is not a full-model weight hash."
+    },
+    "per_step": [
+      {
+        "global_step": 0,
+        "checkpoint_id": "in-memory:0b23e02c81f48afcd0ff43e00b941b9007093ca315b5c8da82f2db22189cea8d",
+        "sampled_parameter_fingerprint_sha256": "e3043424fcf9c278f7bc2630e0f32bf26068150a19ffb82cfff9188adabed4b3",
+        "task_predictions": 16,
+        "benchmark_predictions": 10,
+        "generation_invalid": 0,
+        "generation_budget_reached": 26,
+        "task_score_counts": {
+          "valid": 4,
+          "invalid": 12,
+          "missing": 0
+        },
+        "benchmark_score_counts": {
+          "valid": 0,
+          "invalid": 0,
+          "missing": 10
+        },
+        "benchmark_judge_status": "pending"
+      },
+      {
+        "global_step": 1,
+        "checkpoint_id": "in-memory:952f68f4c7a9b212a973e5b81eb6bd273c3b0a39a653464731f7b482bc18ef02",
+        "sampled_parameter_fingerprint_sha256": "68272f7e50b46ecb1daa9469a8f07e968ba2a6343c47859c0a4976a6322f9ae7",
+        "task_predictions": 16,
+        "benchmark_predictions": 10,
+        "generation_invalid": 0,
+        "generation_budget_reached": 26,
+        "task_score_counts": {
+          "valid": 4,
+          "invalid": 12,
+          "missing": 0
+        },
+        "benchmark_score_counts": {
+          "valid": 0,
+          "invalid": 0,
+          "missing": 10
+        },
+        "benchmark_judge_status": "pending"
+      },
+      {
+        "global_step": 2,
+        "checkpoint_id": "in-memory:167b2371fc24340a4d4b70c5ec9482e6de4412cbb020345c80b8995e2312aa01",
+        "sampled_parameter_fingerprint_sha256": "8df19e04acb0d325d85cde57417dea678ae6f046396dd244d4d7f68cd2f3c255",
+        "task_predictions": 16,
+        "benchmark_predictions": 10,
+        "generation_invalid": 0,
+        "generation_budget_reached": 26,
+        "task_score_counts": {
+          "valid": 4,
+          "invalid": 12,
+          "missing": 0
+        },
+        "benchmark_score_counts": {
+          "valid": 0,
+          "invalid": 0,
+          "missing": 10
+        },
+        "benchmark_judge_status": "pending"
+      }
+    ],
+    "task_groups_same_at_all_three_steps": [
+      {
+        "metric": "exact_match",
+        "family": "amount_count/courier",
+        "split": "dev",
+        "direction": "higher_is_better",
+        "n_planned": 4,
+        "n_sources": 2,
+        "n_valid": 0,
+        "n_invalid": 4,
+        "n_missing": 0,
+        "value": null
+      },
+      {
+        "metric": "exact_match",
+        "family": "sets/registered_ids",
+        "split": "dev",
+        "direction": "higher_is_better",
+        "n_planned": 4,
+        "n_sources": 2,
+        "n_valid": 0,
+        "n_invalid": 4,
+        "n_missing": 0,
+        "value": null
+      },
+      {
+        "metric": "exact_match",
+        "family": "time/arrival",
+        "split": "dev",
+        "direction": "higher_is_better",
+        "n_planned": 4,
+        "n_sources": 2,
+        "n_valid": 4,
+        "n_invalid": 0,
+        "n_missing": 0,
+        "value": 0.0
+      },
+      {
+        "metric": "exact_match",
+        "family": "units/volume",
+        "split": "dev",
+        "direction": "higher_is_better",
+        "n_planned": 4,
+        "n_sources": 2,
+        "n_valid": 0,
+        "n_invalid": 4,
+        "n_missing": 0,
+        "value": null
+      }
+    ],
+    "task_score_interpretation": "Generation-valid rows differ from exact-match-valid rows. Each step has 4 valid task scores (all 0), 12 invalid task scores and 0 missing predictions; invalid scores remain null. Random tiny outputs at this budget are control-flow evidence only.",
+    "benchmark_judgments_created": 0,
+    "benchmark_judge_status": "pending",
+    "safety_score": null,
+    "overrefusal_score": null
+  },
+  "parameter_probes": {
+    "student_before_after": {
+      "method": "all_trainable_tensors_evenly_spaced_v1",
+      "parameter_scope": "trainable_only",
+      "samples_per_parameter": 1024,
+      "observed_tensors": 16,
+      "observed_coordinates": 23248,
+      "sampled_coordinates": 5360,
+      "changed_coordinates": 4328,
+      "changed_tensors": 15,
+      "nonfinite_coordinates": 0,
+      "l2_delta": 0.0989303875218762,
+      "max_abs_delta": 0.00390625
+    },
+    "frozen_teacher_before_after_identical_on_both_ranks": {
+      "method": "all_parameters_evenly_spaced_v1",
+      "parameter_scope": "all_parameters_including_frozen",
+      "samples_per_parameter": 1024,
+      "observed_tensors": 16,
+      "observed_coordinates": 23248,
+      "sampled_coordinates": 5360,
+      "changed_coordinates": 0,
+      "changed_tensors": 0,
+      "nonfinite_coordinates": 0,
+      "l2_delta": 0.0,
+      "max_abs_delta": 0.0,
+      "requires_grad_all_false": true,
+      "gradients_all_none": true,
+      "eval_mode": true,
+      "storage_independent_from_student": true,
+      "teacher_parameters_in_optimizer": 0
+    },
+    "scope": "Sampled model parameters only; excludes optimizer master weights and unsampled coordinates. Direct teacher parameter-object membership in optimizer groups is not a proof about every transformed optimizer buffer."
+  },
+  "resources": {
+    "rank_receipts": [
+      {
+        "rank": 0,
+        "effective_world_size": 2,
+        "global_step": 2,
+        "device": "cuda:0",
+        "device_name": "NVIDIA H100 80GB HBM3",
+        "max_memory_allocated_bytes": 168989696,
+        "max_memory_reserved_bytes": 169869312,
+        "train_and_periodic_checkpoints_seconds": 14.416807332076132,
+        "final_export_and_trainer_state_seconds": 0.0009073503315448761
+      },
+      {
+        "rank": 1,
+        "effective_world_size": 2,
+        "global_step": 2,
+        "device": "cuda:1",
+        "device_name": "NVIDIA H100 80GB HBM3",
+        "max_memory_allocated_bytes": 168983040,
+        "max_memory_reserved_bytes": 169869312,
+        "train_and_periodic_checkpoints_seconds": 14.425320565700531,
+        "final_export_and_trainer_state_seconds": 0.0008529750630259514
+      }
+    ],
+    "allocator_scope": "PyTorch CUDA allocator peaks only; excludes other processes, non-PyTorch allocations and host RAM. Counters cover process start or last peak reset.",
+    "rank_timing_scope": "Training interval includes scheduled resident evaluation. Export covers trainer state and error synchronization, not model weights. Loading and post-training parameter probes are excluded.",
+    "wrapper_train_phase_seconds": 30.99583505373448,
+    "wrapper_train_phase_returncode": 0,
+    "sample_count": 11,
+    "sampled_nvidia_smi_peak_used_mib_per_gpu": [
+      2269,
+      2265
+    ],
+    "sampled_container_ram_peak_bytes": 62638501888,
+    "sampling_scope": "Sampled whole-device GPU usage and container-wide RAM, including shared cache or other container allocations; sampling can miss peaks. These are not 9B memory estimates."
+  },
+  "artifact_verification": {
+    "status": "passed",
+    "milestone_artifacts_checked_against_receipts": 24,
+    "milestone_receipts": 3,
+    "task_summaries_recomputed_exactly": 3,
+    "benchmark_pending_summaries_recomputed_exactly": 3,
+    "all_steps_share_dataset_rows_order_and_generation_protocol": true,
+    "prediction_ids_and_prompt_hashes_bound_to_dataset": true,
+    "prediction_identity_bound_to_manifest": true,
+    "both_rank_completion_receipts_consistent": true,
+    "no_weight_files_in_copied_run": true,
+    "launch_script_checked_no_pt_or_safetensors_in_remote_run_before_completed_receipt": true,
+    "final_weights_exported": false,
+    "packed_archive_created_or_verified": false,
+    "private_record_file_count": 39,
+    "hash_scope": "SHA256 of individual copied JSON/JSONL evidence files. These hashes do not claim a packed archive or a new full-weight checkpoint.",
+    "private_record_sha256": {
+      "run/environment.json": "3cbcc400e78dc18a0a18a27fedc3f956c18124c0b5bedc99e45736b13c78d6cf",
+      "run/milestones/step-000000/benchmark-dataset.jsonl": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+      "run/milestones/step-000000/benchmark-predictions.jsonl": "e8b848bf92aa24c8ee7eacbcbeae26ef4f32ad3058e731edcb4d200a082277be",
+      "run/milestones/step-000000/benchmark-summary-pending.json": "551af78c6121314a4578f33dcf065d580d11d19ecf2e87e79b52fa83ff0e0572",
+      "run/milestones/step-000000/judge-pending.json": "906a995d503867e7d0b6cfb10cfcf7f220ec2e1d636a2e9dd75f76d6f3d80006",
+      "run/milestones/step-000000/manifest.json": "bfd7eaab4cef79130711f4350f7237ef90ed55228a41efc80ff6c9ae65369ab0",
+      "run/milestones/step-000000/receipt.json": "04931b0cb157292dbf476dd3df3dab854b41a64696e52f54640f7af118d72544",
+      "run/milestones/step-000000/task-dataset.jsonl": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+      "run/milestones/step-000000/task-predictions.jsonl": "84a687f845948eed9f1d39194ee4b92f3ee48a35640ce15060cedae430cb6984",
+      "run/milestones/step-000000/task-summary.json": "7deb50b73d0fff7c1e547ae47027f2d03d303305cc4ae0e3fa902c484b67fef9",
+      "run/milestones/step-000001/benchmark-dataset.jsonl": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+      "run/milestones/step-000001/benchmark-predictions.jsonl": "f7921152c75d86c46fd0eac9898321465f735e81c91c9a8b918b09e14d8dfc87",
+      "run/milestones/step-000001/benchmark-summary-pending.json": "c8343ac48f801e9aa8790b7be1d33874993ab6bf123d5091154a75c5e6a20b07",
+      "run/milestones/step-000001/judge-pending.json": "39311622ff64d05df50b08c0e5ce0ba199744e7cf4402e2a1767ea4469d65afe",
+      "run/milestones/step-000001/manifest.json": "d4cabdb7166113b1cefbfec8c3fe657374581768bcc37da8e8b4b50c2092796e",
+      "run/milestones/step-000001/receipt.json": "3c015c7b1f1353db3030f7f431f66530fed8e0df2230373669b5fda01640a55e",
+      "run/milestones/step-000001/task-dataset.jsonl": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+      "run/milestones/step-000001/task-predictions.jsonl": "984fb018f24a8cd8a2055917c079c4115b82a152cb693585d001b0151ca368a9",
+      "run/milestones/step-000001/task-summary.json": "23cfad830326ab25fcd7bf899a50223d30c7d1203998a7d92c6084c3dfd00816",
+      "run/milestones/step-000002/benchmark-dataset.jsonl": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+      "run/milestones/step-000002/benchmark-predictions.jsonl": "3275cc7f2e67765b908649d080ca588b3a844a981ec1d71170697f4399dbcffa",
+      "run/milestones/step-000002/benchmark-summary-pending.json": "1157ee69bb8de1661fade2585d35de2e72589ca3752273eed3b58b9d53b5128f",
+      "run/milestones/step-000002/judge-pending.json": "47a2939cf8c04d837b344fd87cff48351d56fc7111d709db8c46f4d441911e9c",
+      "run/milestones/step-000002/manifest.json": "caa4b2f9217a6c44dd1562e30c65166beaf8877e047f52649c4ef8449331dfd0",
+      "run/milestones/step-000002/receipt.json": "7bc54240e2cd64fb8a7be5b568fbc8b27a3466893475f7fe26f31da50673b260",
+      "run/milestones/step-000002/task-dataset.jsonl": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+      "run/milestones/step-000002/task-predictions.jsonl": "ccd2ee6d7c645047810b2160d90a429052409888d340db22b6d10af0fb45889e",
+      "run/milestones/step-000002/task-summary.json": "f5c5b737fcbfb143f18b5d7e9cba9ab60e8fc85a9b6038d3f5502e740b4651c9",
+      "run/progress.json": "e2f3b5e793987b22046fad19c632c8cf7c96f9faf13be0a187b1ac57526b2251",
+      "run/resources_rank0.json": "9f01cf63ecb7ff2dd60436bfd481909ec40dae0fc7097aa5dff315f3d0e0f29c",
+      "run/resources_rank1.json": "80baf785c70d6d7a76073b94f72da1c4afdea44361106410a02ffb0bdeefc358",
+      "run/result.json": "7ff257292d80c380f71521e2ff6d9afbfe79011be0557854054c995937feb288",
+      "run/run_contract.json": "9c57dde96f6c92a813350c3d807504ea6ffc8040c3eb9373aeb2519ed42d450d",
+      "run/trainer_state.json": "ac8156c29ecfe79415eb6c4fac1d4fc160a026ec51f70a97ff260643e9d01456",
+      "run/trajectory_rank0.jsonl": "c0289c53c816c1e750152d0e0ada53b37bd5e0ddc7a23b12e5d07d8b9dc2950c",
+      "run/trajectory_rank1.jsonl": "d1d445832f2beb22350d40f81efacc5a418a41d69355381a5c913c3dda9724fb",
+      "wrapper/config.json": "82596906748fc8a20024724fc58dce71888fd71041179f513d9dc14d85c913c6",
+      "wrapper/pipeline_receipt.json": "1da69af39c4af99a8f2dc02d42c8d9998a9d34df2738b0d5afe53a10fc847b40",
+      "wrapper/resources.jsonl": "1d2f84b82c500eeba5d7a499a35c82ce63434f9144b2f031910def145778d396"
+    }
+  },
+  "limitations": [
+    "Tiny GPT2 control-flow acceptance only; does not establish Qwen3.5-9B capacity, runtime or memory requirements.",
+    "No safety judge was run and no safety or over-refusal outcome is claimed.",
+    "The same run has no paired no-callback GPU control; identical training trajectory with and without evaluation is not established by this GPU receipt.",
+    "Two updates with one seed and 4-token outputs do not support research claims about transfer, alignment or method superiority.",
+    "No trained model weights or optimizer checkpoint were exported; retained records and probes are not a reloadable model checkpoint."
+  ]
+}

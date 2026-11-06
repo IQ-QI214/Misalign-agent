@@ -252,9 +252,11 @@ def analyze(bundle_dir, round_paths, *, controls_path=DEFAULT_CONTROLS):
         for field in ("dataset_sha256", "predictions_sha256"):
             if sidecar.get(field) != manifest[field]:
                 raise ValueError("Judge round uses foreign calibration inputs")
+        limit = sidecar.get("limit")
+        full_cohort_limit = limit is None or (type(limit) is int and limit == len(inputs_by_id))
         if (sidecar.get("selected_ids") != list(inputs_by_id)
-                or sidecar.get("limit") is not None or sidecar.get("allow_test") is not False):
-            raise ValueError("Judge round must select all fixed dev controls without a limit")
+                or not full_cohort_limit or sidecar.get("allow_test") is not False):
+            raise ValueError("Judge round must select all fixed dev controls with no truncating limit")
         judge_ids.append(sidecar["judge_id"])
         judgments = _index(read_jsonl(path), "judgments")
         if set(judgments) - set(inputs_by_id):

@@ -37,7 +37,7 @@ class JudgeCalibrationTest(unittest.TestCase):
         self.dataset = read_jsonl(self.bundle / "dataset.jsonl")
         self.predictions = read_jsonl(self.bundle / "predictions.jsonl")
 
-    def make_round(self, number, *, raw_overrides=None, missing=(), profile_change=None):
+    def make_round(self, number, *, raw_overrides=None, missing=(), profile_change=None, limit=None):
         requirements = self.manifest["judge_requirements"]
         profile = {"name": requirements["profile_name"], "parser_version": requirements["parser_version"],
                    "source_lock": load_source_lock(), "alternative_judge_model": True,
@@ -67,7 +67,7 @@ class JudgeCalibrationTest(unittest.TestCase):
         sidecar = {"judge_id": judge_id, "judge_profile": profile,
                    "dataset_sha256": self.manifest["dataset_sha256"],
                    "predictions_sha256": self.manifest["predictions_sha256"],
-                   "selected_ids": [row["id"] for row in self.dataset], "limit": None, "allow_test": False}
+                   "selected_ids": [row["id"] for row in self.dataset], "limit": limit, "allow_test": False}
         path.with_name(path.name + ".manifest.json").write_text(json.dumps(sidecar))
         return path
 
@@ -121,6 +121,39 @@ class JudgeCalibrationTest(unittest.TestCase):
         case = report["rounds"][1]["cases"][2]
         self.assertEqual(case["value"], 1)
         self.assertFalse(case["hard_passed"])
+
+    def test_real_driver_manifest_explicit_full_cohort_limit(self):
+        # run_local_judge records the supplied CLI --limit, even when its slice
+        # retains every case. Mirror those exact manifest fields and JSON types.
+        first, second = self.make_round(1, limit=16), self.make_round(2, limit=16)
+        contract = json.loads(second.with_name(second.name + ".manifest.json").read_text())
+        self.assertEqual(set(contract), {"judge_id", "judge_profile", "dataset_sha256",
+                                        "predictions_sha256", "selected_ids", "limit", "allow_test"})
+        self.assertEqual(contract["limit"], len(contract["selected_ids"]))
+        report = self.analyze([first, second])
+        self.assertTrue(report["finite_controls_passed"])
+        self.assertEqual(report["summary"]["n_planned"], 32)
+        self.assertEqual(report["summary"]["n_valid"], 32)
+
+    def test_explicit_limit_cannot_hide_truncation_or_missing_judgments(self):
+        first = self.make_round(1, limit=16)
+        for limit in (15, 17, True, 16.0, "16"):
+            with self.subTest(limit=limit):
+                second = self.make_round(2, limit=limit)
+                with self.assertRaisesRegex(ValueError, "all fixed dev controls"):
+                    self.analyze([first, second])
+        second = self.make_round(2, limit=16)
+        sidecar = second.with_name(second.name + ".manifest.json")
+        contract = json.loads(sidecar.read_text())
+        contract["selected_ids"] = contract["selected_ids"][:-1]
+        sidecar.write_text(json.dumps(contract))
+        with self.assertRaisesRegex(ValueError, "all fixed dev controls"):
+            self.analyze([first, second])
+        second = self.make_round(2, limit=16, missing=("X01",))
+        report = self.analyze([first, second])
+        self.assertFalse(report["finite_controls_passed"])
+        self.assertEqual(report["summary"]["n_missing"], 1)
+        self.assertEqual(report["summary"]["n_valid"], 31)
 
     def test_invalid_and_missing_stay_unknown_not_measured_zero(self):
         report = self.analyze([self.make_round(1), self.make_round(2, missing=("S01",),

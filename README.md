@@ -91,11 +91,11 @@ python -m rsd.train --config configs/rsd/qwen35_9b_2h100.json --arm R0 --dry-run
 
 100步、全局batch2对应200次样本曝光，不是200个独立任务。主配置每20步保存；恢复用 `--resume-from-checkpoint` 指定该运行自己的 checkpoint。训练、模型生成与judge按阶段执行，减少同时驻留。v1未启用vLLM，也没有自动根据安全分数选点或启动下一组的控制器。
 
-新增 `configs/rsd/qwen35_9b_milestone_smoke.json`：两步 F0，训练 completion 上限64，评测 completion 上限512，预先固定 step 0/1/2。每点对16条任务dev及冻结的5条StrongREJECT、5条XSTest safe生成回答，任务分当场计算。`save_strategy="no"` 且 `export_final_model=false` 不导出checkpoint或final；此组合要求配置包含最终step的评测。冻结教师使用独立副本，并逐rank核查冻结状态、无梯度、与学生存储独立及抽样参数未改变。当前CPU测试已验证无权重导出和评测不扰动训练，真实双卡新路径的状态以新增GPU回执为准。
+新增 `configs/rsd/qwen35_9b_milestone_smoke.json`：两步 F0，训练 completion 上限64，评测 completion 上限512，预先固定 step 0/1/2。每点对16条任务dev及冻结的5条StrongREJECT、5条XSTest safe生成回答，任务分当场计算。`save_strategy="no"` 且 `export_final_model=false` 不导出checkpoint或final；此组合要求配置包含最终step的评测。冻结教师使用独立副本，并逐rank核查冻结状态、无梯度、与学生存储独立及抽样参数未改变。当前CPU测试已验证无权重导出和评测不扰动训练；真实双H100 tiny F0已完成step0/1/2共78条有效预测且无权重导出，见 `validation/gpu_tiny_milestone_v1.json`。该tiny的训练和评测生成上限均为4，不证明9B容量。
 
 `milestones/step-000000` 等目录保留原始回答、协议、冻结cohort、任务评分与哈希；模型身份为运行合同+step+抽样参数指纹，不是完整权重SHA，也不是可重载checkpoint。训练退出后由 `scripts/rsd_milestone_pipeline.py` 顺序运行同一Gemma judge并保存逐点评分，不改写原先pending回执。全程只保留输入基座与结果，失败后可以复核已完成节点或从基座重跑，不能断点续训。
 
-10条cohort的固定ID、顺序和原文件SHA记录在 `configs/rsd/milestone_dev_cohort_v1.json`。准备完整官方dev后，按其ID顺序抽取并以 `json.dumps(row, ensure_ascii=False) + "\n"` 写入 `data/rsd_benchmarks/milestone_dev_10.jsonl`，运行前核对SHA；不得换用test或另抽一组。此极小cohort用于工程联测，不提供统计意义上的安全迁移证据。构造的16条judge控制案例另由 `rsd.judge_calibration build/analyze` 管理，重复两轮；它们不属于Qwen的性能样本，也不足以验证真实有害依从判别能力。
+10条cohort的固定ID、顺序和原文件SHA记录在 `configs/rsd/milestone_dev_cohort_v1.json`。准备完整官方dev后，按其ID顺序抽取并以 `json.dumps(row, ensure_ascii=False) + "\n"` 写入 `data/rsd_benchmarks/milestone_dev_10.jsonl`，运行前核对SHA；不得换用test或另抽一组。此极小cohort用于工程联测，不提供统计意义上的安全迁移证据。构造的16条judge控制案例另由 `rsd.judge_calibration build/analyze` 管理，重复两轮；它们不属于Qwen的性能样本，也不足以验证真实有害依从判别能力。 本次真实Gemma3控制校准得到32/32有效、28/32硬断言通过：X06、X10两个带评审指令的变体在两轮均误分类，故v2 judge未通过有限校准，当前逐点安全/误拒分仅为诊断结果，不用于宣布正负迁移。两轮原始文本有5/16变化，最终分值均相同；不能据固定seed和greedy设置声称逐字确定性。见 `validation/local_judge_calibration_v1.json`。
 
 配置默认 `save_strategy="steps"`，保存可恢复的完整checkpoint。显式设置 `save_strategy="no"` 时不保存周期checkpoint，训练结束仍导出 `final/` 权重与tokenizer；这种运行不能作为优化器断点续训验收。短工程验证可以采用该策略，正式长训练应先确定恢复需求与存储预算。
 

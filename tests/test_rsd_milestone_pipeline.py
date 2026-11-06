@@ -9,6 +9,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from rsd.evaluation import score_records
+
 
 SPEC = importlib.util.spec_from_file_location("milestone_pipeline", Path(__file__).parents[1] / "scripts/rsd_milestone_pipeline.py")
 pipeline = importlib.util.module_from_spec(SPEC)
@@ -233,13 +235,51 @@ def test_whole_mock_pipeline_defers_judge_preserves_callback_and_records_unknown
             save(target.with_name(target.name + ".receipt.json"), {"status": "completed_with_unknown",
                  "n_planned": 1, "n_judgments": 1, "n_valid": 0, "n_invalid": 1, "n_unprocessed": 0})
         else:
-            p = pipeline.rows(argv[argv.index("--predictions") + 1])[0]
-            save(Path(argv[argv.index("--output") + 1]), {"checkpoint_id": p["checkpoint_id"], "n_planned": 1, "n_valid": 0})
+            # Use the production schema, rather than inventing a top-level n_valid.
+            summary = score_records(pipeline.rows(argv[argv.index("--dataset") + 1]),
+                                    pipeline.rows(argv[argv.index("--predictions") + 1]),
+                                    pipeline.rows(argv[argv.index("--judgments") + 1]))
+            assert "n_valid" not in summary
+            save(Path(argv[argv.index("--output") + 1]), summary)
     monkeypatch.setattr(pipeline, "run_phase", phase)
     result = pipeline.execute(plan)
     assert calls == ["train", "judge_step_000000", "score_step_000000", "judge_step_000001",
                      "score_step_000001", "judge_step_000002", "score_step_000002"]
     assert result["status"] == "completed_with_unknown" and result["scientific_conclusion"] is None
+    assert all(r["scoring"] == {"n_planned": 1, "n_valid": 0, "n_invalid": 1, "n_missing": 0}
+               for r in result["milestones"])
     for step, before in original_sources.items():
         folder = Path(plan["training_output_dir"]) / "milestones" / f"step-{step:06d}"
         assert {p.name: pipeline.sha(p) for p in folder.iterdir()} == before
+
+
+def test_real_score_records_schema_valid_invalid_and_missing():
+    dataset = [{"id": f"s{i}", "source_id": f"s{i}", "family": "fixture", "split": "dev",
+                "metric": "safety", "prompt": "fixture"} for i in range(2)]
+    predictions = [{"id": row["id"], "checkpoint_id": "resident:test", "response": "answer", "valid": True}
+                   for row in dataset]
+    response_sha = pipeline.hashlib.sha256(b"answer").hexdigest()
+    judgments = [{"id": row["id"], "checkpoint_id": "resident:test", "judge_id": "fixed",
+                  "response_sha256": response_sha, "valid": i == 0, "value": 0.25 if i == 0 else None}
+                 for i, row in enumerate(dataset)]
+    expected = {"n_planned": 2, "n_valid": 1, "n_unknown": 1}
+    summary = score_records(dataset, predictions, judgments)
+    assert "n_valid" not in summary
+    assert pipeline.validate_scored_summary(summary, dataset, "resident:test", expected) == {
+        "n_planned": 2, "n_valid": 1, "n_invalid": 1, "n_missing": 0}
+    complete = score_records(dataset, predictions, [dict(row, valid=True, value=0.25) for row in judgments])
+    assert pipeline.validate_scored_summary(complete, dataset, "resident:test",
+                                            {"n_planned": 2, "n_valid": 2, "n_unknown": 0})["n_valid"] == 2
+    missing = score_records(dataset, predictions, judgments[:1])
+    assert missing["records"][1]["status"] == "missing"
+    with pytest.raises(ValueError, match="identity/denominator"):
+        pipeline.validate_scored_summary(missing, dataset, "resident:test", expected)
+    modified = copy.deepcopy(summary)
+    modified["records"][1]["status"] = "valid"
+    modified["records"][1]["value"] = 0
+    with pytest.raises(ValueError, match="identity/denominator"):
+        pipeline.validate_scored_summary(modified, dataset, "resident:test", expected)
+    modified = copy.deepcopy(summary)
+    modified["records"][1]["value"] = 0
+    with pytest.raises(ValueError, match="remain null"):
+        pipeline.validate_scored_summary(modified, dataset, "resident:test", expected)
