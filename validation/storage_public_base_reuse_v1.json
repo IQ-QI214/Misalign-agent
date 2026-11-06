@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-06",
+  "status": "public_base_reuse_and_runtime_load_verified",
+  "scope": "Storage-only change; no new training or inference",
+  "model": "Qwen/Qwen3.5-9B",
+  "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "shared_public_model": "Qwen/Qwen3.5-9B",
+  "weight_content_checks": [
+    {
+      "file": "model.safetensors-00001-of-00004.safetensors",
+      "bytes": 5276436216,
+      "sha256": "db6f444b43d318c92f360a13a25561a6a65b10c0631b8ed305a426dbaa6c380e",
+      "public_sha_matches": true
+    },
+    {
+      "file": "model.safetensors-00002-of-00004.safetensors",
+      "bytes": 5335161512,
+      "sha256": "31c7d7e2dd5d207840b31cc59083c8f4c4718959149e0358c0364052bb9a0330",
+      "public_sha_matches": true
+    },
+    {
+      "file": "model.safetensors-00003-of-00004.safetensors",
+      "bytes": 5368717440,
+      "sha256": "7ec36ba3a4176a44c3c0876ad80c56a2f70c84bf008d82e9501df642f17dadec",
+      "public_sha_matches": true
+    },
+    {
+      "file": "model.safetensors-00004-of-00004.safetensors",
+      "bytes": 3325995712,
+      "sha256": "b62b0c4cd7e44edee103ee8f4fe225f246d5e768e07bfd5f25b63a8aa1fdd0c6",
+      "public_sha_matches": true
+    }
+  ],
+  "runtime_small_assets_identical": true,
+  "nonruntime_differences": [
+    {
+      "relative_filename": "LICENSE",
+      "public_exists": true,
+      "pinned_cache_exists": false,
+      "note": "Public LICENSE exists; project pinned snapshot did not include LICENSE. This is retained as a difference, not a model runtime mismatch."
+    }
+  ],
+  "actions": {
+    "base_weight_blobs_replaced_with_public_symlinks": 4,
+    "obsolete_large_download_fragments_removed": 4,
+    "checkpoints_deleted": 0,
+    "public_files_modified": 0,
+    "pinned_config_tokenizer_and_template_preserved": true
+  },
+  "storage": {
+    "logical_allocated_bytes_released": 21057896448,
+    "project_cache_before_bytes": 21082816000,
+    "project_cache_after_bytes": 24921600,
+    "project_after_bytes": 181860985344,
+    "runs_before_and_after_bytes": 179181517312,
+    "shared_user_mount_capacity_bytes": 2199023255552,
+    "shared_user_mount_free_bytes_at_final_check": 56757321728,
+    "checked_at_utc": "2026-11-06T12:50:48.946821+00:00",
+    "scope": "Shared persistent user mount, not GPU VRAM or GPU-instance overlay; concurrent users may change free space."
+  },
+  "post_migration_verification": {
+    "all_four_snapshot_paths_resolve_to_verified_public_files": true,
+    "all_index_keys_match_safetensors_headers": true,
+    "strict_text_model_cpu_load": {
+      "parameters": 8953803264,
+      "seconds": 8.675683829933405,
+      "missing_keys": [],
+      "mismatched_keys": [],
+      "device": "cpu"
+    },
+    "eos_token_id": 248046,
+    "pad_token_id": 248044,
+    "template_sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+    "gpu_model_execution": false
+  },
+  "preserved_validation_attempt": {
+    "unfiltered_offline_snapshot_download": "Failed because the pre-existing selective cache lacks .gitattributes, LICENSE and README.md; the subsequent runtime-file-only resolution and actual model/tokenizer loading passed."
+  },
+  "future_additional_storage_budget": {
+    "unit": "bytes",
+    "scope": "Additional checkpoint/final storage estimated from measured R0; F0 not yet measured; excludes existing files, caches, logs and reserve.",
+    "full_checkpoint_bytes": 143281158637,
+    "final_export_bytes": 17927672852,
+    "schemes": {
+      "two_arms_final_only": 35855345704,
+      "two_arms_two_steps_default": 322417662978,
+      "two_arms_100_steps_current_defaults": 1468666932074,
+      "two_arms_100_steps_limit1_steady": 322417662978,
+      "two_arms_100_steps_limit1_sequential_peak": 447771148763,
+      "two_arms_five_weight_snapshots_plus_final_proposed_not_implemented": 215132074224
+    },
+    "notes": [
+      "Checkpoint rotation writes the next checkpoint before deleting the previous one.",
+      "Final-only has no intermediate checkpoints and cannot establish progressive drift curves.",
+      "The proposal for weight-only intermediate snapshots is not implemented in the current trainer."
+    ]
+  },
+  "cleanup_candidates_not_executed": {
+    "old_EOS_optimizer_two_files_bytes": 107445683426,
+    "consequence": "Deleting would forfeit exact optimizer resume and FP32 master-weight recovery for the preserved old EOS run."
+  },
+  "private_evidence_sha256": {
+    "public_qwen_verification.json": "7375951aa20c753b8b974f20db9c3ea90eecdfac511b9be556ef189e0b3c1da8",
+    "public_qwen_migration_receipt.json": "f95d67bb8156806d7ca10e245b046e7262802210cc36725e569d32fae206f342",
+    "public_qwen_post_migration_check.json": "65bc900163450e43d79dd64d1ede03c59e90e6bd8c3ca8ab8f858e2134e6f45c",
+    "project_after_cleanup.txt": "616cabdab19729db893b05de032cf2185a27e499155406932f0d353a84b00357",
+    "final_storage_status.json": "f6649c5c4ce1df8c5248ded3d136c7bf287e420cdb5c2dc9251875ef24d68f57",
+    "future_budget.json": "472bc43e99162dd30d5d96b0c8780926b6e42b9c9c3d5189d168072e7ef0bc8f"
+  }
+}

@@ -63,6 +63,10 @@ python -m rsd.smoke --output-dir runs/cpu_pipeline_smoke
 
 首轮旧EOS运行的单个完整 step-2 checkpoint 为143.28 GB，最终权重另占17.93 GB；二者合计161.21 GB，不含原始模型、依赖和缓存。修复后的运行使用 `save_strategy="no"`，另存最终权重，保留首轮文件。按首轮完整checkpoint尺寸估算，主配置100步、每20步保存，5个完整checkpoint加最终权重约734 GB；若更长运行达到保留上限6个，则约878 GB，并另留模型缓存和运行余量。当前短 smoke 的成功不能作为100步、长输出或四组实验的容量验收。
 
+2026-11-06 的存储整理已改为只读复用公共Qwen3.5-9B权重：四个分片与固定revision的SHA完全一致，原HF snapshot、配置、tokenizer与模板保留，仅把四个重复blob改为公共文件引用，并删除四个已有完整替代文件的下载残片。释放约19.61 GiB，项目模型缓存从19.63 GiB降为约24 MiB；全部训练checkpoint和final保持原状。切换后实际9B文本模型离线CPU严格加载及tokenizer检查通过，没有运行推理或训练。公共模型仍需在运行节点可读，迁移不改变原来的显式EOS策略。回执见 [`validation/storage_public_base_reuse_v1.json`](validation/storage_public_base_reuse_v1.json)。
+
+同日最后查询的共享持久存储可用约52.9 GiB；这是共享用户挂载点，不能当作GPU显存或实例本地盘余量。F0/R0各新增一份final预计共33.39 GiB；默认两步配置若各存一份完整checkpoint与final，则共需300.27 GiB。当前100步配置两臂合计约1367.80 GiB。仅将保留数量改为1，虽然两臂稳态约300.27 GiB，顺序运行并保留前一臂时仍有约417.02 GiB的保存峰值，因为新checkpoint写完后才轮换删除旧文件。正式研究若要观察逐步变化，应保留预先约定的中间模型并重新设计恢复点保留策略；目前尚未实现独立的模型快照/优化器保存频率。
+
 已通过真实9B双卡 smoke 的镜像为 NVIDIA Torch 2.8.0a0 / CUDA 12.9 / Python 3.12。该镜像可额外使用 `-c configs/rsd/constraints-nvidia25.06.txt` 安装项目依赖：其 Torch 使用 NumPy 1 ABI，必须配套 NumPy 1.26.4、PyArrow 24.0.0；直接安装最新 PyArrow 26 或改用 NumPy 2 均在实际检查中失败。此约束不适用于其他 Torch 镜像，实际二进制兼容性由 preflight 的数据转换、CPUAdam 和 CUDA 小模型检查确认。
 
 ```bash
@@ -180,4 +184,4 @@ python -m rsd.train --config configs/rsd/dce_inspired_probe.json --dry-run
 
 统一v2协议下，dev严格匹配为4/16 → 4/16：金额3/4 → 3/4，集合1/4 → 0/4，时间0/4 → 0/4，单位0/4 → 1/4。生成达到128-token上限的回答为base 2条、R0 1条。基线12条严格失分中，8条为数值错误、2条为计算正确但格式不符、2条为截断后无最终答案；这是诊断，未改变冻结分数。不能把这些小样本变化解释为统计显著、安全正迁移或负迁移。回执见 [`validation/gpu_qwen35_9b_v1.json`](validation/gpu_qwen35_9b_v1.json)。加入独立校准和离线judge后的本地全套回归为247项测试和37个子测试通过。
 
-训练部分只验证R0（recursive / on-policy / reverse KL / neutral），不是DCE设置的精确复现。本地安全judge已通过10条dev工程联测，其评分可靠性、完整基准结果、固定教师9B训练、长训练输出、9B续训、论文现象和正负安全迁移仍未验证。下一阶段先用预先定义的校准样本检查judge的拒绝/部分回答/完全回答区分及注入干扰，审查任务难度并冻结评测，再完成F0两步容量验证及同起点F0/R0对照。F0/R0除教师更新方式外使用相同数据、训练与生成预算，base与两臂均按冻结协议重评；前提纠正F1/R1作为后续独立因素接入。正式长训练启动前另需解决存储预算：本轮结束时剩余约33.8 GiB，不能容纳新的143 GB级完整checkpoint。
+训练部分只验证R0（recursive / on-policy / reverse KL / neutral），不是DCE设置的精确复现。本地安全judge已通过10条dev工程联测，其评分可靠性、完整基准结果、固定教师9B训练、长训练输出、9B续训、论文现象和正负安全迁移仍未验证。下一阶段先用预先定义的校准样本检查judge的拒绝/部分回答/完全回答区分及注入干扰，审查任务难度并冻结评测，再完成F0两步容量验证及同起点F0/R0对照。F0/R0除教师更新方式外使用相同数据、训练与生成预算，base与两臂均按冻结协议重评；前提纠正F1/R1作为后续独立因素接入。公共基座复用后，共享存储余量回升至约52.9 GiB，可以承接只导出final的短联测，仍不能容纳新的143 GB级完整checkpoint；正式长训练前需重新安排保存策略与容量。
