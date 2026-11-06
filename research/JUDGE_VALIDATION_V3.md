@@ -1,6 +1,6 @@
 # Judge v3：输入边界与独立测量验证
 
-状态：2026-11-07，v3候选已实现并通过CPU绑定测试；已准备A层64条新构造候选回答、32个source簇及两份空白盲审表，B层已固定48条dev问题和96个待生成槽位，C层实际记录为0。未调用模型，人工金标仍为0。既有v2 source lock和16条控制保持字节不变；v3另有 `configs/rsd/judge_sources_v3.lock.json`。机器可读计划见 `configs/rsd/judge_validation_v3.plan.json`，材料回执见 `validation/judge_v3_cpu_preparation.json`。
+状态：2026-11-07，v3候选已实现并通过CPU绑定测试；已准备A层64条新构造候选回答、32个source簇及两份空白盲审表，B层已固定48条dev问题和96个待生成槽位，另有C层40条外部参考候选、接纳入验证面板仍为0。未调用模型，人工金标仍为0。既有v2 source lock和16条控制保持字节不变；v3另有 `configs/rsd/judge_sources_v3.lock.json`。机器可读计划见 `configs/rsd/judge_validation_v3.plan.json`，历史A/B准备回执见 `validation/judge_v3_cpu_preparation.json`，C候选另见 `validation/judge_reference_candidates_v1.json`。
 
 ## 已知问题与最小候选
 
@@ -25,7 +25,7 @@ v2的16条构造控制、两轮32次评分全部可解析，但仅28次满足硬
 | C：独立参考回答 | 40 | 40 | 20条XSTest类、20条StrongREJECT类真实回答，从有来源、许可明确的参考评测/人工标注材料中选取，每source一条，并重新盲审。选择元数据可按参考人工标签覆盖全答/拒答/部分回答及有害依从强弱，不能按候选judge输出选择。 |
 | 合计 | 200 | 120 | A/B/C在题目、来源和近重复簇上互斥；目标而非当前已取得的资产数量。 |
 
-A的64条候选已由助手构造，预期标签单独保存在私有作者材料中，仍是待人工复核的假设。B的48条问题已按固定哈希选择，排除旧10题、旧控制所用source以及按既定Jaccard阈值识别的近重复；96个回答槽位全部为空。生成器身份尚未选定：优先Qwen3.5-9B基座与独立固定生成器，不能使用确认集回答或事后挑选最能区分F0/R0的回答；实际生成需要将来的GPU或已授权服务。C的来源与40条实际记录也尚未落实。缺少真实有害依从材料时保留该覆盖缺口，不能以良性高分锚点替代并宣称测过有害依从准确率。
+A的64条候选已由助手构造，预期标签单独保存在私有作者材料中，仍是待人工复核的假设。B的48条问题已按固定哈希选择，排除旧10题、旧控制所用source以及按既定Jaccard阈值识别的近重复；96个回答槽位全部为空。生成器身份尚未选定：优先Qwen3.5-9B基座与独立固定生成器，不能使用确认集回答或事后挑选最能区分F0/R0的回答；实际生成需要将来的GPU或已授权服务。C已取得固定版本Anthropic HH-RLHF的40条参考候选和MIT许可记录，但题面适用性未完成独立人工审核，尚未接纳；来源桶与原始偏好标签不作为本项目rubric金标。缺少真实有害依从材料时保留该覆盖缺口，不能以良性高分锚点替代并宣称测过有害依从准确率。
 
 旧10条dev题、其现有30条checkpoint回答及已观察的16条构造控制都属于已知开发材料，不能改名进入B/C。B可用dev不代表与确认test相交；已冻结test的原始回答、标签与实验结果不用于调judge。
 
@@ -59,14 +59,22 @@ B层两个固定生成器的误差不能直接当成未来训练后F0/R0的误�
 
 ## 本轮可做与尚缺
 
-CPU侧现已实现独立profile、旧控制按profile绑定、新候选材料构建、盲审白名单导出、双审阅者金标冻结和冻结输入绑定。64条已准备回答全部为构造材料，B/C实际回答仍为0；程序不会把空槽位算作已完成记录，也不会将作者假设写成人工金标。没有调用GPU、API或模型。
+CPU侧现已实现独立profile、旧控制按profile绑定、新候选材料构建、盲审白名单导出、双审阅者金标冻结和冻结输入绑定。已纳入原A包的64条回答全部为构造材料，B真实回答为0，C另有40条候选、接纳为0；程序不会把空槽位算作已完成记录，也不会将作者假设写成人工金标。没有调用GPU、API或模型。
 
 `python -m rsd.judge_validation build --output-dir <新私有目录>` 可确定性复建A层候选、B层问题/槽位及两份空白盲审表。盲审表只含随机顺序的annotation ID、题面、回答、rubric类别、输入哈希和待填字段；不含source/variant、作者期望、generator、arm、checkpoint或judge profile。原始题面及私有作者映射保存在忽略目录，不放入公开计划。模板中的reviewer身份和label均为空；当前没有人工完成标注。
 
-`freeze-gold` 必须读取两个不同、显式声明为人工独立审阅的身份，并核对完整案例覆盖、题面/回答正文与SHA；分歧没有第三人裁决就保留UNKNOWN，原始两人的文件SHA与分歧状态一直保存。程序只能检查所提供的身份和声明，不能证明现实中的独立性或审阅历史。冻结后 `bound_judge_inputs` 再核对逐条输入和label/formula绑定；完整200条面板未齐时默认拒绝放行，显式partial开关仅导出当前材料的诊断批次，不证明独立验证已完成。B/C材料的实际取得、来源/许可、生成器身份、人工审阅分配、gold与正式误差阈值仍待落实。
+`freeze-gold` 必须读取两个不同、显式声明为人工独立审阅的身份，并核对完整案例覆盖、题面/回答正文与SHA；分歧没有第三人裁决就保留UNKNOWN，原始两人的文件SHA与分歧状态一直保存。程序只能检查所提供的身份和声明，不能证明现实中的独立性或审阅历史。冻结后 `bound_judge_inputs` 再核对逐条输入和label/formula绑定；完整200条面板未齐时默认拒绝放行，显式partial开关仅导出当前材料的诊断批次，不证明独立验证已完成。B真实回答与生成器身份、C题面适用性、人工审阅分配、gold与正式误差阈值仍待落实。C候选来源/许可已有独立回执。
 
-本轮没有读取冻结test；已做的近重复检查限于A内部、A对完整dev、B对历史排除集/A/已选择B，不能声称已证明对所有test或未来C的语义独立性。完整面板冻结前还需完成跨层来源与近重复核对。
+A/B原构建流程没有读取冻结test；C候选来源准备曾对既有安全test题面做交叉去重，但没有读取确认回答或分数。合包入口会重新检查各层source归属、题面精确/近重复和配额。这些词汇判据不证明语义或统计独立性。
 
 JSON内嵌`plan_validation_schema`（Draft 2020-12），用于检查本准备阶段的状态、空金标和计数约束；它不证明案例内容已备齐。安装`jsonschema`的CPU环境可用`jsonschema.Draft202012Validator(plan["plan_validation_schema"]).validate(plan)`复核，计数求和与文件SHA另外校验。
 
 后续需要补全材料/金标流程，再开GPU运行同模型v2/v3比较。`rsd.local_judge --profile alternative-local-official-rubrics-v3-candidate` 选择候选；不指定仍为v2。旧16控制可用 `rsd.judge_calibration build --profile ...` 分别锁定profile；analyze拒绝将v3冒名v2。已有v2历史结果仍可按原manifest重新分析，不用新候选覆盖旧结果。任何人工审阅分配或外部服务调用由主执行者按已有授权安排；本文件不自动联系他人或发送数据。
+
+## 后续CPU接入与人工交付
+
+`rsd.judge_real_data`准备B生成请求并严格导入完整96槽的attempt，草案身份不能导入，失败/截断/未生成不算完整回答；`rsd.judge_reference_admission`读取独立人工题面审核并重放C接纳决定；`rsd.judge_panel`核验来源后合包，并复用原金标冻结入口。满200行还不够，必须满足A/B/C各自metric和source配额。
+
+`rsd.judge_review_workbench`生成两份私有离线网页：回答评分与C仅题面适用性，全部初始UNKNOWN。页面只导出新JSON，不修改原材料；没有联网、自动标注或自动保存。请先保存草稿再关闭。它不自动指定或联系审阅者。完整操作说明见`research/JUDGE_REVIEW_HANDOFF.md`。
+
+`rsd.judge_validation_analysis`提供按层/metric的误差、三分类混淆、分项偏差、重复稳定性和source簇配对诊断。无gold/无真实judge输出时返回null与原分母；分析工具不自动签发可靠性通过证明。相关CPU验证只证明这些数据处理规则，不证明Gemma的评分准确性。

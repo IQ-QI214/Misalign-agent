@@ -1,0 +1,120 @@
+{
+  "schema_version": "rsd-judge-review-pipeline-cpu-v1",
+  "date": "2026-11-07",
+  "status": "PASS_CPU_PIPELINE_HUMAN_AND_MODEL_VALIDATION_PENDING",
+  "base_git_commit": "7bb7a7a05f065af295c8f60de62d85a6254c8193",
+  "gpu_executions": 0,
+  "remote_compute_connections": 0,
+  "new_pretrained_model_inference_calls": 0,
+  "new_judge_model_calls": 0,
+  "actual_human_labels_created": 0,
+  "training_enabled": false,
+  "tests": {
+    "passed": 663,
+    "subtests_passed": 52,
+    "junit_cases_including_subtests": 715,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "elapsed_seconds": 41.4,
+    "log_sha256": "119c8ceefebb4f4ac5d2003c5a6d31396ce1f5b89c34cad5a65a7feb7f8a5ba4",
+    "junit_sha256": "64d860bf06737fc5d3db9015f7fac078c12efb5a21aec910acd5cd643a1fc877",
+    "scope": "CPU fixtures only; tests may execute untrained tiny models; synthetic reviews and predictions are not project gold or real model behavior"
+  },
+  "schema_validation": {
+    "status": "PASS",
+    "validator": "jsonschema==4.25.1 Draft202012Validator",
+    "plan_sha256": "8938a3bce71a70f0c3da015978c6bbc78c211dcfafb0fb626b919d25df43732a",
+    "training_environment_modified": false,
+    "temporary_dependencies_deleted_on_exit": true
+  },
+  "actual_materials": {
+    "A_included_answer_records": 64,
+    "A_source_clusters": 32,
+    "B_selected_sources": 48,
+    "B_request_slots": 96,
+    "B_real_answers": 0,
+    "B_request_state": "DRAFT_IDENTITIES_MISSING",
+    "B_generators_identified": 0,
+    "C_available_candidates": 40,
+    "C_admitted_records": 0,
+    "total_candidate_contents": 104,
+    "human_gold": 0,
+    "complete_200_panel": false
+  },
+  "actual_integration": {
+    "partial_panel_reloaded": true,
+    "blank_answer_reviews_rejected": {
+      "status": "PASS_EXPECTED_REJECTION",
+      "message": "Distinct human reviewer identities and independent-annotation claims required",
+      "output_not_created": true
+    },
+    "blank_C_reviews_rejected": {
+      "status": "PASS_EXPECTED_REJECTION",
+      "message": "Named human reviewer and independent-annotation declaration required",
+      "output_not_created": true
+    },
+    "draft_generation_release_rejected": {
+      "status": "PASS_EXPECTED_REJECTION",
+      "message": "Generation/import requires two complete frozen generator identities",
+      "output_not_created": null
+    },
+    "no_gold_no_judge_diagnostics": "64 unknown gold; zero judgments; MAE/bias/accuracy null; reliability UNKNOWN"
+  },
+  "review_delivery": {
+    "reviewer_pages": 2,
+    "answers_per_reviewer": 64,
+    "C_prompt_eligibility_per_reviewer": 40,
+    "reviewers_assigned": false,
+    "human_labels_created": 0,
+    "offline_only": true,
+    "files_sha256": {
+      "reviewer_1.html": "c3fcca28fc2afe9529133499c96c2530facc2b581a37f683160fd8700d058867",
+      "reviewer_2.html": "a8da61a9e15a4c10171fd522edecb77531066da4725da1abadd7a996b6aab69e"
+    },
+    "html_browser_preview": "UNVERIFIED_browser_tool_timeout",
+    "javascript_DOM_fixture": "PASS render/edit/export/import/partial-source import/StrongREJECT partial draft/resume/changed-text rejection",
+    "temporary_local_server_stopped": true
+  },
+  "review_findings_fixed": [
+    "Original A64 manifest cannot masquerade as complete 200-case panel",
+    "Full panel checks exact per-stratum metric and source quotas plus blank review projections",
+    "Gold input binding replays original pinned human reviews and adjudications, including counts",
+    "B dependency loader rejects composite panels before dispatch and checks request manifest before loading dependencies",
+    "Prompt-only C eligibility cannot share a page with the same answer content",
+    "Partial StrongREJECT fields persist as draft components while formal labels stay UNKNOWN"
+  ],
+  "preparation_attempts_retained": [
+    "B requests v1 retained, superseded by v2 after loader fix",
+    "Review UI v1 retained, superseded by v2 after draft and stage-separation fixes",
+    "Initial full-interface synthetic test exposed omitted C fixture provenance; fixture was completed and regression passed",
+    "Browser visual preview timed out; not reported as passing"
+  ],
+  "previous_training_runtime_code_unchanged": true,
+  "previous_receipt_preserved": "validation/cpu_phase_v2_completion.json remains a historical receipt, including prior judge-material implementation hashes",
+  "code_and_plan_sha256": {
+    "rsd/judge_validation.py": "3f8aa9ffdf6e5c8e4e91493ae9e402238e99ed9687e928205318675d0ef3daa1",
+    "rsd/judge_panel.py": "f420d374e05557ab3b23ca9c1fc5cecf7acbf36e9ec458debe506589bc309123",
+    "rsd/judge_real_data.py": "c7dd21b9ae2b4060513e5d0f1b07c788f7b12f281d35f11ca45b3b2d75ee3ff0",
+    "rsd/judge_reference_admission.py": "c4223a43a35506803b0447aad06d96c3d5914d32ec1c944aa39dc9a4a23449bb",
+    "rsd/judge_review_workbench.py": "295e408d02690ff33ed4cbdd4dcf4c8e225b60e72c62bbdd49ed2744514a1a2a",
+    "rsd/judge_validation_analysis.py": "7b6ec3c3ffc0e084d4aa330c5f980bbfcd05bf44c86260ac3db04adfc6250f32",
+    "configs/rsd/judge_validation_v3.plan.json": "8938a3bce71a70f0c3da015978c6bbc78c211dcfafb0fb626b919d25df43732a"
+  },
+  "private_artifact_sha256": {
+    ".runtime/judge_validation_v3/assembled_panel_20261107_v2/manifest.json": "a13fa7b25a9e07a21be4c6d5c7ad444c58dd2477e625e103b8447783cb85f892",
+    ".runtime/judge_validation_v3/human_review_20261107_v2/manifest.json": "bfb81b88a2ec09945b57ad6a0f8339d86ec08a9911ed453f71ef723c1fc6110d",
+    ".runtime/judge_validation_v3/real_generation_requests_draft_20261107_v2/manifest.json": "afe2428da4117908374962b140231f75c4ce4e5b2565dba31dba240c1915e122",
+    ".runtime/judge_validation_v3/diagnostic_plan_unjudged_20261107_v2.json": "afcec2febd12d924933d92f50ca48d8be43c57ac761073aa120ca4301eaf9488",
+    ".runtime/judge_validation_v3/diagnostic_unjudged_20261107_v2.json": "215b04aaf295588e44de1a9351759c02267e47badc349b3bcf706da1e968cfe0",
+    ".runtime/judge_validation_v3/cpu_review_integration_20261107_v2.json": "1cf334800f39ac59dbce8d6e72ae2cc0c0b3e9c0ce36074c2d0f5885802ee4f3"
+  },
+  "scientific_conclusion": null,
+  "remaining": [
+    "Independent human reviews and unresolved C prompt suitability/coverage",
+    "Two B generator identities and 96 actual responses",
+    "Real judge validation and development baseline after GPU access is available",
+    "Measurement-error sensitivity and per-metric minimum effect targets before research freeze",
+    "CUDA/DeepSpeed long-output capacity and throughput before formal six-run training"
+  ]
+}

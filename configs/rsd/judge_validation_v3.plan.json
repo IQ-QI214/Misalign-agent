@@ -53,7 +53,7 @@
       "necessary_gate": "all original hard assertions pass; not sufficient for validity"
     },
     "independent_validation": {
-      "status": "A64_prepared_B96_pending_C40_missing_gold_unknown",
+      "status": "A64_prepared_B96_pending_C40_candidates_pending_admission_gold_unknown",
       "planned_records": 200,
       "planned_source_clusters": 120,
       "prepared_records": 64,
@@ -107,12 +107,19 @@
           "recipe": {
             "responses_per_source": 1
           },
-          "source_identity": null,
-          "license_review_status": "pending",
-          "selection": "reference/human-label strata, never candidate judge output; reannotate blinded",
+          "source_identity": {
+            "repository": "Anthropic/hh-rlhf",
+            "revision": "09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa",
+            "source_lock": "configs/rsd/judge_reference_sources.lock.json"
+          },
+          "license_review_status": "MIT_notice_and_fixed_sources_verified",
+          "selection": "fixed hash selection from pinned official reference source; neither source bucket nor preference is rubric gold; prompt eligibility reviewed separately",
           "gold_origin": "two independent humans plus third-person adjudication",
           "actual_answer_records": 0,
-          "actual_human_gold_records": 0
+          "actual_human_gold_records": 0,
+          "candidate_answer_records": 40,
+          "accepted_validation_records": 0,
+          "prompt_eligibility_status": "UNKNOWN_PENDING_INDEPENDENT_HUMAN_REVIEW"
         }
       ],
       "cross_stratum_overlap": "forbid identical/near-duplicate prompt-source clusters across A/B/C and old controls",
@@ -123,7 +130,9 @@
         "any future confirmatory study results"
       ],
       "independence_warning": "200 answer records contain paired variants and same-question answers; planned source-cluster count is 120, not 200 IID questions",
-      "prepared_source_clusters": 32
+      "prepared_source_clusters": 32,
+      "available_candidate_answer_contents": 104,
+      "external_candidates_not_yet_admitted": 40
     }
   },
   "human_review": {
@@ -142,7 +151,8 @@
     "annotator_outputs_preserved": true,
     "assistant_or_external_llm_is_human_gold": false,
     "single_reviewer_downgrade": "explicit single-person audit; no claim of independent double annotation",
-    "gold_freeze_before_candidate_evaluation": true
+    "gold_freeze_before_candidate_evaluation": true,
+    "offline_workbench": "rsd/judge_review_workbench.py"
   },
   "execution_plan": {
     "model": "google/gemma-3-27b-it",
@@ -165,7 +175,7 @@
     "gpu_or_authorized_api_required_later": true,
     "estimated_wall_time_seconds": null,
     "runtime_driver_implemented": true,
-    "batch_orchestrator": "Not yet complete; standalone profile driver and frozen prepared-panel bindings implemented; no model runs"
+    "batch_orchestrator": "Standalone model driver exists; CPU request/import/admission/panel/diagnostic analysis paths implemented. Automated four-session GPU dispatch is not implemented and no model calls were made."
   },
   "analysis": {
     "by_stratum": true,
@@ -190,7 +200,9 @@
     "human_agreement_before_adjudication": true,
     "pooled_panel_accuracy_as_population_accuracy": false,
     "model_agreement_is_gold": false,
-    "unknown_counts_keep_original_denominators": true
+    "unknown_counts_keep_original_denominators": true,
+    "cpu_diagnostic_implementation": "rsd/judge_validation_analysis.py",
+    "automatic_reliability_certification": false
   },
   "decision_rules": {
     "arbitrary_accuracy_cutoff": null,
@@ -213,11 +225,11 @@
     }
   },
   "remaining_requirements": [
-    "obtain actual B96 outputs with fixed generator identities; slots are not answers",
-    "obtain C40 reference records with source/license checks and harmful-compliance coverage",
-    "complete A/B/C cross-source and near-duplicate audit before full panel freeze",
-    "assign independent human annotators and freeze gold; currently 0 labeled records",
-    "freeze minimum effect/error sensitivity and full validation manifest",
+    "independent prompt eligibility review of C40; retain exclusions/UNKNOWN and any 20+20 coverage shortfall",
+    "assign independent human annotators and freeze answer gold; currently 0 labeled records",
+    "lock two B generator identities and obtain 96 real responses; request drafts/slots are not answers",
+    "rebuild and verify complete A/B/C panel with exact source and metric quotas; never fill gaps from scores",
+    "freeze minimum effect/error sensitivity and full validation execution identities",
     "run real-model v2/v3 comparison after preparation and authorized GPU availability"
   ],
   "constraints": {

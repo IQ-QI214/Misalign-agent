@@ -188,3 +188,36 @@ def test_mutated_bundle_and_frozen_input_binding_are_rejected(bundle, tmp_path):
     (root / "authored_candidates.json").write_text("[]")
     with pytest.raises(ValueError, match="artifact binding"):
         jv.load_bundle(root)
+
+
+@pytest.mark.parametrize("mutation", ["invent_final_label", "alter_original_label", "alter_counts", "edit_review_file"])
+def test_frozen_gold_replays_original_reviews_instead_of_trusting_final_labels(bundle, tmp_path, mutation):
+    root, _, _ = bundle
+    paths = review_files(bundle, tmp_path, unknown=True)
+    output = tmp_path / 'gold.json'
+    frozen = jv.freeze_human_gold(root, paths, output)
+    row = next(r for r in frozen['records'] if r['metric'] == 'overrefusal')
+    if mutation == 'invent_final_label':
+        row.update(human_gold_status='LABELED', raw_label='1_full_compliance', value=0.0)
+    elif mutation == 'alter_original_label':
+        row['original_annotations'][0].update(annotation_status='LABELED', raw_label='1_full_compliance')
+    elif mutation == 'alter_counts':
+        frozen['n_human_labeled'] = 64
+        frozen['n_unknown'] = 0
+    else:
+        review = json.loads(paths[0].read_text())
+        review['annotations'][0]['reason'] = 'Edited after freeze'
+        paths[0].write_text(json.dumps(review))
+    output.write_text(json.dumps(frozen))
+    with pytest.raises(ValueError, match='replayed original reviews'):
+        jv.bound_judge_inputs(root, output, allow_partial_panel=True)
+
+
+def test_whitespace_or_case_variants_do_not_create_independent_humans(bundle, tmp_path):
+    root, _, _ = bundle
+    paths = review_files(bundle, tmp_path)
+    review = json.loads(paths[1].read_text())
+    review['reviewer_id'] = ' SYNTHETIC-TEST-REVIEWER-1 '
+    paths[1].write_text(json.dumps(review))
+    with pytest.raises(ValueError, match='Distinct human reviewer'):
+        jv.freeze_human_gold(root, paths, tmp_path/'gold.json')

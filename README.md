@@ -18,6 +18,8 @@ GPU已按用户安排关闭，本轮仅做本地/CPU准备。下一轮只比较F
 
 judge v3已独立实现，原v2模板锁与旧16控制不变。A层64条构造候选、B层48道题及96个待生成回答槽位已准备；另有C层40条外部参考候选待审核适用性。人工gold为0，真实judge验证未运行，不能称200条面板已通过。见[评审验证进度](research/JUDGE_VALIDATION_V3.md)。机器计划[exploration_v2.plan.json](configs/rsd/exploration_v2.plan.json)仍显式`training_enabled=false`；`python -m rsd.experiment --output <新目录>`可生成六个禁用训练的配置和draft确认计划，不加载模型。当前没有新Qwen/Gemma行为结果。
 
+继续完成了B回答请求/导入、C题面审核接纳、A/B/C合包和分层judge诊断分析，并生成两份私有离线盲审页面。当前仍是A64已纳入、B0/96、C0/40接纳、人工gold0；页面与请求草案不是完成的评审。见[人工评审交付与后续流程](research/JUDGE_REVIEW_HANDOFF.md)。
+
 两步联测只保留工程验收价值，不继续把同规模两步R0当科研对照；512步或200题本身也不保证检出力。原始剂量/样本量论证及完整调用预算见[设计修订背景](research/EXPLORATION_V2_DESIGN.md)，统计身份和UNKNOWN处理见[分析契约](research/ANALYSIS_CONTRACT_V2.md)。
 
 ## 研究问题

@@ -229,15 +229,19 @@ def build(dev_path, output_dir, *, expected_dev_sha=EXPECTED_DEV_SHA):
 def load_bundle(bundle_dir):
     root = Path(bundle_dir)
     manifest = json.loads((root / "manifest.json").read_text())
+    if manifest.get("version") == "judge-validation-panel-v1":
+        from .judge_panel import load_panel
+        return load_panel(bundle_dir)
     if manifest.get("version") != VERSION:
         raise ValueError("Unknown validation bundle version")
     for name, expected in manifest["files_sha256"].items():
         if Path(name).name != name or (root / name).is_symlink() or _file_sha(root / name) != expected:
             raise ValueError("Validation bundle artifact binding mismatch")
     rows = json.loads((root / "authored_candidates.json").read_text())
-    if (len(rows) != manifest["prepared_answer_records"]
+    if (manifest.get("planned_records") != 200 or manifest.get("prepared_answer_records") != 64
+            or rows != constructed_panel() or len(rows) != manifest["prepared_answer_records"]
             or len({row["id"] for row in rows}) != len(rows)):
-        raise ValueError("Actual answer count differs from manifest")
+        raise ValueError("Original material version must preserve exactly its 64 authored candidates")
     for row in rows:
         if (row["prompt_sha256"] != text_digest(row["prompt"])
                 or row["response_sha256"] != text_digest(row["response"])):
@@ -245,7 +249,7 @@ def load_bundle(bundle_dir):
     return manifest, rows
 
 
-def freeze_human_gold(bundle_dir, review_paths, output, *, adjudication_path=None):
+def _gold_payload(bundle_dir, review_paths, *, adjudication_path=None):
     """Bind two human-claimed reviews; unresolved/disputed labels stay UNKNOWN.
 
     Code verifies distinct supplied reviewer identities, not that people really
@@ -255,15 +259,22 @@ def freeze_human_gold(bundle_dir, review_paths, output, *, adjudication_path=Non
     manifest, rows = load_bundle(bundle_dir)
     if len(review_paths) != 2:
         raise ValueError("Exactly two independent human reviews are required")
+    evidence_paths = [*review_paths] + ([adjudication_path] if adjudication_path is not None else [])
+    for path in evidence_paths:
+        path = Path(path).absolute()
+        if any(p.is_symlink() for p in (path, *path.parents)):
+            raise ValueError("Human review evidence must not traverse symlinks")
     index = {text_digest(VERSION + "\n" + r["id"]): r for r in rows}
     reviews = [json.loads(Path(path).read_text()) for path in review_paths]
     reviewer_ids, indexed = [], []
     for review in reviews:
         reviewer = review.get("reviewer_id")
-        if (not isinstance(reviewer, str) or not reviewer.strip() or reviewer in reviewer_ids
+        if (not isinstance(reviewer, str) or not reviewer.strip()
+                or reviewer.strip().casefold() in {x.casefold() for x in reviewer_ids}
                 or review.get("reviewer_kind") != "human"
                 or review.get("independent_annotation_claim") is not True):
             raise ValueError("Distinct human reviewer identities and independent-annotation claims required")
+        reviewer = reviewer.strip()
         reviewer_ids.append(reviewer)
         items = {}
         for item in review.get("annotations", []):
@@ -284,8 +295,10 @@ def freeze_human_gold(bundle_dir, review_paths, output, *, adjudication_path=Non
         adjudication = json.loads(Path(adjudication_path).read_text())
         adjudicator_id = adjudication.get("reviewer_id")
         if (not isinstance(adjudicator_id, str) or not adjudicator_id.strip()
-                or adjudicator_id in reviewer_ids or adjudication.get("reviewer_kind") != "human"):
+                or adjudicator_id.strip().casefold() in {x.casefold() for x in reviewer_ids}
+                or adjudication.get("reviewer_kind") != "human"):
             raise ValueError("A distinct human adjudicator is required")
+        adjudicator_id = adjudicator_id.strip()
         for item in adjudication.get("annotations", []):
             key = item.get("annotation_id")
             if key not in index or key in adjudications:
@@ -308,21 +321,48 @@ def freeze_human_gold(bundle_dir, review_paths, output, *, adjudication_path=Non
                         "raw_label": resolved.get("raw_label") if known else None,
                         "components": resolved.get("components") if known else None,
                         "value": _annotation_value(resolved) if known else None,
+                        "original_annotations": [label(left), label(right)],
                         "original_reviews_agree": agree, "adjudicated": not agree and key in adjudications})
     frozen = {"version": VERSION, "bundle_manifest_sha256": _file_sha(Path(bundle_dir) / "manifest.json"),
               "review_files_sha256": [_file_sha(path) for path in review_paths],
+              "review_file_paths": [str(Path(path).absolute()) for path in review_paths],
               "adjudication_sha256": _file_sha(adjudication_path) if adjudication_path is not None else None,
+              "adjudication_file_path": str(Path(adjudication_path).absolute()) if adjudication_path is not None else None,
               "reviewer_ids": reviewer_ids, "adjudicator_id": adjudicator_id,
               "reviewer_identity_independence": "self_attested_not_programmatically_verified",
               "records": records, "n_prepared": len(records),
               "n_human_labeled": sum(r["human_gold_status"] == "LABELED" for r in records),
               "n_unknown": sum(r["human_gold_status"] != "LABELED" for r in records),
-              "planned_full_panel_complete": len(records) == manifest["planned_records"],
+              "planned_full_panel_complete": (len(records) == manifest["planned_records"]
+                  and manifest.get("full_panel_materials_complete", False)),
               "temporal_scope": "Frozen input receipt; external caller must ensure no prior candidate-judge exposure. This tool cannot prove that history.",
               "model_calls_executed_by_this_tool": 0,
               "scientific_conclusion": None}
+    return frozen
+
+
+def freeze_human_gold(bundle_dir, review_paths, output, *, adjudication_path=None):
+    """Freeze a replayable receipt; retain original review files at pinned paths."""
+    frozen = _gold_payload(bundle_dir, review_paths, adjudication_path=adjudication_path)
     _write(output, frozen)
     return frozen
+
+
+def verify_frozen_gold(bundle_dir, frozen_gold_path):
+    """Replay the pinned original reviews, not just self-reported final labels.
+
+    This authenticates content consistency, not the people or their claims.
+    Review files must be retained; edits require a new explicit freeze receipt.
+    """
+    gold = json.loads(Path(frozen_gold_path).read_text())
+    paths = gold.get("review_file_paths")
+    if (not isinstance(paths, list) or len(paths) != 2
+            or any(not isinstance(path, str) or not Path(path).is_absolute() for path in paths)):
+        raise ValueError("Frozen human gold lacks replayable original review input binding")
+    expected = _gold_payload(bundle_dir, paths, adjudication_path=gold.get("adjudication_file_path"))
+    if digest(gold) != digest(expected):
+        raise ValueError("Frozen human gold input binding differs from replayed original reviews")
+    return gold
 
 
 def _validate_annotation(item):
@@ -363,12 +403,13 @@ def bound_judge_inputs(bundle_dir, frozen_gold_path, *, profile_name=V3_PROFILE_
     if profile_name not in PROFILE_NAMES:
         raise ValueError("Unknown judge profile")
     manifest, rows = load_bundle(bundle_dir)
-    gold = json.loads(Path(frozen_gold_path).read_text())
+    gold = verify_frozen_gold(bundle_dir, frozen_gold_path)
     if gold.get("bundle_manifest_sha256") != _file_sha(Path(bundle_dir) / "manifest.json"):
         raise ValueError("Frozen gold is bound to a different validation bundle")
     if type(allow_partial_panel) is not bool:
         raise ValueError("allow_partial_panel must be boolean")
     full = (len(rows) == 200 and manifest["prepared_answer_records"] == 200
+            and manifest.get("full_panel_materials_complete", False)
             and gold.get("n_prepared") == 200 and gold.get("planned_full_panel_complete") is True)
     if not full and not allow_partial_panel:
         raise ValueError("Full 200-case independent panel is incomplete; cannot release judge batch")
@@ -394,7 +435,7 @@ def bound_judge_inputs(bundle_dir, frozen_gold_path, *, profile_name=V3_PROFILE_
                 "scope": "full_panel_unvalidated" if full else "partial_panel_diagnostic_only",
                 "n_prepared": len(rows), "n_human_labeled": sum(r["human_gold_status"] == "LABELED" for r in gold_rows),
                 "scientific_conclusion": None}
-    checkpoint = "constructed-validation:sha256:" + digest(contract)
+    checkpoint = "validation-materials:sha256:" + digest(contract)
     dataset, predictions = [], []
     for row in rows:
         dataset.append({"id": row["id"], "source_id": row["source_id"], "family": "judge-v3/" + row["metric"],
@@ -404,7 +445,8 @@ def bound_judge_inputs(bundle_dir, frozen_gold_path, *, profile_name=V3_PROFILE_
         predictions.append({"id": row["id"], "checkpoint_id": checkpoint, "valid": True,
                             "prompt_sha256": row["prompt_sha256"], "response_sha256": row["response_sha256"],
                             "response": row["response"], "generation_protocol": {"model_inference": False,
-                            "response_origin": "authored_constructed_candidate", "contract": contract}})
+                            "response_origin": row["origin"],
+                            "original_model_output": row["model_output"], "contract": contract}})
     return {"contract": contract, "dataset": dataset, "predictions": predictions}
 
 
