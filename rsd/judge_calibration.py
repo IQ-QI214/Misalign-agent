@@ -8,16 +8,31 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import hashlib
+import inspect
 import json
 from pathlib import Path
 
 from .evaluation import digest, judge_inputs, read_jsonl, text_digest, validate_dataset
-from .judge_protocols import PARSER_VERSION, PROFILE_NAME, load_source_lock, parse_judge_output
+from .judge_protocols import PARSER_VERSION, PROFILE_NAME, PROFILE_NAMES, load_source_lock, parse_judge_output
+from . import judge_protocols as _judge_protocols
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONTROLS = ROOT / "configs/rsd/judge_calibration_controls_v1.json"
 VERSION = "rsd-judge-calibration-v1"
+# Exact historical v2 identity, accepted only while every parser helper and
+# its discrete label/metric definitions retain the recorded source fingerprint.
+_HISTORICAL_V2_PROTOCOL = "e6cd314ea0b271f9af612323ac0d8d4a4a44708d00e54636d0a35bae4b7f41ff"
+_HISTORICAL_V2_PARSER = "9fc35b149c272e36a8a16188616f5f69528c7010c4e18360660a54136476c3fb"
+
+
+def _parser_fingerprint():
+    source = "".join(inspect.getsource(fn) for fn in
+                     (parse_judge_output, _judge_protocols._invalid, _judge_protocols._check_metric))
+    blob = json.dumps({"source": source, "labels": _judge_protocols._XSTEST_LABELS,
+                       "metrics": sorted(_judge_protocols.JUDGE_SYSTEMS)}, sort_keys=True,
+                      separators=(",", ":")).encode()
+    return hashlib.sha256(blob).hexdigest()
 
 
 def _sha(path):
@@ -61,9 +76,10 @@ def load_controls(path=DEFAULT_CONTROLS):
     return spec
 
 
-def build(source_dev, output_dir, *, controls_path=DEFAULT_CONTROLS):
+def build(source_dev, output_dir, *, controls_path=DEFAULT_CONTROLS, profile_name=PROFILE_NAME):
     """Read exactly the frozen dev file, then produce judge-compatible artifacts."""
     spec = load_controls(controls_path)
+    source_lock = load_source_lock(profile_name)
     source = Path(source_dev)
     # Authenticate bytes before parsing; an arbitrary test file is not a source.
     if _sha(source) != spec["source_dev_sha256"]:
@@ -108,8 +124,8 @@ def build(source_dev, output_dir, *, controls_path=DEFAULT_CONTROLS):
                 "n_cases": 16, "n_rounds": 2, "n_planned_judgments": 32,
                 "dataset_sha256": digest(dataset), "predictions_sha256": digest(predictions),
                 "files_sha256": {name: _sha(destination / name) for name in ("dataset.jsonl", "predictions.jsonl")},
-                "judge_requirements": {"profile_name": PROFILE_NAME, "parser_version": PARSER_VERSION,
-                                       "source_lock_sha256": digest(load_source_lock()),
+                "judge_requirements": {"profile_name": profile_name, "parser_version": PARSER_VERSION,
+                                       "source_lock_sha256": digest(source_lock),
                                        "protocol_implementation_sha256": _sha(Path(__file__).with_name("judge_protocols.py"))},
                 "construction_only": True, "subject_model_performance": False,
                 "scientific_conclusion": None}
@@ -127,6 +143,11 @@ def _load_bundle(bundle_dir, controls_path):
             or manifest.get("controls") != spec
             or manifest.get("checkpoint_id") != "constructed-controls:sha256:" + digest(contract)):
         raise ValueError("Calibration manifest differs from frozen controls")
+    requirements = manifest.get("judge_requirements", {})
+    profile_name = requirements.get("profile_name")
+    if (profile_name not in PROFILE_NAMES or requirements.get("parser_version") != PARSER_VERSION
+            or requirements.get("source_lock_sha256") != digest(load_source_lock(profile_name))):
+        raise ValueError("Calibration manifest has an unsupported or changed judge profile")
     for name in ("dataset.jsonl", "predictions.jsonl"):
         if _sha(directory / name) != manifest["files_sha256"][name]:
             raise ValueError(f"Calibration artifact hash mismatch: {name}")
@@ -155,7 +176,8 @@ def _load_bundle(bundle_dir, controls_path):
 
 
 def _validate_profile(profile, judge_id, requirements):
-    if (not isinstance(profile, dict) or judge_id != PROFILE_NAME + ":" + digest(profile)
+    if (not isinstance(profile, dict) or requirements.get("profile_name") not in PROFILE_NAMES
+            or judge_id != requirements["profile_name"] + ":" + digest(profile)
             or profile.get("name") != requirements["profile_name"]
             or profile.get("parser_version") != requirements["parser_version"]
             or digest(profile.get("source_lock")) != requirements["source_lock_sha256"]
@@ -238,10 +260,14 @@ def analyze(bundle_dir, round_paths, *, controls_path=DEFAULT_CONTROLS):
         raise ValueError("Exactly two distinct round files are required")
     manifest, inputs = _load_bundle(bundle_dir, controls_path)
     requirements = manifest["judge_requirements"]
-    current = {"profile_name": PROFILE_NAME, "parser_version": PARSER_VERSION,
-               "source_lock_sha256": digest(load_source_lock()),
+    current = {"profile_name": requirements["profile_name"], "parser_version": PARSER_VERSION,
+               "source_lock_sha256": digest(load_source_lock(requirements["profile_name"])),
                "protocol_implementation_sha256": _sha(Path(__file__).with_name("judge_protocols.py"))}
-    if requirements != current:
+    historic_compatible = (requirements["profile_name"] == PROFILE_NAME
+                           and requirements.get("protocol_implementation_sha256") == _HISTORICAL_V2_PROTOCOL
+                           and _parser_fingerprint() == _HISTORICAL_V2_PARSER
+                           and all(requirements.get(k) == current[k] for k in current if k != "protocol_implementation_sha256"))
+    if requirements != current and not historic_compatible:
         raise ValueError("Calibration judge protocol changed after construction")
     inputs_by_id = _index(inputs, "inputs")
     controls = manifest["controls"]["controls"]
@@ -307,6 +333,7 @@ def analyze(bundle_dir, round_paths, *, controls_path=DEFAULT_CONTROLS):
     summary = _summarize(all_results)
     passed = summary["n_valid"] == 32 and summary["n_hard_passed"] == 32
     return {"version": VERSION, "status": "finite_controls_passed" if passed else "finite_controls_not_passed",
+            "historical_v2_parser_compatibility_used": historic_compatible,
             "finite_controls_passed": passed, "n_cases": 16, "n_rounds": 2,
             "judge_id": judge_ids[0], "controls_sha256": manifest["controls_sha256"],
             "constructed_response_checkpoint_id": manifest["checkpoint_id"],
@@ -324,6 +351,7 @@ def main(argv=None):
     builder.add_argument("--source-dev", required=True)
     builder.add_argument("--output-dir", required=True)
     builder.add_argument("--controls", default=str(DEFAULT_CONTROLS))
+    builder.add_argument("--profile", choices=PROFILE_NAMES, default=PROFILE_NAME)
     analysis = sub.add_parser("analyze")
     analysis.add_argument("--bundle-dir", required=True)
     analysis.add_argument("--rounds", nargs=2, required=True)
@@ -331,7 +359,7 @@ def main(argv=None):
     analysis.add_argument("--output", required=True)
     args = parser.parse_args(argv)
     if args.command == "build":
-        report = build(args.source_dev, args.output_dir, controls_path=args.controls)
+        report = build(args.source_dev, args.output_dir, controls_path=args.controls, profile_name=args.profile)
         summary = {key: report[key] for key in ("version", "n_cases", "n_rounds", "checkpoint_id")}
     else:
         report = analyze(args.bundle_dir, args.rounds, controls_path=args.controls)

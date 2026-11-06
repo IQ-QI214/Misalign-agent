@@ -260,7 +260,7 @@ class MilestoneEvalCallback(TrainerCallback):
                           "global_step": identity["global_step"], "run_contract_sha256": self.contract_sha,
                           "model_revision": self.run_contract.get("config", {}).get("model_revision"),
                           "generation_protocol": protocol, "prompt_sha256": text_digest(row["prompt"]),
-                          "response": "", "valid": False}
+                          "response": "", "valid": False, "stop_reason": "error"}
                 try:
                     rendered = self.tokenizer.apply_chat_template(
                         [{"role": "user", "content": row["prompt"]}], tokenize=False,

@@ -226,9 +226,14 @@ def score_records(gold, responses, *, allow_confirmation_scoring=False):
                 record["response_sha256"] = hashlib.sha256(response.encode("utf-8")).hexdigest()
             record["finish_reason"] = prediction.get("finish_reason")
             record["finish_reason_observed"] = prediction.get("finish_reason") is not None
-            parsed = extract_answer(response, reference["answer_type"],
-                                    choice_labels=reference.get("choice_labels"),
-                                    finish_reason=prediction.get("finish_reason"))
+            if "valid" in prediction and type(prediction["valid"]) is not bool:
+                raise ValueError(f"response {item_id}: valid must be a boolean when supplied")
+            if prediction.get("valid") is False or prediction.get("error"):
+                parsed = _unknown("invalid_generation_record", format_error=False)
+            else:
+                parsed = extract_answer(response, reference["answer_type"],
+                                        choice_labels=reference.get("choice_labels"),
+                                        finish_reason=prediction.get("finish_reason"))
         expected = reference["expected_answer"]
         if reference["answer_type"] == "numeric":
             expected = _canonical_number(_numeric(_normalized(expected)))

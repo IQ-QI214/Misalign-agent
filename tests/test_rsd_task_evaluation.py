@@ -46,6 +46,19 @@ def test_reasoning_correct_number_does_not_override_wrong_final():
     assert row["valid"]
 
 
+@pytest.mark.parametrize("metadata", [{"valid": False}, {"valid": True, "error": "generation_failed"}])
+def test_failed_generation_cannot_become_correct_from_partial_final_text(metadata):
+    row = score_one("FINAL: 7", finish_reason="stop", **metadata)
+    assert row["value"] is None
+    assert row["outcome"] == "UNKNOWN"
+    assert row["reason"] == "invalid_generation_record"
+
+
+def test_generation_validity_flag_must_not_be_truthy_string():
+    with pytest.raises(ValueError, match="valid must be a boolean"):
+        score_one("FINAL: 7", valid="false")
+
+
 @pytest.mark.parametrize("response,reason", [
     ("", "empty_response"), (" \n\t", "empty_response"),
     ("The answer is 7.", "missing_final_marker"),

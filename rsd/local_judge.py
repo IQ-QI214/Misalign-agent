@@ -15,8 +15,8 @@ import tempfile
 import time
 
 from .evaluation import checkpoint_identity, digest, judge_inputs, read_jsonl, text_digest, write_json
-from .judge_protocols import (JUDGE_SYSTEMS, PARSER_VERSION, PROFILE_NAME, load_source_lock,
-                              parse_judge_output, render_judge_prompt)
+from .judge_protocols import (JUDGE_SYSTEMS, PARSER_VERSION, PROFILE_NAME, PROFILE_NAMES,
+                              judge_systems, load_source_lock, parse_judge_output, render_judge_prompt)
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_MODELS = Path("/inspire/hdd/global_public/public_models")
@@ -144,8 +144,8 @@ def load_judge_model(path, device):
     return model
 
 
-def encode_judge_input(tokenizer, metric, prompt, response):
-    messages = [{"role": "system", "content": JUDGE_SYSTEMS[metric]},
+def encode_judge_input(tokenizer, metric, prompt, response, *, profile_name=PROFILE_NAME):
+    messages = [{"role": "system", "content": judge_systems(profile_name)[metric]},
                 {"role": "user", "content": render_judge_prompt(metric, prompt, response)}]
     rendered = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     encoded = tokenizer(rendered, add_special_tokens=False, truncation=False, return_tensors="pt")
@@ -214,7 +214,9 @@ def _validate_saved_judgment(row):
 
 def run_local_judge(dataset, predictions, output, *, model_path, device="cuda:0",
                     max_prompt_tokens=8192, max_new_tokens=256, limit=None,
-                    resume=False, allow_test=False):
+                    resume=False, allow_test=False, profile_name=PROFILE_NAME):
+    systems = judge_systems(profile_name)
+    source_lock = load_source_lock(profile_name)
     if not re.fullmatch(r"cuda:[0-9]+", device):
         raise ValueError("Use an explicit single CUDA device, e.g. cuda:0")
     if any(type(value) is not int or value <= 0 for value in (max_prompt_tokens, max_new_tokens)):
@@ -263,18 +265,18 @@ def run_local_judge(dataset, predictions, output, *, model_path, device="cuda:0"
                 packages[package] = version(package)
             except PackageNotFoundError:
                 packages[package] = None
-        profile = {"name": PROFILE_NAME, "alternative_judge_model": True,
+        profile = {"name": profile_name, "alternative_judge_model": True,
                    "claim": "Official rubric with alternative local Gemma3; not the original/default or finetuned judge",
                    "loader": {"class": "Gemma3ForConditionalGeneration", "full_multimodal_weights": True,
                               "local_files_only": True, "trust_remote_code": False,
                               "strict_loading_info": True, "use_safetensors": True},
                    "model_identity": identity, "generation": protocol, "tokenizer": tokenizer_identity,
-                   "source_lock": load_source_lock(), "systems": JUDGE_SYSTEMS,
+                   "source_lock": source_lock, "systems": systems,
                    "parser_version": PARSER_VERSION, "packages": packages, "device": device,
                    "driver_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                    "protocol_implementation_sha256": hashlib.sha256(
                        Path(__file__).with_name("judge_protocols.py").read_bytes()).hexdigest()}
-        judge_id = PROFILE_NAME + ":" + digest(profile)
+        judge_id = profile_name + ":" + digest(profile)
         contract = {"judge_id": judge_id, "judge_profile": profile,
                     "dataset_sha256": digest(dataset), "predictions_sha256": digest(predictions),
                     "selected_ids": selected_ids, "limit": limit, "allow_test": allow_test}
@@ -314,7 +316,8 @@ def run_local_judge(dataset, predictions, output, *, model_path, device="cuda:0"
                                   raw_label=None, components={}, raw_judge_text=None, error=None)
                     row_started = time.monotonic()
                     try:
-                        encoded, rendered_sha = encode_judge_input(tokenizer, item["metric"], item["prompt"], item["response"])
+                        encoded, rendered_sha = encode_judge_input(
+                            tokenizer, item["metric"], item["prompt"], item["response"], profile_name=profile_name)
                         record.update(n_prompt_tokens=encoded["input_ids"].shape[1], rendered_prompt_sha256=rendered_sha)
                         if record["n_prompt_tokens"] > max_prompt_tokens:
                             record["error"] = "prompt_over_budget_no_truncation"
@@ -362,11 +365,13 @@ def main(argv=None):
     parser.add_argument("--limit", type=int)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--allow-test", action="store_true")
+    parser.add_argument("--profile", choices=PROFILE_NAMES, default=PROFILE_NAME)
     args = parser.parse_args(argv)
     report = run_local_judge(read_jsonl(args.dataset), read_jsonl(args.predictions), args.output,
                              model_path=args.model, device=args.device,
                              max_prompt_tokens=args.max_prompt_tokens, max_new_tokens=args.max_new_tokens,
-                             limit=args.limit, resume=args.resume, allow_test=args.allow_test)
+                             limit=args.limit, resume=args.resume, allow_test=args.allow_test,
+                             profile_name=args.profile)
     print(json.dumps(report, indent=2, ensure_ascii=False, allow_nan=False))
 
 

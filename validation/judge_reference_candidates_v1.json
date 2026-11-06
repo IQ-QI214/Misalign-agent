@@ -1,0 +1,85 @@
+{
+  "accepted_validation_records": 0,
+  "candidate_records": 40,
+  "confirmation_answers_or_scores_read": false,
+  "confirmation_question_text_read_for_overlap_only": true,
+  "existing_A_B_bundle_modified": false,
+  "files": {
+    "blind_key.private.json": {
+      "bytes": 5382,
+      "sha256": "8611989f2589959eff83bae461342fae52f894b250183b9eb9eeb5e807400c8e"
+    },
+    "candidates.private.json": {
+      "bytes": 67789,
+      "sha256": "dce46ad3f1b01892f8a980f11e39d6989e8e3086d5498f4f781c12046ee2520d"
+    },
+    "reviewer_1_prompt_eligibility.json": {
+      "bytes": 11815,
+      "sha256": "b5d7603808b20d751afd70066d7ba6b11911f9f68679635e404090b7d1d595e4"
+    },
+    "reviewer_1_responses.json": {
+      "bytes": 24916,
+      "sha256": "80c3737fe8472cd6e8b35ea2b9c550800c1533928e14bb914b8dc8f5be307740"
+    },
+    "reviewer_2_prompt_eligibility.json": {
+      "bytes": 11815,
+      "sha256": "d7486fb7c6696f42504751a4fad34a0028d41e69a7b22f5b865c11f9ff233650"
+    },
+    "reviewer_2_responses.json": {
+      "bytes": 24916,
+      "sha256": "975ff53bc63c9e43ab0312af4e1db87e3af733706ee3d450f28d9e113b739c27"
+    }
+  },
+  "human_prompt_eligibility_labels": 0,
+  "human_rubric_gold_records": 0,
+  "implementation_sha256": "0cd630e0881648f86e0dda048ed921a22a531f2ee19924e0cda27d870a50f29b",
+  "license": "MIT",
+  "limitations": [
+    "Source preference is not independent rubric gold.",
+    "Source buckets do not establish prompt benignness/harmfulness.",
+    "Eligibility UNKNOWN/UNSUITABLE never counts as an accepted validation record.",
+    "Human eligibility may leave fewer than 20 suitable items per rubric; no automatic replacement.",
+    "Source model checkpoint is unavailable; provenance is the pinned public dataset revision.",
+    "No actual human annotations; four blank sheets only. Lexical separation is not semantic independence.",
+    "This standalone candidate pool does not release or complete the 200-case panel."
+  ],
+  "parsing": {
+    "harmless": {
+      "complete_single_turn_pairs": 658,
+      "excluded_character_bounds_without_truncation": 27,
+      "excluded_not_complete_single_turn_or_empty": 1654,
+      "raw_rows": 2312
+    },
+    "helpful": {
+      "complete_single_turn_pairs": 694,
+      "excluded_character_bounds_without_truncation": 11,
+      "excluded_not_complete_single_turn_or_empty": 1660,
+      "raw_rows": 2354
+    }
+  },
+  "project_model_calls": 0,
+  "scientific_conclusion": null,
+  "selected_projection_sha256": "6acbacacab0a3a656149e573f725c95474b5c37957fa1617c9c63120642c54f7",
+  "selection_counts": {
+    "harmless": {
+      "chosen": 10,
+      "eligible_unique_prompt_pairs": 628,
+      "rejected": 10,
+      "selected": 20
+    },
+    "helpful": {
+      "chosen": 10,
+      "eligible_unique_prompt_pairs": 682,
+      "excluded_near_selected_C_prompt": 1,
+      "rejected": 10,
+      "selected": 20
+    }
+  },
+  "source_lock_file_sha256": "93e555dd2042ded43f687b544372af732c04b661aaddbeb7676fea76ff5f4194",
+  "source_repository": "Anthropic/hh-rlhf",
+  "source_revision": "09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa",
+  "state": "C40_CANDIDATES_PREPARED_NOT_ACCEPTED_NOT_LABELED",
+  "training_data_augmentation": false,
+  "unique_source_clusters": 40,
+  "version": "judge-reference-candidates-cpu-v1"
+}

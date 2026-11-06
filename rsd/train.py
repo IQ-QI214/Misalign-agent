@@ -11,6 +11,50 @@ import time
 from .upstream import ROOT, verify_upstream
 
 
+def validate_batch_config(config):
+    if type(config.get("per_device_train_batch_size")) is not int or config["per_device_train_batch_size"] != 1:
+        raise ValueError("Only per-device microbatch=1 is supported")
+    for key in ("gradient_accumulation_steps", "expected_world_size"):
+        if type(config.get(key)) is not int or config[key] < 1:
+            raise ValueError(f"{key} must be a positive integer")
+    if "training_enabled" in config and type(config["training_enabled"]) is not bool:
+        raise ValueError("training_enabled must be a boolean")
+    for key in ("training_seed", "data_seed"):
+        if key in config and (type(config[key]) is not int or not 0 <= config[key] < 2**32):
+            raise ValueError(f"{key} must be a uint32")
+    if config.get("thinking", False) is not False:
+        raise ValueError("This adapter requires thinking=false")
+    if config.get("lr_scheduler_type", "constant") != "constant":
+        raise ValueError("This adapter requires the frozen constant learning-rate schedule")
+    return config
+
+
+def validate_training_geometry(config, rows, world):
+    """No padded distributed examples or partial accumulation windows."""
+    validate_batch_config(config)
+    if type(world) is not int or world < 1:
+        raise ValueError("world must be a positive integer")
+    batch = world * config["per_device_train_batch_size"] * config["gradient_accumulation_steps"]
+    if not rows or len(rows) % batch:
+        raise ValueError(f"Training rows must be divisible by effective batch {batch}; partial windows/padded duplicates are forbidden")
+    if "effective_global_batch" in config and config["effective_global_batch"] != batch:
+        raise ValueError("Declared effective_global_batch differs from runtime geometry")
+    if "planned_exposures" in config and config["planned_exposures"] != batch * config["max_steps"]:
+        raise ValueError("Declared planned_exposures differs from optimizer-step budget")
+    cue = config.get("teacher_context")
+    if cue is not None:
+        if not isinstance(cue, str) or not cue.strip():
+            raise ValueError("Explicit teacher_context must be a nonempty string")
+        if any(r.get("teacher_context") != cue or "teacher_feedback" in r for r in rows):
+            raise ValueError("Every training row must carry the frozen explicit teacher_context")
+    return {"world_size": world, "microbatch": config["per_device_train_batch_size"],
+            "gradient_accumulation_steps": config["gradient_accumulation_steps"],
+            "effective_global_batch": batch, "unique_training_rows": len(rows),
+            "planned_sample_exposures": batch * config["max_steps"],
+            "loss_normalization": "mean_token_KL_per_completion_then_equal_mean_across_microsteps_and_ranks",
+            "partial_window_policy": "rejected"}
+
+
 def normalize_save_strategy(config):
     config = dict(config)
     config.setdefault("save_strategy", "steps")
@@ -46,6 +90,9 @@ def prepare_milestone_data(config):
     """Freeze dev inputs and evaluator implementation before loading a model."""
     if config.get("milestone_eval") is None:
         return None
+    if config["milestone_eval"].get("profile") == "reasoning-v2":
+        from .milestone_v2 import prepare_v2_milestone_data
+        return prepare_v2_milestone_data(config, ROOT)
     from .evaluation import read_jsonl, validate_dataset
     spec = config["milestone_eval"]
     datasets, hashes = {}, {}
@@ -116,8 +163,7 @@ def load_config(path, arm=None):
         raise ValueError("trajectory_mode must be on_policy or off_policy")
     if config["kl_direction"] not in ("forward", "reverse"):
         raise ValueError("kl_direction must be explicit and independent of sampling mode")
-    if config["per_device_train_batch_size"] != 1 or config["gradient_accumulation_steps"] != 1:
-        raise ValueError("v1 requires microbatch=1 and accumulation=1")
+    validate_batch_config(config)
     if config["max_steps"] < 1 or config["max_completion_length"] < 1:
         raise ValueError("Invalid step/length budget")
     if config["max_prompt_length"] + config["max_completion_length"] > config["max_length"]:
@@ -144,11 +190,13 @@ def inspect_training_data(path):
 def make_training_args(config, output_dir, use_cpu=False):
     from trl.experimental.gold import GOLDConfig
     config = normalize_save_strategy(config)
+    validate_batch_config(config)
     return GOLDConfig(
         output_dir=str(output_dir), max_steps=config["max_steps"],
-        per_device_train_batch_size=1, gradient_accumulation_steps=1,
+        per_device_train_batch_size=1, gradient_accumulation_steps=config["gradient_accumulation_steps"],
         learning_rate=config["learning_rate"], lr_scheduler_type="constant", warmup_steps=0,
-        weight_decay=0.01, adam_beta1=0.9, adam_beta2=0.999, adam_epsilon=1e-8,
+        weight_decay=config.get("weight_decay", 0.01), adam_beta1=config.get("adam_beta1", 0.9),
+        adam_beta2=config.get("adam_beta2", 0.999), adam_epsilon=config.get("adam_epsilon", 1e-8),
         max_grad_norm=config["max_grad_norm"],
         bf16=not use_cpu, fp16=False, use_cpu=use_cpu,
         gradient_checkpointing=not use_cpu,
@@ -160,7 +208,7 @@ def make_training_args(config, output_dir, use_cpu=False):
         dataloader_num_workers=0, dataloader_drop_last=True, packing=False,
         logging_steps=1, save_strategy=config["save_strategy"], save_steps=config.get("save_steps", 500),
         save_total_limit=config.get("save_total_limit", 3), save_only_model=False,
-        report_to="none", seed=config["training_seed"], data_seed=config["training_seed"],
+        report_to="none", seed=config["training_seed"], data_seed=config.get("data_seed", config["training_seed"]),
         use_vllm=False, log_completions=False, disable_dropout=True,
         deepspeed=None if use_cpu else str(ROOT / config["deepspeed"]),
         ddp_find_unused_parameters=False,
@@ -282,29 +330,40 @@ def compare_parameter_probes(initial, final):
 
 
 def run(config, resume=None, use_cpu=False):
+    if config.get("training_enabled") is False:
+        raise ValueError("Training is disabled in this preparation config; --dry-run only")
+    validate_batch_config(config)
     import torch
     from datasets import Dataset
     from transformers import set_seed
     from accelerate import PartialState
     from .modeling import load_text_model, load_tokenizer
     from .collator import TransferCollator
-    from .trainer import TransferTrainer, ReceiptCallback, TRAINING_GENERATION_POLICY
+    from .trainer import TransferTrainer, ReceiptCallback, TRAINING_GENERATION_POLICY, ACCUMULATION_POLICY
 
     config = normalize_save_strategy(config)
     verify_upstream()
     milestone_data = prepare_milestone_data(config)
+    if config.get("milestone_eval", {}).get("profile") == "reasoning-v2":
+        from .confirmation import load_plan
+        experiment_plan, _ = load_plan(milestone_data["plan_path"], milestone_data["root"], frozen=True)
+        if experiment_plan["purpose"] == "cpu_fixture" and not use_cpu:
+            raise ValueError("CPU fixture plans may execute only with use_cpu=True")
     world = int(os.environ.get("WORLD_SIZE", "1"))
     if not use_cpu and world != config["expected_world_size"]:
         raise ValueError(f"Expected {config['expected_world_size']} processes, got {world}")
     set_seed(config["training_seed"])
     train_path = (ROOT / config["train_file"]).resolve()
     rows = inspect_training_data(train_path)
+    dose_contract = validate_training_geometry(config, rows, world)
     output = (ROOT / config["output_dir"]).resolve()
     output.mkdir(parents=True, exist_ok=True)
     identity = {"config": config, "train_sha256": hashlib.sha256(train_path.read_bytes()).hexdigest(),
                 "upstream": verify_upstream(), "world_size": world,
                 "deepspeed_sha256": hashlib.sha256((ROOT / config["deepspeed"]).read_bytes()).hexdigest(),
-                "effective_global_batch": world, "profile": "independent_qwen35_rsd_v1",
+                "effective_global_batch": dose_contract["effective_global_batch"],
+                "dose_contract": dose_contract, "profile": "independent_qwen35_rsd_v2",
+                "accumulation_policy": dict(ACCUMULATION_POLICY),
                 "generation_policy": dict(TRAINING_GENERATION_POLICY),
                 "template": {"version": "explicit_privileged_prefix_v1", "thinking": False,
                              "context_mode": config.get("context_mode", "feedback_only"),
@@ -334,16 +393,23 @@ def run(config, resume=None, use_cpu=False):
     callbacks = [ReceiptCallback()]
     milestone_callback = None
     if milestone_data is not None:
-        from .milestone_eval import MilestoneEvalCallback
         spec = config["milestone_eval"]
-        milestone_callback = MilestoneEvalCallback(
-            output_dir=output / "milestones", run_contract=identity,
-            task_dataset=milestone_data["datasets"]["task_dataset"],
-            benchmark_dataset=milestone_data["datasets"]["benchmark_dataset"],
-            steps=spec["steps"], tokenizer=tokenizer,
-            model_getter=lambda: trainer.accelerator.unwrap_model(trainer.model_wrapped),
-            max_new_tokens=spec["max_new_tokens"], max_prompt_tokens=spec["max_prompt_tokens"], seed=spec["seed"],
-        )
+        if spec.get("profile") == "reasoning-v2":
+            from .milestone_v2 import ReasoningMilestoneCallback
+            milestone_callback = ReasoningMilestoneCallback(
+                output_dir=output / "milestones", run_contract=identity, prepared=milestone_data,
+                tokenizer=tokenizer,
+                model_getter=lambda: trainer.accelerator.unwrap_model(trainer.model_wrapped))
+        else:
+            from .milestone_eval import MilestoneEvalCallback
+            milestone_callback = MilestoneEvalCallback(
+                output_dir=output / "milestones", run_contract=identity,
+                task_dataset=milestone_data["datasets"]["task_dataset"],
+                benchmark_dataset=milestone_data["datasets"]["benchmark_dataset"],
+                steps=spec["steps"], tokenizer=tokenizer,
+                model_getter=lambda: trainer.accelerator.unwrap_model(trainer.model_wrapped),
+                max_new_tokens=spec["max_new_tokens"], max_prompt_tokens=spec["max_prompt_tokens"], seed=spec["seed"],
+            )
         callbacks.append(milestone_callback)
     trainer = TransferTrainer(
         model=model, args=args, train_dataset=Dataset.from_list(rows), processing_class=tokenizer,
@@ -412,13 +478,22 @@ def run(config, resume=None, use_cpu=False):
     export_started = time.monotonic()
     synchronized_check("Final model/state export", export_records)
     export_finished = time.monotonic()
+    from .evaluation import digest
     report = {"status": "training_completed", "global_step": trainer.state.global_step,
+                  "run_contract_sha256": digest(identity),
                   "metrics": result.metrics, "parameter_probe_l2_delta": probe_report["l2_delta"],
                   "parameter_probe": probe_report,
                   "evaluation_status": "milestone_predictions_and_task_scores_completed_benchmark_judge_pending" if milestone_callback else "not_run",
                   "frozen_teacher_probe": frozen_report,
                   "final_model_exported": config["export_final_model"],
                   "scientific_conclusion": None}
+    if config.get("milestone_eval", {}).get("profile") == "reasoning-v2":
+        report["evaluation_status"] = "dev_task_scores_completed_confirmation_predictions_sealed_benchmark_judge_pending"
+        report["confirmation_status"] = "sealed_unscored"
+        report["experiment_run_id"] = config["experiment"]["run_id"]
+        report["run_id"] = config["experiment"]["run_id"]
+        report["experiment_plan_file_sha256"] = config["experiment"]["plan_file_sha256"]
+    report["dose_contract"] = dose_contract
     cuda_device = trainer.accelerator.device if not use_cpu and trainer.accelerator.device.type == "cuda" else None
     resources = {
         "status": "training_and_export_completed" if config["export_final_model"] else "training_and_record_export_completed",
@@ -452,11 +527,13 @@ def main():
     args = parser.parse_args()
     config = load_config(args.config, args.arm)
     rows = inspect_training_data(ROOT / config["train_file"])
+    dose_contract = validate_training_geometry(config, rows, config["expected_world_size"])
     prepare_milestone_data(config)
     verify_upstream()
     if args.dry_run:
         print(json.dumps({"status": "configuration_validated_only", "config": config,
-                          "n_train": len(rows), "gpu_verified": False}, indent=2, ensure_ascii=False))
+                          "n_train": len(rows), "dose_contract": dose_contract,
+                          "gpu_verified": False}, indent=2, ensure_ascii=False))
         return
     run(config, args.resume_from_checkpoint)
 

@@ -1,0 +1,149 @@
+{
+  "schema_version": "rsd-cpu-v2-pipeline-acceptance",
+  "status": "PASS_CPU_FIXTURE_ONLY",
+  "purpose": "random tiny GPT2 plumbing acceptance; no Qwen/Gemma research evidence",
+  "model": "random tiny GPT2, 1 layer, hidden size 16",
+  "device": "CPU",
+  "runs": [
+    {
+      "run_id": "fixture-f0-s0",
+      "teacher_mode": "frozen",
+      "seed": 0,
+      "optimizer_steps": 2,
+      "effective_batch": 4,
+      "sample_exposures": 8,
+      "valid_training_tokens": 32,
+      "student_changed_sampled_coordinates": 4704,
+      "frozen_teacher_changed_sampled_coordinates": 0,
+      "result_sha256": "e2699c863f10248d2ca47ceb12cf2ebba0cb5552ba110b5e8de2105b5f981924",
+      "contract_sha256": "20023ec58e69c4e671171524d3fa6da3092381f66c948f991b2a8de2315b2d88"
+    },
+    {
+      "run_id": "fixture-r0-s0",
+      "teacher_mode": "recursive",
+      "seed": 0,
+      "optimizer_steps": 2,
+      "effective_batch": 4,
+      "sample_exposures": 8,
+      "valid_training_tokens": 32,
+      "student_changed_sampled_coordinates": 4704,
+      "frozen_teacher_changed_sampled_coordinates": null,
+      "result_sha256": "ceed81c81fe5d6bc3e2d66632353c7f7386021f1435bf93481510eaafa0de410",
+      "contract_sha256": "3818277d6fe591290f1738af6859707eb168c905e3899b6ff109b15114da0982"
+    },
+    {
+      "run_id": "fixture-f0-s1",
+      "teacher_mode": "frozen",
+      "seed": 1,
+      "optimizer_steps": 2,
+      "effective_batch": 4,
+      "sample_exposures": 8,
+      "valid_training_tokens": 32,
+      "student_changed_sampled_coordinates": 4704,
+      "frozen_teacher_changed_sampled_coordinates": 0,
+      "result_sha256": "b490325ec73b545832758068bc5df2f1c7ee8ddfb36570b361247cf83e894903",
+      "contract_sha256": "f9d9d421b2c149d1a2b5a2323068760bf3eee560418080954fa62773d1799997"
+    },
+    {
+      "run_id": "fixture-r0-s1",
+      "teacher_mode": "recursive",
+      "seed": 1,
+      "optimizer_steps": 2,
+      "effective_batch": 4,
+      "sample_exposures": 8,
+      "valid_training_tokens": 32,
+      "student_changed_sampled_coordinates": 4704,
+      "frozen_teacher_changed_sampled_coordinates": null,
+      "result_sha256": "5c0ee3aeb5b63814fc5023f94aaf038e24597ef1bc5cb1cdb07f18881ba89657",
+      "contract_sha256": "d72febc3e1f796c1b15960903380f1a27729c845e85b11742492436ec39e1d33"
+    },
+    {
+      "run_id": "fixture-f0-s2",
+      "teacher_mode": "frozen",
+      "seed": 2,
+      "optimizer_steps": 2,
+      "effective_batch": 4,
+      "sample_exposures": 8,
+      "valid_training_tokens": 32,
+      "student_changed_sampled_coordinates": 4704,
+      "frozen_teacher_changed_sampled_coordinates": 0,
+      "result_sha256": "6057df4a92d4fa47e6ee75dd36beef32d602cbffa5d01f32ae6c3b34bb2caadc",
+      "contract_sha256": "504e97252ac43c0b8520788d80582fea5a4e9f12e84fa6df6781f983f0f31241"
+    },
+    {
+      "run_id": "fixture-r0-s2",
+      "teacher_mode": "recursive",
+      "seed": 2,
+      "optimizer_steps": 2,
+      "effective_batch": 4,
+      "sample_exposures": 8,
+      "valid_training_tokens": 32,
+      "student_changed_sampled_coordinates": 4704,
+      "frozen_teacher_changed_sampled_coordinates": null,
+      "result_sha256": "534e1ca49017d171aa917105312d19cdbcd7fa177e360ff3d1389ac9ec71e7ff",
+      "contract_sha256": "9e2bc00a4bbfe13bee215b03091214c052ca0ee3bb338aa5fda252e9ac8866a8"
+    }
+  ],
+  "total_optimizer_steps": 12,
+  "total_sample_exposures": 48,
+  "dev_nodes_per_run": [
+    0,
+    1,
+    2
+  ],
+  "confirmation_nodes_per_run": [
+    0,
+    2
+  ],
+  "confirmation_release_verified": true,
+  "confirmation_task_scores": [
+    {
+      "run_id": "fixture-f0-s0",
+      "n_planned": 1,
+      "n_unknown": 1
+    },
+    {
+      "run_id": "fixture-r0-s0",
+      "n_planned": 1,
+      "n_unknown": 1
+    },
+    {
+      "run_id": "fixture-f0-s1",
+      "n_planned": 1,
+      "n_unknown": 1
+    },
+    {
+      "run_id": "fixture-r0-s1",
+      "n_planned": 1,
+      "n_unknown": 1
+    },
+    {
+      "run_id": "fixture-f0-s2",
+      "n_planned": 1,
+      "n_unknown": 1
+    },
+    {
+      "run_id": "fixture-r0-s2",
+      "n_planned": 1,
+      "n_unknown": 1
+    }
+  ],
+  "paired_task_analysis_status": "complete_runs_with_unknown",
+  "sealed_judge_inputs_exported_after_release": true,
+  "judge_model_calls": 0,
+  "gpu_executions": 0,
+  "pretrained_weights_loaded": 0,
+  "trained_weights_persisted": false,
+  "retained_untrained_tiny_input_assets": true,
+  "plan_sha256": "e027b527d2a50faba15a9635c91880f2b1c53d9c3530c1fa75d71f84b4fc37fa",
+  "release_sha256": "3fc41a97732b991a46e5aa44cd169e146c9d24f574fee2918aabc1020d84c3c8",
+  "paired_analysis_sha256": "8fa379c4df6eecb7f97568a3abb5a30da26625e85353d5ca827a828c7f653766",
+  "script_sha256": "d081747421c0cf35695a3ba4e148d947a98f56a415416d221a1e41d9c33f30f0",
+  "scientific_ready": false,
+  "scientific_conclusion": null,
+  "limits": [
+    "CUDA/DeepSpeed and long outputs not exercised.",
+    "Fixture judge profile is not an actual calibrated judge; no benchmark judge results produced.",
+    "Single-process integration uses effective batch4; actual 2-rank CPU batch8 parity is recorded separately."
+  ]
+}

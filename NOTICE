@@ -19,3 +19,9 @@ AllenAI ARC-Challenge (CC-BY-SA-4.0 per its official dataset card; Clark et al.,
 2018). Pinned sources and attribution are in configs/rsd/reasoning_sources_v2.lock.json.
 Derived ARC records retain CC-BY-SA-4.0; source and derived datasets are not
 bundled in this Git repository. Filtering/rendering does not change their terms.
+
+External judge-validation candidates use Anthropic HH-RLHF (MIT, copyright
+2022 Anthropic) at a pinned dataset revision. The notice is retained in
+configs/rsd/judge_licenses/Anthropic-HH-MIT.txt and source identities are in
+configs/rsd/judge_reference_sources.lock.json. These are evaluation candidates,
+not student training data; original preferences are not rubric gold labels.

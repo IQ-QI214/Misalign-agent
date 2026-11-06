@@ -1,6 +1,6 @@
 {
   "schema_version": "rsd-exploration-v2-plan",
-  "status": "CPU_PREPARATION_DRAFT_NOT_FROZEN",
+  "status": "CPU_PIPELINE_VERIFIED_RESEARCH_NOT_FROZEN",
   "training_enabled": false,
   "executable_training_config": false,
   "gpu_state": "OFF_BY_USER",
@@ -186,16 +186,17 @@
     "degenerate_bootstrap": "null with reason; bounded sensitivity analysis, no zero population uncertainty claim",
     "multiple_testing": "No secondary significance claim; predeclare Holm family before release if adding formal tests",
     "task_score_protocol": "final-answer-v1",
-    "task_score_to_analysis_adapter": "PENDING"
+    "task_score_to_analysis_adapter": "CPU_TESTED_BOUND_RAW_PREDICTIONS_WITH_RELEASE_GATE"
   },
   "confirmation_release": {
-    "implemented": false,
+    "implemented": true,
     "default": "sealed and unscored",
     "required_runs": 6,
     "requires_complete_manifest": true,
     "no_interim_score_or_summary": true,
     "failed_run_policy": "retain missing run and sealed responses; record recovery decision; no automatic unsealing",
-    "manual_flags_are_not_release_authorization": true
+    "manual_flags_are_not_release_authorization": true,
+    "implementation": "rsd.confirmation; CPU workflow gate, not encryption"
   },
   "planned_workload": {
     "dev_generations": 13176,
@@ -213,18 +214,21 @@
     "task_gold_isolation": "PASS_CPU",
     "source_binding_and_split_review": "PASS_CPU",
     "prompt_length_audit": "PASS_CPU",
-    "capability_scorer": "CPU_TESTED_NOT_INTEGRATED",
+    "capability_scorer": "CPU_INTEGRATED_TESTED_NO_9B_EVIDENCE",
     "paired_safety_analysis": "CPU_TESTED_NOT_RESEARCH_EVIDENCE",
-    "accumulation4_loss_and_teacher_timing": "NOT_IMPLEMENTED",
-    "new_capability_callback": "NOT_IMPLEMENTED",
-    "test_response_seal_and_release_controller": "NOT_IMPLEMENTED",
-    "judge_v3_profile": "DESIGN_ONLY",
-    "independent_judge_validation_records": "0_OF_200",
+    "accumulation4_loss_and_teacher_timing": "CPU_SINGLE_AND_TWO_RANK_GLOO_TESTED_CUDA_DEEPSPEED_UNVERIFIED",
+    "new_capability_callback": "CPU_INTEGRATED_TESTED",
+    "test_response_seal_and_release_controller": "CPU_INTEGRATED_SIX_RUN_GATE_TESTED",
+    "judge_v3_profile": "IMPLEMENTED_CPU_TESTED_NOT_MODEL_VALIDATED",
+    "independent_judge_validation_records": "A64_CANDIDATES_B0_OF96_C40_REFERENCE_CANDIDATES_PENDING_ADMISSION",
     "independent_judge_gold": "0_OF_200",
     "judge_error_and_per_metric_mde": "UNKNOWN_NOT_FROZEN",
     "gpu_capacity_long_output_accum4": "UNVERIFIED",
     "output_length_distribution": "UNKNOWN",
-    "warmup_excluded_throughput": "UNKNOWN"
+    "warmup_excluded_throughput": "UNKNOWN",
+    "six_run_random_tiny_cpu_integration": "PASS_ENGINEERING_ONLY",
+    "ability_paired_analysis": "CPU_INTEGRATED_RELEASE_AWARE",
+    "C_reference_prompt_eligibility": "UNKNOWN_NEEDS_INDEPENDENT_HUMAN_REVIEW"
   },
   "stop_rules": [
     "identity/hash mismatch",
@@ -238,5 +242,10 @@
     "resume": "no optimizer resume; preserve completed records and rebuild from fixed base if interrupted"
   },
   "final_protocol_sha256": null,
-  "scientific_result": null
+  "scientific_result": null,
+  "cpu_receipts": [
+    "validation/accumulation_cpu_v2.json",
+    "validation/cpu_v2_pipeline_v2.json",
+    "validation/judge_v3_cpu_preparation.json"
+  ]
 }

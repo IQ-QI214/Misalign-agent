@@ -1,0 +1,120 @@
+{
+  "schema_version": "rsd-accumulation-cpu-v2",
+  "date": "2026-11-07",
+  "state": "PASS_CPU_ONLY",
+  "gpu_runs": 0,
+  "remote_connections": 0,
+  "model": "random tiny GPT2; no pretrained model weights",
+  "policy": {
+    "loss": "Each completion token-mean KL, then equal mean over microsteps and ranks",
+    "transformers_scales_once_by_current_gas": true,
+    "accelerator_gas": 1,
+    "deepspeed_scale_wrt_gas": "false per inspected pinned Trainer implementation; real CUDA/DeepSpeed execution remains unverified",
+    "partial_windows": "rejected before generation/backward",
+    "teacher_mode_tests": [
+      "frozen unchanged",
+      "recursive unchanged within four-microstep window, updated at next optimizer step"
+    ]
+  },
+  "tests": {
+    "command": "PYTHONPATH=.runtime/trl026 PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python -m pytest -q tests/test_rsd_accumulation.py tests/test_rsd_training.py tests/test_rsd_milestone_training.py",
+    "passed": 38,
+    "elapsed_seconds": 15.21,
+    "warnings": 1,
+    "warning": "Existing upstream TRLExperimentalWarning"
+  },
+  "distributed_workers": [
+    {
+      "backend": "gloo",
+      "world_size": 2,
+      "device": "cpu:0",
+      "rank": 0,
+      "teacher_mode": "frozen",
+      "microbatch": 1,
+      "gradient_accumulation_steps": 4,
+      "optimizer_steps": 2,
+      "effective_batch": 8,
+      "global_exposures": 16,
+      "global_tokens": 44,
+      "manual_batch_reference_max_parameter_error": 1.862645149230957e-09
+    },
+    {
+      "backend": "gloo",
+      "world_size": 2,
+      "device": "cpu:0",
+      "rank": 1,
+      "teacher_mode": "frozen",
+      "microbatch": 1,
+      "gradient_accumulation_steps": 4,
+      "optimizer_steps": 2,
+      "effective_batch": 8,
+      "global_exposures": 16,
+      "global_tokens": 44,
+      "manual_batch_reference_max_parameter_error": 1.862645149230957e-09
+    },
+    {
+      "backend": "gloo",
+      "world_size": 2,
+      "device": "cpu:0",
+      "rank": 0,
+      "teacher_mode": "recursive",
+      "microbatch": 1,
+      "gradient_accumulation_steps": 4,
+      "optimizer_steps": 2,
+      "effective_batch": 8,
+      "global_exposures": 16,
+      "global_tokens": 44,
+      "manual_batch_reference_max_parameter_error": 3.725290298461914e-09
+    },
+    {
+      "backend": "gloo",
+      "world_size": 2,
+      "device": "cpu:0",
+      "rank": 1,
+      "teacher_mode": "recursive",
+      "microbatch": 1,
+      "gradient_accumulation_steps": 4,
+      "optimizer_steps": 2,
+      "effective_batch": 8,
+      "global_exposures": 16,
+      "global_tokens": 44,
+      "manual_batch_reference_max_parameter_error": 3.725290298461914e-09
+    }
+  ],
+  "attempts": [
+    {
+      "state": "PASS",
+      "scope": "single-process accumulation and legacy training/milestone tests",
+      "passed": 36
+    },
+    {
+      "state": "LOCAL_RENDEZVOUS_FAILURE",
+      "backend": "torchrun --standalone IPv6 reverse-DNS on Mac",
+      "first_case": "timed out before worker execution at 90 seconds",
+      "second_case": "stopped owned launcher after repeated same rendezvous error",
+      "model_training_executed": false
+    },
+    {
+      "state": "WORKER_PARITY_PASS_OUTER_ASSERTION_FAILED",
+      "backend": "static IPv4 CPU Gloo",
+      "reason": "Accelerator reports cpu:0, while initial test expected literal cpu",
+      "fix": "validate torch.device(...).type == cpu; retain actual device string"
+    },
+    {
+      "state": "PASS",
+      "scope": "38 tests including frozen/recursive two-rank global-batch parity"
+    }
+  ],
+  "source_sha256": {
+    "rsd/trainer.py": "09ef80cd5e2cb6cb931a692be7d7b3cee2e31d4efff999455308509f44eca271",
+    "tests/test_rsd_accumulation.py": "80853a72d77f0442f14b11b67ffb2ebd1d5bf716fec947f9b2ffe4cef3a892df"
+  },
+  "telemetry": "rank trajectory and optimizer JSONL; global observed samples/tokens/source coverage; counters reset per attempt; wall timing uses CUDA sync boundaries when on CUDA",
+  "limitations": [
+    "No H100/DeepSpeed/long-completion capacity verification",
+    "No model-behavior or safety-transfer conclusion",
+    "CPU parameter parity does not validate GPU numerical equivalence",
+    "Timing is instrumented wall clock and includes synchronization overhead"
+  ],
+  "scientific_conclusion": null
+}

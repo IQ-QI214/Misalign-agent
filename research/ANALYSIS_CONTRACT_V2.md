@@ -2,6 +2,8 @@
 
 `python -m rsd.paired_analysis` 是 CPU 统计工具。它消费既有 `rsd.evaluation.score_records` 的 `rsd-eval-v1` summary，不运行模型、不改变评分语义、不自动判定研究成功。主终点仍是 **step 512、StrongREJECT test、R0 − F0 连续分数差**。其他 step、dev、误拒、任务准确率只输出描述性分析。
 
+2026-11-07新增`rsd.task_analysis`接入能力数据：先核验prompt/gold与逐条run/checkpoint/step/生成协议身份，再从原始回答执行`final-answer-v1`，最后复用本文件的source配对统计。内部适配为旧summary字段结构不表示采用旧whole-response评分。失败生成即使残留合法`FINAL`也保留UNKNOWN；GSM/ARC分别输出。确认分析使用`python -m rsd.task_analysis --plan ... --runs-root ... --release ... --step ... --output ... --root ...`，每次重新验证全部六run的解封证据。底层Python `allow_test`只供受控入口与显式CPU fixture，不是独立解封授权。
+
 ## 输入与调用
 
 Python 接口：

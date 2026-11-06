@@ -1,0 +1,100 @@
+{
+  "version": "judge-v3-reference-source-lock-v1",
+  "repository": "Anthropic/hh-rlhf",
+  "revision": "09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa",
+  "github_revision": "c72f5cee8eb7b4d2ea5617657f4430d5e333af07",
+  "source_files": [
+    {
+      "subset": "helpful-base",
+      "native_split": "test",
+      "file": "helpful-base-test.jsonl.gz",
+      "bytes": 875191,
+      "sha256": "8be3fc1a13b27901631696f2be6f184c799f1baeaf145f53ac5db24960adc37b",
+      "metadata_lfs_sha256": "8be3fc1a13b27901631696f2be6f184c799f1baeaf145f53ac5db24960adc37b",
+      "metadata_lfs_verified": true,
+      "raw_rows": 2354,
+      "url": "https://huggingface.co/datasets/Anthropic/hh-rlhf/resolve/09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa/helpful-base/test.jsonl.gz?download=true"
+    },
+    {
+      "subset": "harmless-base",
+      "native_split": "test",
+      "file": "harmless-base-test.jsonl.gz",
+      "bytes": 742801,
+      "sha256": "ebfaaed21162a4de120ae85366075b34425e2a6303fac59b99555002f7016f03",
+      "metadata_lfs_sha256": "ebfaaed21162a4de120ae85366075b34425e2a6303fac59b99555002f7016f03",
+      "metadata_lfs_verified": true,
+      "raw_rows": 2312,
+      "url": "https://huggingface.co/datasets/Anthropic/hh-rlhf/resolve/09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa/harmless-base/test.jsonl.gz?download=true"
+    }
+  ],
+  "documentation": [
+    {
+      "file": "README.md",
+      "sha256": "f75f40db0268656ba07736ec8e59a9720c1910ce554c85354cec74b1c8bda175",
+      "url": "https://huggingface.co/datasets/Anthropic/hh-rlhf/blob/09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa/README.md"
+    },
+    {
+      "file": "github-LICENSE",
+      "sha256": "d4fb18db48757e273261a5597b8a09381de8073da060474ce33d0643e06c875e",
+      "url": "https://github.com/anthropics/hh-rlhf/blob/c72f5cee8eb7b4d2ea5617657f4430d5e333af07/LICENSE"
+    },
+    {
+      "file": "github-README.md",
+      "sha256": "1c0c05d81159503de2b72116d6858d71288bc46548ef4541e9e7a5c33dc1e39d",
+      "url": "https://github.com/anthropics/hh-rlhf/blob/c72f5cee8eb7b4d2ea5617657f4430d5e333af07/README.md"
+    }
+  ],
+  "selection": {
+    "salt": "judge-v3-C-hh-rlhf-single-turn-20261107-v1",
+    "sort": "SHA256(salt + newline + normalized-prompt source_id)",
+    "answer_field": "independent SHA256 salt parity; quota chosen10/rejected10 per source subset; no judge or project model outputs consulted",
+    "one_response_per_prompt": true,
+    "single_turn_only": true,
+    "paired_context_exact_match_required": true,
+    "prompt_character_bounds": [
+      15,
+      1500
+    ],
+    "each_source_response_character_bounds": [
+      10,
+      3000
+    ],
+    "text_rewritten_or_truncated": false,
+    "duplicate_source_prompt_policy": "exclude all exact normalized duplicates across eligible pools",
+    "near_duplicate_rule": "Normalized question word-set Jaccard>=0.85 or normalized exact equality; compare to A, B, old controls/cohort, full safety dev/test and selected C."
+  },
+  "exclusion_assets": {
+    "A": {
+      "path": ".runtime/judge_validation_v3/prepared_20261107/authored_candidates.json",
+      "sha256": "8511a618518140c50fba1be520ac8d2c3dbf4cbf2c7d44166acec7949b7b86fe"
+    },
+    "B": {
+      "path": ".runtime/judge_validation_v3/prepared_20261107/real_dev_generation_slots.json",
+      "sha256": "293f33cfa078494be7f8b1994d629f06cb00da98f49bb7572743b08a9e2a3543"
+    },
+    "controls": {
+      "path": "configs/rsd/judge_calibration_controls_v1.json",
+      "sha256": "142b3fce58336822bd8d7644692afcb4921d2b9aa44795b2d8708fa502a5f3d8"
+    },
+    "old_cohort": {
+      "path": "configs/rsd/milestone_dev_cohort_v1.json",
+      "sha256": "2d62020f631874f8c6e6b33a9dd75fbf732f1c130e61b3b3a0eb9e039bdbfc55"
+    },
+    "full_dev": {
+      "path": "data/rsd_benchmarks/dev.jsonl",
+      "sha256": "ded0a031138c2ca58f253b8d6e8360a6e9a8e9539d6cd89df088843ea390e602"
+    },
+    "full_test": {
+      "path": "data/rsd_benchmarks/test.jsonl",
+      "sha256": "5252ee547ab1c165c7d8c3d2b876d4ebebeb9d8cf170859ab540e4f045ad1525"
+    }
+  },
+  "expected_selected_projection_sha256": "6acbacacab0a3a656149e573f725c95474b5c37957fa1617c9c63120642c54f7",
+  "expected_candidates": 40,
+  "expected_accepted_candidates": 0,
+  "human_gold": "UNKNOWN",
+  "preference_is_rubric_gold": false,
+  "source_bucket_is_prompt_eligibility": false,
+  "license": "MIT",
+  "local_license_notice": "configs/rsd/judge_licenses/Anthropic-HH-MIT.txt"
+}

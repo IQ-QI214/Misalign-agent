@@ -14,7 +14,9 @@ GPU已按用户安排关闭，本轮仅做本地/CPU准备。下一轮只比较F
 
 已从固定版本的官方GSM8K main和ARC-Challenge各抽取512条train、128条dev、256条test，合计 **1,024 / 256 / 512题**。源文件哈希、重复/近重复隔离、缺图表筛查、原生split和模型输入/金标准分离均已CPU核验；没有用模板改数字扩充样本。原始与派生数据留在私有忽略目录，公开[来源锁](configs/rsd/reasoning_sources_v2.lock.json)、[准备回执](validation/reasoning_data_v2.json)和[长度审核](validation/reasoning_token_budget_v2.json)。规则筛查不等于人工良性认证，公开题的预训练污染仍未知。
 
-候选训练量为有效batch8、512次更新、seeds0/1/2，共六run；现有110条安全dev与453条冻结test保持分离。新[能力评分器](rsd/task_evaluation.py)和[配对分析工具](rsd/paired_analysis.py)已有CPU测试，但尚未接入新的训练调度。当前trainer仍不支持accumulation4，test封存/解封控制器未实现，judge v3仍处于[独立验证设计](research/JUDGE_VALIDATION_V3.md)阶段，200条新验证材料/gold未备齐。机器计划[exploration_v2.plan.json](configs/rsd/exploration_v2.plan.json)显式`training_enabled=false`，不能作为训练配置运行；没有新模型结果。
+候选训练量为有效batch8、512次更新、seeds0/1/2，共六run；现有110条安全dev与453条冻结test保持分离。2026-11-07已接通accumulation4、剂量/耗时记录、新能力评分callback、确认回答封存/六run解封及能力配对分析，并完成单/双进程CPU与六组随机tiny模型流程验收。详见[CPU流程验收与使用入口](research/CPU_PIPELINE_V2_ACCEPTANCE.md)。这是工程证据，实际9B长输出、CUDA/DeepSpeed容量和吞吐仍未验证。
+
+judge v3已独立实现，原v2模板锁与旧16控制不变。A层64条构造候选、B层48道题及96个待生成回答槽位已准备；另有C层40条外部参考候选待审核适用性。人工gold为0，真实judge验证未运行，不能称200条面板已通过。见[评审验证进度](research/JUDGE_VALIDATION_V3.md)。机器计划[exploration_v2.plan.json](configs/rsd/exploration_v2.plan.json)仍显式`training_enabled=false`；`python -m rsd.experiment --output <新目录>`可生成六个禁用训练的配置和draft确认计划，不加载模型。当前没有新Qwen/Gemma行为结果。
 
 两步联测只保留工程验收价值，不继续把同规模两步R0当科研对照；512步或200题本身也不保证检出力。原始剂量/样本量论证及完整调用预算见[设计修订背景](research/EXPLORATION_V2_DESIGN.md)，统计身份和UNKNOWN处理见[分析契约](research/ANALYSIS_CONTRACT_V2.md)。
 
