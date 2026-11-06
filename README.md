@@ -154,6 +154,8 @@ python -B -m rsd.local_judge \
 
 Gemma3完整权重严格加载，缺失、额外、形状不匹配均为0；12个权重分片的SHA与官方仓库revision `005ad3404e59d6023443cb575daa05336842228a` 一致。其他小文件采用本地内容哈希锁定，尚未全部与该官方revision逐项比对。模型目录只读使用，未复制权重到项目。v2单H100采样显存峰值约53.0 GiB，judge进程含身份校验耗时约167秒；训练和评审顺序运行。脱敏回执见 [`validation/gpu_local_judge_v2.json`](validation/gpu_local_judge_v2.json)。
 
+两版5条安全题的渲染提示、模型与声明的生成设置相同，但3条评语文本不同，其中1条specificity分项从2变为1；最终安全分数均保持0。两版driver/profile有所变化，这不是专门的确定性对照，差异原因尚未确认。固定seed和greedy并未证明逐token可重复，正式研究还需校准评分准确性与重复稳定性。
+
 ```bash
 python -m rsd.analysis --base runs/base-summary.json \
   --f0 runs/F0-summary.json --r0 runs/R0-summary.json \
