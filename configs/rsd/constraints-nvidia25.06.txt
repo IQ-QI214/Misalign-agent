@@ -1,0 +1,9 @@
+# Optional profile for the NVIDIA 25.06 image's preinstalled Python 3.12 Torch.
+# Use in a project virtualenv; this does not install the NVIDIA Torch image.
+# PyArrow 26 requires NumPy 2, incompatible with this Torch build's NumPy 1 ABI.
+torch==2.8.0a0+5228986c39.nv25.6
+numpy==1.26.4
+pyarrow==24.0.0
+deepspeed==0.19.9
+flash-linear-attention==0.6.0
+causal-conv1d==1.7.0

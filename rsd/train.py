@@ -6,6 +6,7 @@ from importlib.metadata import version, PackageNotFoundError
 import json
 import os
 from pathlib import Path
+import time
 
 from .upstream import ROOT, verify_upstream
 
@@ -250,9 +251,12 @@ def run(config, resume=None, use_cpu=False):
             except PackageNotFoundError:
                 versions[package] = None
         (output / "environment.json").write_text(json.dumps({"packages": versions, "load_report": model.load_report}, indent=2) + "\n")
+    training_started = time.monotonic()
     result = trainer.train(resume_from_checkpoint=resume)
+    training_finished = time.monotonic()
     trainer.save_model(str(output / "final"))
     trainer.save_state()
+    export_finished = time.monotonic()
     final_probe = capture_parameter_probe(trainer.accelerator.unwrap_model(trainer.model))
     if rank == 0:
         probe_report = compare_parameter_probes(initial_probe, final_probe)
@@ -263,6 +267,23 @@ def run(config, resume=None, use_cpu=False):
                   "parameter_probe": probe_report,
                   "evaluation_status": "not_run", "scientific_conclusion": None}
         (output / "result.json").write_text(json.dumps(report, indent=2) + "\n")
+    cuda_device = trainer.accelerator.device if not use_cpu and trainer.accelerator.device.type == "cuda" else None
+    resources = {
+        "status": "training_and_export_completed", "rank": rank,
+        "effective_world_size": trainer.accelerator.num_processes,
+        "global_step": trainer.state.global_step, "attempt_id": trainer.attempt_id,
+        "resume_requested": resume is not None,
+        "device": str(trainer.accelerator.device),
+        "device_name": torch.cuda.get_device_name(cuda_device) if cuda_device is not None else None,
+        "max_memory_allocated_bytes": torch.cuda.max_memory_allocated(cuda_device) if cuda_device is not None else None,
+        "max_memory_reserved_bytes": torch.cuda.max_memory_reserved(cuda_device) if cuda_device is not None else None,
+        "memory_scope": "PyTorch CUDA allocator only; excludes other processes, non-PyTorch allocations and host RAM.",
+        "memory_peak_window": "Since process start or last allocator peak reset; this receipt does not reset counters.",
+        "train_and_periodic_checkpoints_seconds": training_finished - training_started,
+        "final_export_and_trainer_state_seconds": export_finished - training_finished,
+        "timing_scope": "Rank-local monotonic wall clock without added barriers or CUDA synchronization; excludes loading and parameter probes.",
+    }
+    (output / f"resources_rank{rank}.json").write_text(json.dumps(resources, indent=2) + "\n")
     return trainer
 
 

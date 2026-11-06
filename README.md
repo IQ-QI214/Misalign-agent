@@ -2,7 +2,7 @@
 
 研究良性任务学习中的安全迁移，以及迁移方向如何受到教师递归更新的影响。
 
-第一版面向 **Qwen3.5-9B、2×H100**，基于公开 [OPSD](https://github.com/siyan-zhao/OPSD) 的固定版本独立适配。当前完成本地 CPU pipeline；尚无真实 9B/GPU 实验或安全迁移结论。
+第一版面向 **Qwen3.5-9B、2×H100**，基于公开 [OPSD](https://github.com/siyan-zhao/OPSD) 的固定版本独立适配。当前完成本地 CPU pipeline 和随机小模型的双 H100 ZeRO-2 两步更新及保存；真实 9B 训练与安全迁移结论仍待验证。
 
 ## 研究问题
 
@@ -57,10 +57,12 @@ python -m rsd.smoke --output-dir runs/cpu_pipeline_smoke
 
 ## 两卡运行
 
-先安装与节点 CUDA 匹配的 PyTorch/DeepSpeed，运行 `ds_report` 并核验 CPUAdam 编译及 Qwen3.5 fast kernels。当前配置 ZeRO-2 + CPU optimizer offload，学生权重每卡完整保留；冻结教师每卡另占一份。建议约256GB以上可用RAM、0.5—1TB空闲盘，实际按峰值核验。Linux/CUDA组合尚未验收，不要原样使用上游旧 environment.yml。
+先安装与节点 CUDA 匹配的 PyTorch/DeepSpeed，运行 `ds_report` 并核验 CPUAdam 编译及 Qwen3.5 fast kernels。当前配置 ZeRO-2 + CPU optimizer offload，学生权重每卡完整保留；冻结教师每卡另占一份。建议约256GB以上可用RAM、0.5—1TB空闲盘，实际按峰值核验。完整9B训练尚未验收，不要原样使用上游旧 environment.yml。
+
+已通过小模型双卡测试的镜像为 NVIDIA Torch 2.8.0a0 / CUDA 12.9 / Python 3.12。该镜像可额外使用 `-c configs/rsd/constraints-nvidia25.06.txt` 安装项目依赖：其 Torch 使用 NumPy 1 ABI，必须配套 NumPy 1.26.4、PyArrow 24.0.0；直接安装最新 PyArrow 26 或改用 NumPy 2 均在实际检查中失败。此约束不适用于其他 Torch 镜像，实际二进制兼容性由 preflight 的数据转换、CPUAdam 和 CUDA 小模型检查确认。
 
 ```bash
-# 离线检查真实 CUDA、实际 kernel 导入、CPUAdam 更新和随机 tiny Qwen3.5 前后向。
+# 离线检查数据栈ABI、真实 CUDA、实际 kernel 导入、CPUAdam 更新和随机 tiny Qwen3.5 前后向。
 # 输出目录也承接缓存、编译文件和逐项失败日志；通过不代表完整9B/双卡训练通过。
 python -B scripts/rsd_gpu_preflight.py --output-dir runs/gpu_preflight \
   --check-kernels --exercise-optimizer --exercise-model
@@ -132,4 +134,4 @@ python -m rsd.train --config configs/rsd/dce_inspired_probe.json --dry-run
 
 ## 当前状态
 
-本地CPU软件、数据契约、基准题目准备与配置检查已完成。真实Qwen3.5-9B权重加载、2×H100峰值/吞吐、真实judge、论文现象和正负安全迁移仍未验证。
+本地CPU软件、数据契约、基准题目准备、CUDA小Qwen3.5前后向和随机小模型的双H100 ZeRO-2更新/保存已完成。真实Qwen3.5-9B权重加载、9B峰值/吞吐、真实judge、论文现象和正负安全迁移仍未验证。

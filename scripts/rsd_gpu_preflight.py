@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Collect a local GPU environment receipt without installing or downloading.
 
-Default: system/package inventory and a Torch CUDA availability check.
+Default: system/package inventory, Torch CUDA availability, and a real CPU
+Dataset -> NumPy -> Torch -> NumPy interoperability check.
 Optional, explicitly requested exercises run in isolated, bounded subprocesses:
     --check-kernels        import the actual FLA and causal-conv1d functions
     --exercise-optimizer   build/load CPUAdam and update one tiny CPU parameter
@@ -40,7 +41,7 @@ SCRIPT_PATH = Path(__file__).resolve()
 PACKAGES = (
     "torch", "transformers", "trl", "accelerate", "peft", "datasets",
     "deepspeed", "flash-linear-attention", "causal-conv1d", "flash-attn",
-    "triton", "ninja", "packaging", "safetensors",
+    "triton", "ninja", "packaging", "safetensors", "numpy", "pyarrow", "pandas",
 )
 CACHE_PATHS = {
     "TMPDIR": "tmp", "TMP": "tmp", "TEMP": "tmp",
@@ -243,6 +244,35 @@ def probe_torch_cuda(_args) -> dict:
     }
 
 
+def probe_data_stack(_args) -> dict:
+    """Exercise the binary interfaces; installed version metadata is insufficient."""
+    import numpy as np
+    import pyarrow as pa
+    from datasets import Dataset
+    import torch
+
+    dataset = Dataset.from_list([{"value": 1.5}, {"value": -2.25}, {"value": 0.0}])
+    array = np.asarray(dataset.with_format("numpy")["value"], dtype=np.float32)
+    tensor = torch.from_numpy(array)
+    tensor.add_(0.5)
+    roundtrip = tensor.numpy()
+    expected = np.array([2.0, -1.75, 0.5], dtype=np.float32)
+    values_match = bool(np.array_equal(roundtrip, expected))
+    shared_mutation = bool(np.array_equal(array, expected))
+    return {
+        "status": "passed" if values_match and shared_mutation else "failed",
+        "scope": "Real CPU Dataset/Arrow -> NumPy -> torch.from_numpy -> tensor.numpy interoperability",
+        "versions": {"numpy": np.__version__, "pyarrow": pa.__version__,
+                     "torch": str(torch.__version__)},
+        "module_paths": {"numpy": np.__file__, "pyarrow": pa.__file__, "torch": torch.__file__},
+        "dataset_rows": len(dataset), "arrow_schema": str(dataset.data.schema),
+        "tensor_device": str(tensor.device), "tensor_dtype": str(tensor.dtype),
+        "values_match": values_match, "shared_mutation_observed": shared_mutation,
+        "roundtrip_values": roundtrip.tolist(),
+        "gpu_exercised": False,
+    }
+
+
 def probe_kernels(args) -> dict:
     if not args.check_kernels:
         raise ValueError("Kernel imports require --check-kernels")
@@ -355,7 +385,7 @@ def probe_tiny_qwen(args) -> dict:
     }
 
 
-PROBES = {"torch_cuda": probe_torch_cuda, "kernels": probe_kernels,
+PROBES = {"torch_cuda": probe_torch_cuda, "data_stack": probe_data_stack, "kernels": probe_kernels,
           "cpu_adam": probe_cpu_adam, "tiny_qwen_cuda": probe_tiny_qwen}
 
 
@@ -466,7 +496,7 @@ def main(argv=None) -> int:
         "full_9b_training_readiness": "not_established",
         "distributed_training_tested": False, "probes": {},
     }
-    requested = {"torch_cuda": True, "kernels": args.check_kernels,
+    requested = {"torch_cuda": True, "data_stack": True, "kernels": args.check_kernels,
                  "cpu_adam": args.exercise_optimizer, "tiny_qwen_cuda": args.exercise_model}
     for name, enabled in requested.items():
         if enabled:

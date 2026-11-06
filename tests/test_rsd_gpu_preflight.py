@@ -1,4 +1,4 @@
-"""Preflight orchestration/receipt checks without importing Torch or using a GPU."""
+"""Preflight checks; optional libraries stay in child processes, no GPU is used."""
 
 import json
 import os
@@ -95,6 +95,41 @@ def test_child_failure_has_json_and_log_without_exercising_optimizer(
     assert "requires --exercise-optimizer" in Path(result["log"]).read_text()
 
 
+def test_real_data_stack_roundtrip_runs_on_cpu_in_child(isolated_environment, tmp_path):
+    root, _ = preflight.configure_output(tmp_path / "output")
+    receipt_dir = root / "receipts"
+    receipt_dir.mkdir()
+    args = SimpleNamespace(check_kernels=False, exercise_optimizer=False, exercise_model=False,
+                           device_index=0, timeout_seconds=60)
+    result = preflight.run_probe("data_stack", args, root, receipt_dir)
+    assert result["status"] == "passed", result
+    assert result["returncode"] == 0
+    assert result["tensor_device"] == "cpu"
+    assert result["values_match"] and result["shared_mutation_observed"]
+    assert result["roundtrip_values"] == [2.0, -1.75, 0.5]
+    assert result["gpu_exercised"] is False
+
+
+def test_data_stack_import_failure_isolated_and_preserved(tmp_path):
+    fake_modules = tmp_path / "fake_modules"
+    fake_modules.mkdir()
+    (fake_modules / "numpy.py").write_text('raise RuntimeError("synthetic NumPy ABI failure")\n')
+    output = tmp_path / "output"
+    receipt = output / "data_stack.json"
+    original_numpy = sys.modules.get("numpy")
+    result = subprocess.run(
+        [sys.executable, "-B", str(preflight.SCRIPT_PATH), "--output-dir", str(output),
+         "--internal-probe", "data_stack", "--probe-output", str(receipt)],
+        env={**os.environ, "PYTHONPATH": str(fake_modules)},
+        capture_output=True, text=True, timeout=10, check=False,
+    )
+    assert result.returncode == 1
+    report = json.loads(receipt.read_text())
+    assert report["status"] == "failed"
+    assert report["error"] == "RuntimeError: synthetic NumPy ABI failure"
+    assert sys.modules.get("numpy") is original_numpy
+
+
 def test_receipt_keeps_requested_failure_and_unrequested_checks_separate(
     isolated_environment, monkeypatch, tmp_path,
 ):
@@ -102,13 +137,13 @@ def test_receipt_keeps_requested_failure_and_unrequested_checks_separate(
 
     def fake_probe(name, args, root, receipt_dir):
         calls.append(name)
-        return {"status": "passed" if name == "torch_cuda" else "failed"}
+        return {"status": "failed" if name == "kernels" else "passed"}
 
     monkeypatch.setattr(preflight, "run_probe", fake_probe)
     monkeypatch.setattr(preflight, "package_inventory", lambda: {})
     result = preflight.main(["--output-dir", str(tmp_path / "output"), "--check-kernels"])
     assert result == 1
-    assert calls == ["torch_cuda", "kernels"]
+    assert calls == ["torch_cuda", "data_stack", "kernels"]
     report_path = next((tmp_path / "output/receipts").glob("*/preflight.json"))
     report = json.loads(report_path.read_text())
     assert report["failed_requested_probes"] == ["kernels"]
