@@ -337,6 +337,11 @@ def test_real_cpu_generation_uses_content_identity_and_no_judge(tmp_path):
     tokenizer.save_pretrained(model_path)
     model = GPT2LMHeadModel(GPT2Config(vocab_size=len(vocabulary), n_layer=1, n_head=2, n_embd=16,
                                      n_positions=64, bos_token_id=1, eos_token_id=1, pad_token_id=0))
+    # Equal logits make greedy decoding emit token 0. This lets the EOS
+    # regression below distinguish a saved default EOS=0 (would stop at one
+    # token) from the tokenizer EOS=1 (must continue to the two-token budget).
+    with torch.no_grad():
+        model.lm_head.weight.zero_()
     model.save_pretrained(model_path)
     data = [{"id": "b1", "source_id": "b1", "split": "test", "family": "benign",
              "metric": "overrefusal", "prompt": "Hello", "teacher_context": "NEVER_SENT_TO_EVAL"}]
@@ -347,6 +352,58 @@ def test_real_cpu_generation_uses_content_identity_and_no_judge(tmp_path):
     assert rows[0]["checkpoint_label"] == "human-label"
     assert rows[0]["checkpoint_id"] == checkpoint_identity(model_path)["checkpoint_id"]
     assert rows[0]["generation_protocol"]["enable_thinking"] is False
-    assert rows[0]["n_tokens"] <= 2
+    assert rows[0]["generation_protocol"]["profile"] == "rsd-text-eval-v2"
+    assert rows[0]["generation_protocol"]["eos_token_id"] == tokenizer.eos_token_id
+    assert rows[0]["generation_protocol"]["eos_token_id_source"] == "tokenizer.eos_token_id"
+    assert rows[0]["n_tokens"] == 2
     assert "NEVER_SENT_TO_EVAL" not in output.read_text()
     assert group(score_records(data, rows), "overrefusal")["value"] is None
+
+    # The saved model's default EOS changes, while weights/tokenizer stay equal.
+    # Both checkpoints must still have identical explicit generation protocols
+    # and generated responses under the same seed.
+    alternate = tmp_path / "different_model_default_eos"
+    model.generation_config.eos_token_id = tokenizer.pad_token_id
+    assert model.generation_config.eos_token_id != tokenizer.eos_token_id
+    model.save_pretrained(alternate)
+    tokenizer.save_pretrained(alternate)
+    alternate_output = tmp_path / "alternate-generated.jsonl"
+    generate_predictions(data, alternate_output, model_name_or_path=str(alternate),
+                         checkpoint_id="other-human-label", dtype="float32",
+                         max_new_tokens=2, max_prompt_tokens=32)
+    alternate_rows = read_jsonl(alternate_output)
+    assert rows[0]["checkpoint_id"] != alternate_rows[0]["checkpoint_id"]
+    assert rows[0]["generation_protocol"] == alternate_rows[0]["generation_protocol"]
+    assert rows[0]["response"] == alternate_rows[0]["response"]
+    assert rows[0]["n_tokens"] == alternate_rows[0]["n_tokens"]
+    assert score_records(data, rows)["protocol_sha256"] == score_records(data, alternate_rows)["protocol_sha256"]
+
+
+def test_v1_and_v2_evaluation_protocols_cannot_be_compared():
+    old_predictions, new_predictions = predictions("base-v1"), predictions("base-v2")
+    for row in old_predictions:
+        row["generation_protocol"].update(profile="rsd-text-eval-v1", eos_token_id=248044)
+    for row in new_predictions:
+        row["generation_protocol"].update(profile="rsd-text-eval-v2", eos_token_id=248046,
+                                          eos_token_id_source="tokenizer.eos_token_id")
+    old = score_records(dataset(), old_predictions, judgments(old_predictions))
+    new = score_records(dataset(), new_predictions, judgments(new_predictions))
+    with pytest.raises(ValueError, match="protocol_sha256"):
+        compare_summaries(old, new)
+
+
+def test_evaluation_missing_tokenizer_eos_fails_before_model_load(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    from rsd import modeling
+    model_path = tmp_path / "fixture"
+    model_path.mkdir()
+    (model_path / "config.json").write_text("{}")
+    (model_path / "model.safetensors").write_bytes(b"not loaded by this test")
+    monkeypatch.setattr(modeling, "load_tokenizer", lambda *args, **kwargs: SimpleNamespace(eos_token_id=None))
+    def unexpected_model_load(*args, **kwargs):
+        raise AssertionError("Model weights must not load after tokenizer EOS validation fails")
+    monkeypatch.setattr(modeling, "load_text_model", unexpected_model_load)
+    output = tmp_path / "must-not-exist.jsonl"
+    with pytest.raises(ValueError, match="tokenizer.eos_token_id"):
+        generate_predictions(dataset(), output, model_name_or_path=str(model_path), checkpoint_id="label")
+    assert not output.exists()

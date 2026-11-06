@@ -467,15 +467,22 @@ def generate_predictions(dataset, output, *, model_name_or_path, checkpoint_id, 
     from transformers import GenerationConfig, set_seed
     from .modeling import load_text_model, load_tokenizer
     tokenizer = load_tokenizer(model_name_or_path, revision=revision)
+    # An upstream generation_config and a Trainer-saved generation_config can
+    # disagree even with the same tokenizer. Use one explicit evaluation policy
+    # for both base and updated checkpoints, never whichever default was saved.
+    eos_token_id = tokenizer.eos_token_id
+    if eos_token_id is None:
+        raise ValueError("Evaluation requires tokenizer.eos_token_id; model-default fallback is disabled")
     model = load_text_model(model_name_or_path, revision=revision, dtype=dtype).to(device).eval()
     set_seed(seed)
-    protocol = {"profile": "rsd-text-eval-v1", "enable_thinking": False,
+    protocol = {"profile": "rsd-text-eval-v2", "enable_thinking": False,
                 "max_new_tokens": max_new_tokens, "max_prompt_tokens": max_prompt_tokens,
                 "temperature": temperature, "do_sample": temperature > 0,
                 "top_p": 1.0, "top_k": 0, "num_beams": 1, "repetition_penalty": 1.0,
                 "seed": seed, "dtype": dtype,
                 "pad_token_id": tokenizer.pad_token_id,
-                "eos_token_id": model.generation_config.eos_token_id,
+                "eos_token_id": eos_token_id,
+                "eos_token_id_source": "tokenizer.eos_token_id",
                 "tokenizer_vocab_sha256": digest(tokenizer.get_vocab()),
                 "tokenizer_template_sha256": digest(tokenizer.chat_template)}
     path = Path(output)
@@ -495,7 +502,7 @@ def generate_predictions(dataset, output, *, model_name_or_path, checkpoint_id, 
             else:
                 kwargs = {"max_new_tokens": max_new_tokens, "do_sample": temperature > 0,
                           "use_cache": True, "pad_token_id": tokenizer.pad_token_id,
-                          "eos_token_id": model.generation_config.eos_token_id,
+                          "eos_token_id": eos_token_id,
                           "num_beams": 1, "num_return_sequences": 1, "repetition_penalty": 1.0}
                 if temperature > 0:
                     kwargs.update(temperature=temperature, top_p=1.0, top_k=0)
