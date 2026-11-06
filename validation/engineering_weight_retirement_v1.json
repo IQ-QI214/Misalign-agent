@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-06",
+  "status": "completed_engineering_weights_retired_results_reproducible",
+  "authorization": "User explicitly requested removal of unneeded training weights and retention of results, conclusions, and reproducibility records. Includes final weights from completed engineering runs.",
+  "scope": "Four completed Misalign-agent engineering runs only. No public base or other-project files modified.",
+  "source_commit_before_retirement": "2c2ee1c829767c9a633938190dff97236083d629",
+  "deleted": {
+    "n_files": 20,
+    "allocated_bytes": 179079348224,
+    "by_run": {
+      "gpu_tiny_resume_v1": {
+        "n_files": 9,
+        "allocated_bytes": 1703936
+      },
+      "gpu_tiny_zero2_attempt2": {
+        "n_files": 5,
+        "allocated_bytes": 917504
+      },
+      "qwen35_9b_gpu_smoke_attempt1": {
+        "n_files": 5,
+        "allocated_bytes": 161169014784
+      },
+      "qwen35_9b_gpu_smoke_eos_v2": {
+        "n_files": 1,
+        "allocated_bytes": 17907712000
+      }
+    },
+    "files": [
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-1/global_step1/bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt",
+        "bytes": 143717,
+        "sha256": "8185b091090c59c9e81bbead331127e465f4e70206bc7448190aaabc9ef6495a"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-1/global_step1/bf16_zero_pp_rank_1_mp_rank_00_optim_states.pt",
+        "bytes": 144485,
+        "sha256": "feb79891fdf56023a670bab98b2fab86b6d2b9b524e4280d50dd8977d19b1f0d"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-1/global_step1/mp_rank_00_model_states.pt",
+        "bytes": 52825,
+        "sha256": "39a3f3829626970b6a12238fa464c93139933f2b98d9fb37c30dff4172e02a7a"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-1/model.safetensors",
+        "bytes": 55160,
+        "sha256": "181cb46e778b579ba794e5ecbb3fb627c8012a0f1239f6ec77a49e5b2500a134"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-2/global_step2/bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt",
+        "bytes": 143717,
+        "sha256": "32b4883592522a7d84bdd63162d0b24a388972186a549f6bb7e4ca01e72eb952"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-2/global_step2/bf16_zero_pp_rank_1_mp_rank_00_optim_states.pt",
+        "bytes": 144485,
+        "sha256": "5fdd3412cf920b447c1063d29093bcda7612e8516111231827934091a183963f"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-2/global_step2/mp_rank_00_model_states.pt",
+        "bytes": 52825,
+        "sha256": "f89b5a03cf244bf0e74e5f6738b245edf3cd8f2940fa942d178f079347895b9e"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/checkpoint-2/model.safetensors",
+        "bytes": 55160,
+        "sha256": "b22d26581ef06b1538aee89aff44c918596bef8a61360163e710664036c30c6f"
+      },
+      {
+        "path": "runs/gpu_tiny_resume_v1/final/model.safetensors",
+        "bytes": 55160,
+        "sha256": "b22d26581ef06b1538aee89aff44c918596bef8a61360163e710664036c30c6f"
+      },
+      {
+        "path": "runs/gpu_tiny_zero2_attempt2/R0/checkpoint-2/global_step2/bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt",
+        "bytes": 143717,
+        "sha256": "ddc62ce806639c3ec40906c0f32cb519a2430d22c2e3e1a0392a377fd0d94996"
+      },
+      {
+        "path": "runs/gpu_tiny_zero2_attempt2/R0/checkpoint-2/global_step2/bf16_zero_pp_rank_1_mp_rank_00_optim_states.pt",
+        "bytes": 144485,
+        "sha256": "3688c1deb5111897080432ccf9948fe9a2816ff825e03feecf9a32867db83e76"
+      },
+      {
+        "path": "runs/gpu_tiny_zero2_attempt2/R0/checkpoint-2/global_step2/mp_rank_00_model_states.pt",
+        "bytes": 52825,
+        "sha256": "f89b5a03cf244bf0e74e5f6738b245edf3cd8f2940fa942d178f079347895b9e"
+      },
+      {
+        "path": "runs/gpu_tiny_zero2_attempt2/R0/checkpoint-2/model.safetensors",
+        "bytes": 55160,
+        "sha256": "b22d26581ef06b1538aee89aff44c918596bef8a61360163e710664036c30c6f"
+      },
+      {
+        "path": "runs/gpu_tiny_zero2_attempt2/R0/final/model.safetensors",
+        "bytes": 55160,
+        "sha256": "b22d26581ef06b1538aee89aff44c918596bef8a61360163e710664036c30c6f"
+      },
+      {
+        "path": "runs/qwen35_9b_gpu_smoke_attempt1/R0/checkpoint-2/global_step2/bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt",
+        "bytes": 53722841873,
+        "sha256": "e504f23ca798eeaa1edf1014980a6292fec7592dbd0e5a76c55b07573130b3a7"
+      },
+      {
+        "path": "runs/qwen35_9b_gpu_smoke_attempt1/R0/checkpoint-2/global_step2/bf16_zero_pp_rank_1_mp_rank_00_optim_states.pt",
+        "bytes": 53722841553,
+        "sha256": "1e767b88f460fcd1e62314e55cb636ea6f2be839292b831b307e4eb9b40114d1"
+      },
+      {
+        "path": "runs/qwen35_9b_gpu_smoke_attempt1/R0/checkpoint-2/global_step2/mp_rank_00_model_states.pt",
+        "bytes": 17907728653,
+        "sha256": "48f4c8124892e66364df47132f7c1e3d18b265c558db7fcb05472cd1923bf72c"
+      },
+      {
+        "path": "runs/qwen35_9b_gpu_smoke_attempt1/R0/checkpoint-2/model.safetensors",
+        "bytes": 17907663008,
+        "sha256": "b7f3b12e3a95f706c1f5c4d636bacace4b5de1e0c452148c0b3f2f3108533ab2"
+      },
+      {
+        "path": "runs/qwen35_9b_gpu_smoke_attempt1/R0/final/model.safetensors",
+        "bytes": 17907663008,
+        "sha256": "b7f3b12e3a95f706c1f5c4d636bacace4b5de1e0c452148c0b3f2f3108533ab2"
+      },
+      {
+        "path": "runs/qwen35_9b_gpu_smoke_eos_v2/R0/final/model.safetensors",
+        "bytes": 17907663008,
+        "sha256": "79d0237d012d0496245ccc897385372a597e42c9bb94e6e49dbbb518c51997f0"
+      }
+    ]
+  },
+  "records": {
+    "archive_file": "records_and_recovery.tar.gz",
+    "archive_bytes": 12670026,
+    "archive_sha256": "cd6fc95c80b9ebd1b4c5c95de0b974fa2d1bf79c14e3a137699793a07ed81acb",
+    "n_archived_record_files": 347,
+    "remote_archive_verified": true,
+    "local_Mac_copy_verified": true,
+    "all_343_existing_project_record_files_verified_unchanged_during_retirement": true,
+    "trained_weight_files_in_archive": 0,
+    "untrained_tiny_input_bytes": 94456,
+    "git_bundles": [
+      "project.bundle",
+      "opsd_upstream.bundle"
+    ],
+    "includes": [
+      "original predictions and judgments",
+      "raw trajectories, metrics and resource logs",
+      "configs, tokenizer, RNG and trainer metadata",
+      "frozen train/dev/test assets and source identities",
+      "historical launchers and environment records",
+      "recovery guide with fresh-output-directory instructions"
+    ]
+  },
+  "post_cleanup_verification": {
+    "n_summaries_reproduced": 11,
+    "n_comparisons_reproduced": 3,
+    "legacy_protocol_rejection_preserved": true,
+    "remaining_trained_weight_files": [],
+    "no_training_or_inference": true
+  },
+  "recoverability": {
+    "historical_results_and_scores": true,
+    "rerun_from_preserved_base_and_recipe": true,
+    "load_retired_trained_model_for_new_outputs": false,
+    "resume_from_deleted_checkpoint": false,
+    "recover_deleted_FP32_master_weights": false,
+    "bitwise_reproduction_guaranteed": false
+  },
+  "storage_after": {
+    "project_bytes": 2796068352,
+    "runs_bytes": 102175232,
+    "shared_user_mount_free_bytes": 235451449344,
+    "shared_user_mount_capacity_bytes": 2199023255552,
+    "scope": "Fresh shared persistent user-mount reading, not GPU memory; concurrent activity may change it."
+  },
+  "scientific_conclusion_changed": false,
+  "private_evidence_sha256": {
+    "retirement_plan.json": "dd74092350598125de3caf2bd1b9777ec8787f2c0123f997243bce4c31d1f0ef",
+    "recovery_guide.json": "b52674559feec83dfa9afcdba4fd5dd6ab94202e11cc315e6002ab05ab617827",
+    "record_manifest.json": "e834556a4e0adb37a1297b48a83845d8f24e73bdf1e4b417c9f4480b8cc79db1",
+    "preparation_receipt.json": "53a2b8c24fd15f13e034ad0441326f19a1ceb0ea18b47bb3cf8414191c048530",
+    "local_archive_verification.json": "c7fa6c5ade1d5cf3ffbd0a98592687a9c930519add81c7e76949e7e70439a90a",
+    "gpu_ownership_check.json": "43b3291d5edfb14d77164dc9e1110d8060bbc98eab1919e9e91d9502986825a8",
+    "retirement_receipt.json": "87eb0c2a03f71e1f0eecfe2056beaf4e34c7c414f37d984acea634dd5f4a0586",
+    "post_retirement_verification.json": "fb6f360b60cf2b494de91040cb0486f4631557b072c86863ba5ad44d21377b8f",
+    "storage_after.txt": "2252fb351b9beae2bada4fa07ae6a34fec9b6b3913109b5fa706b93f5a046d39"
+  }
+}
