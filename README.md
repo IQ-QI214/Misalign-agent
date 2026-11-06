@@ -4,6 +4,8 @@
 
 第一版面向 **Qwen3.5-9B、2×H100**，基于公开 [OPSD](https://github.com/siyan-zhao/OPSD) 的固定版本独立适配。2026-11-06 已完成真实 9B 的双 H100 ZeRO-2 两步更新、最终模型重载和16条任务成对评测，并完成10条dev回答的本地Gemma3安全/误拒评分联测。首次联测暴露的训练/评测EOS问题已修复，并从初始模型重新完成两步验证；安全迁移和论文现象仍未验证。
 
+协作约定：每批经过验证的代码、文档和结果更新提交并推送到 `codex/rsd-pipeline-v1`；公开脱敏汇总和可复核的版本/哈希，原始 benchmark 问答与运行记录保留在项目私有 `runs/` 和本地 `.runtime/`。训练按事先固定的节点评测并保存原始回答、任务分和 judge 回执，失败与 UNKNOWN 同样保留；不按观察到的安全分数选择或删除节点。遵循仅保留结果、结论及重建记录、不保留训练权重的当前存储要求。
+
 ## 研究问题
 
 **反馈结构与教师递归更新如何共同影响安全、任务能力和误拒？** 允许正迁移、负迁移和无明显变化，不预先给训练数据贴正负标签。
@@ -67,7 +69,7 @@ python -m rsd.smoke --output-dir runs/cpu_pipeline_smoke
 
 随后按用户“仅保留结果、结论和可恢复记录，不保留训练过程权重”的要求，清理了旧EOS、修正EOS两步训练及两类tiny联测的20个权重/优化器文件，包含其final权重，释放166.78 GiB。347个记录文件、源码Git bundles、冻结数据、实际启动脚本和恢复说明已打包，并在远端与本地各验证一份；归档不含被清理的训练权重，仅保留94,456字节的未训练tiny输入fixture。343个原项目记录文件在删除前后哈希一致，11份评分汇总和3份比较可由保留预测重新计算，旧EOS运行的协议拒绝也保持不变。历史checkpoint/final目录已写入 `WEIGHTS_RETIRED.json`，只剩审计metadata，不能再加载模型或续训。回执见 [`validation/engineering_weight_retirement_v1.json`](validation/engineering_weight_retirement_v1.json)。
 
-“可恢复记录”支持复核历史评分，或按原代码/数据/环境从初始基座重新运行；不等于恢复已删的训练权重、FP32主权重或优化器状态，也不保证逐位重现。归档中的原始launcher包含旧hostname和输出目录，应在新目录创建新的运行记录，不能直接覆盖历史目录。后续保留策略是先完成所需评测并冻结原始回答、指标与配方，再清理临时训练权重；当前尚未实现研究运行的分阶段评测后自动清理。
+“可恢复记录”支持复核历史评分，或按原代码/数据/环境从初始基座重新运行；不等于恢复已删的训练权重、FP32主权重或优化器状态，也不保证逐位重现。归档中的原始launcher包含旧hostname和输出目录，应在新目录创建新的运行记录，不能直接覆盖历史目录。后续保留策略采用下述驻留学生评测路径，生成回答和任务评分后立即落盘，不需要先导出大权重。
 
 清理后共享持久存储可用约219.3 GiB，项目本身约2.60 GiB；这是共享用户挂载点，不能当作GPU显存或实例本地盘余量。F0/R0各新增一份final预计共33.39 GiB；默认两步配置若各存一份完整checkpoint与final，则共需300.27 GiB。当前100步配置两臂合计约1367.80 GiB。仅将保留数量改为1，虽然两臂稳态约300.27 GiB，顺序运行并保留前一臂时仍有约417.02 GiB的保存峰值，因为新checkpoint写完后才轮换删除旧文件。正式研究要按预定节点先完成评测和记录，再清理临时权重；当前100步默认保存策略仍不能直接用于后续正式实验。
 
@@ -88,6 +90,12 @@ python -m rsd.train --config configs/rsd/qwen35_9b_2h100.json --arm R0 --dry-run
 ```
 
 100步、全局batch2对应200次样本曝光，不是200个独立任务。主配置每20步保存；恢复用 `--resume-from-checkpoint` 指定该运行自己的 checkpoint。训练、模型生成与judge按阶段执行，减少同时驻留。v1未启用vLLM，也没有自动根据安全分数选点或启动下一组的控制器。
+
+新增 `configs/rsd/qwen35_9b_milestone_smoke.json`：两步 F0，训练 completion 上限64，评测 completion 上限512，预先固定 step 0/1/2。每点对16条任务dev及冻结的5条StrongREJECT、5条XSTest safe生成回答，任务分当场计算。`save_strategy="no"` 且 `export_final_model=false` 不导出checkpoint或final；此组合要求配置包含最终step的评测。冻结教师使用独立副本，并逐rank核查冻结状态、无梯度、与学生存储独立及抽样参数未改变。当前CPU测试已验证无权重导出和评测不扰动训练，真实双卡新路径的状态以新增GPU回执为准。
+
+`milestones/step-000000` 等目录保留原始回答、协议、冻结cohort、任务评分与哈希；模型身份为运行合同+step+抽样参数指纹，不是完整权重SHA，也不是可重载checkpoint。训练退出后由 `scripts/rsd_milestone_pipeline.py` 顺序运行同一Gemma judge并保存逐点评分，不改写原先pending回执。全程只保留输入基座与结果，失败后可以复核已完成节点或从基座重跑，不能断点续训。
+
+10条cohort的固定ID、顺序和原文件SHA记录在 `configs/rsd/milestone_dev_cohort_v1.json`。准备完整官方dev后，按其ID顺序抽取并以 `json.dumps(row, ensure_ascii=False) + "\n"` 写入 `data/rsd_benchmarks/milestone_dev_10.jsonl`，运行前核对SHA；不得换用test或另抽一组。此极小cohort用于工程联测，不提供统计意义上的安全迁移证据。构造的16条judge控制案例另由 `rsd.judge_calibration build/analyze` 管理，重复两轮；它们不属于Qwen的性能样本，也不足以验证真实有害依从判别能力。
 
 配置默认 `save_strategy="steps"`，保存可恢复的完整checkpoint。显式设置 `save_strategy="no"` 时不保存周期checkpoint，训练结束仍导出 `final/` 权重与tokenizer；这种运行不能作为优化器断点续训验收。短工程验证可以采用该策略，正式长训练应先确定恢复需求与存储预算。
 

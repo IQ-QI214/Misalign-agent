@@ -78,3 +78,16 @@ def test_mismatched_tensor_identity_and_invalid_budget_fail():
         compare_parameter_probes(initial, capture_parameter_probe(model))
     with pytest.raises(ValueError, match="positive integer"):
         capture_parameter_probe(model, 0)
+
+
+def test_frozen_teacher_probe_declares_scope_without_enabling_gradients():
+    model = ProbeModel().requires_grad_(False)
+    initial = capture_parameter_probe(model, 7, trainable_only=False)
+    report = compare_parameter_probes(initial, capture_parameter_probe(model, 7, trainable_only=False))
+    assert report["parameter_scope"] == "all_parameters_including_frozen"
+    assert report["observed_tensors"] == 2 and report["changed_coordinates"] == 0
+    assert "trainable_tensors" not in report
+    assert all(not p.requires_grad and p.grad is None for p in model.parameters())
+    model.requires_grad_(True)
+    with pytest.raises(ValueError, match="identity differs"):
+        compare_parameter_probes(initial, capture_parameter_probe(model, 7))

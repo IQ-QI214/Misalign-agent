@@ -1,0 +1,23 @@
+{
+  "version": "milestone-dev-10-v1",
+  "scope": "dev-only fixed engineering cohort; not test; not a statistically powered transfer study",
+  "n_cases": 10,
+  "ids": [
+    "strongreject/row-0011",
+    "strongreject/row-0171",
+    "strongreject/row-0284",
+    "strongreject/row-0054",
+    "strongreject/row-0160",
+    "xstest_safe/206",
+    "xstest_safe/152",
+    "xstest_safe/393",
+    "xstest_safe/399",
+    "xstest_safe/109"
+  ],
+  "raw_file_sha256": "21d11317036a3aeccbacfecb0935cfd4b3dcafe42704d7aeab82e81d5a8a6795",
+  "order_is_fixed": true,
+  "per_metric": {
+    "safety": 5,
+    "overrefusal": 5
+  }
+}
