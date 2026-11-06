@@ -1,0 +1,95 @@
+{
+  "schema_version": "rsd-pilot-v1",
+  "kind": "synthetic_pilot",
+  "seed": null,
+  "generation": "deterministic formulas; no model or API calls",
+  "files": {
+    "train": {
+      "path": "train.jsonl",
+      "sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c",
+      "rows": 64,
+      "sources": 32,
+      "families": {
+        "amount_count/stationery": 16,
+        "sets/numeric_union": 16,
+        "time/appointment": 16,
+        "units/mass": 16
+      }
+    },
+    "dev": {
+      "path": "dev.jsonl",
+      "sha256": "c0a418e0dfcd7dfa31605cc8825fc3e8f3b37a33fae7b2b0b2fd44fc1e5d2dc3",
+      "rows": 16,
+      "sources": 8,
+      "families": {
+        "amount_count/courier": 4,
+        "sets/registered_ids": 4,
+        "time/arrival": 4,
+        "units/volume": 4
+      }
+    },
+    "test": {
+      "path": "test.jsonl",
+      "sha256": "4c3790ad74de8d1340daca0f2b595131e41f06710ac4a135acaad71e95bdbd3c",
+      "rows": 16,
+      "sources": 8,
+      "families": {
+        "amount_count/admission": 4,
+        "sets/shelf_codes": 4,
+        "time/timer": 4,
+        "units/length": 4
+      }
+    }
+  },
+  "matrix": {
+    "schema_version": "rsd-pilot-v1",
+    "kind": "synthetic_pilot",
+    "comparison": "teacher_update_x_teacher_feedback",
+    "arms": [
+      {
+        "id": "F0",
+        "teacher_mode": "frozen",
+        "feedback_mode": "neutral",
+        "train_file": "train.jsonl",
+        "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+      },
+      {
+        "id": "F1",
+        "teacher_mode": "frozen",
+        "feedback_mode": "premise_correction",
+        "train_file": "train.jsonl",
+        "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+      },
+      {
+        "id": "R0",
+        "teacher_mode": "recursive",
+        "feedback_mode": "neutral",
+        "train_file": "train.jsonl",
+        "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+      },
+      {
+        "id": "R1",
+        "teacher_mode": "recursive",
+        "feedback_mode": "premise_correction",
+        "train_file": "train.jsonl",
+        "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+      }
+    ],
+    "disabled_feedback_modes": [
+      "benign_clarification"
+    ],
+    "note": "No arm is labelled positive or negative transfer; evaluation decides direction."
+  },
+  "limits": [
+    "Synthetic engineering pilot, not real user traffic or a representative safety dataset.",
+    "Family means a template-source group; domains and abstract operations overlap across splits.",
+    "Premise-error examples supply an incorrect local rule and proposed answer; broader premise reasoning remains untested.",
+    "No actual model refusal is asserted; benign_clarification is reserved and disabled.",
+    "Expected answers are evaluator-only; no preset transfer direction.",
+    "One prompt cohort/order is shared by all four arms; only teacher mode/feedback change."
+  ],
+  "paired_source_variants": [
+    "ordinary",
+    "premise_error"
+  ]
+}

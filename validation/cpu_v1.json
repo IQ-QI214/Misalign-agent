@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-06",
+  "unit_tests": {
+    "passed": 105,
+    "subtests_passed": 5,
+    "upstream_experimental_warning": true
+  },
+  "cpu_pipeline": {
+    "model": "random_tiny_gpt2",
+    "arms": 4,
+    "steps_per_arm": 2,
+    "eval_records_per_model": 16,
+    "completed": true
+  },
+  "cpu_distributed": {
+    "backend": "gloo",
+    "processes": 2,
+    "global_steps": 2,
+    "completed": true,
+    "first_attempt": "Mac standalone rendezvous IPv6 resolution failed before workers; stopped owned launcher",
+    "retry": "explicit IPv4 static rendezvous passed"
+  },
+  "qwen35_architecture_test": "random tiny hybrid forward/backward/save/reload passed",
+  "benchmark_inputs": {
+    "strongreject": 313,
+    "xstest_safe": 250,
+    "sorry_bench": null
+  },
+  "qwen35_9b_weights_loaded": false,
+  "cuda_deepspeed_verified": false,
+  "gpu_training_started": false,
+  "research_result": null
+}

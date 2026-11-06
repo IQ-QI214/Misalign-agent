@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/siyan-zhao/OPSD",
+  "commit": "ae7d2519e94920c4eb6206c0c26de46d9c50abae",
+  "sha256": {
+    "opsd_trainer.py": "aa11fc2a3f3cd814da37db38c6fb2351cab7f98a5a572d808a9b75de16097c9d",
+    "data_collator.py": "5b96f3b3ae2f04e2b9dbf03509d3cd723c1b637d9362ab4697135d9f885b8381",
+    "environment.yml": "8d4b2a67762ffa085dda408d44b79b9ad9f5ed573d8692a4048dcc1f9bdea01e",
+    "README.md": "64588995a2de1dba9182b48a59048259d07297c8c7c716958e924d6f7e85f1c0"
+  }
+}

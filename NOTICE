@@ -1,0 +1,15 @@
+Misalign-agent uses the upstream siyan-zhao/OPSD repository as a pinned submodule.
+https://github.com/siyan-zhao/OPSD
+Commit: ae7d2519e94920c4eb6206c0c26de46d9c50abae
+
+The upstream opsd_trainer.py includes its own Apache-2.0 copyright and license
+notice; it is retained unchanged. This project imports and subclasses that file.
+Other upstream files retain their original notices and are not relicensed here.
+
+The implementation here is an independent adaptation. It is not the authors'
+implementation of arXiv:2610.22467 or arXiv:2609.30652 and does not reproduce their
+reported results merely by importing OPSD. See README for protocol differences.
+
+Synthetic pilot tasks in data/rsd_pilot were generated locally for this project.
+External evaluation datasets are obtained separately from their official sources
+and remain governed by their respective terms. Benchmark records are not bundled.

@@ -1,0 +1,11 @@
+# Adapter's CPU-verified Transformers/TRL pair; Linux CUDA still needs acceptance.
+# Install a CUDA build of torch matching the host separately.
+transformers==5.21.0
+trl==0.26.0
+accelerate==1.15.0
+datasets==5.1.0
+peft==0.21.2
+requests==2.34.2
+rich==15.0.0
+pytest==9.2.0
+# GPU only: install and record a compatible DeepSpeed build; see README runtime gate.

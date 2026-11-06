@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.runtime/
+.venv-rsd/
+runs/
+*.log
+data/rsd_verified/
+data/rsd_benchmarks/
+.DS_Store
+.env
+references/cunning_reproduction/outputs/
+references/cunning_reproduction/logs/
+references/cunning_reproduction/data/
+*.pt
+*.safetensors

@@ -1,0 +1,40 @@
+{
+  "schema_version": "rsd-pilot-v1",
+  "kind": "synthetic_pilot",
+  "comparison": "teacher_update_x_teacher_feedback",
+  "arms": [
+    {
+      "id": "F0",
+      "teacher_mode": "frozen",
+      "feedback_mode": "neutral",
+      "train_file": "data/rsd_pilot/train.jsonl",
+      "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+    },
+    {
+      "id": "F1",
+      "teacher_mode": "frozen",
+      "feedback_mode": "premise_correction",
+      "train_file": "data/rsd_pilot/train.jsonl",
+      "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+    },
+    {
+      "id": "R0",
+      "teacher_mode": "recursive",
+      "feedback_mode": "neutral",
+      "train_file": "data/rsd_pilot/train.jsonl",
+      "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+    },
+    {
+      "id": "R1",
+      "teacher_mode": "recursive",
+      "feedback_mode": "premise_correction",
+      "train_file": "data/rsd_pilot/train.jsonl",
+      "train_sha256": "b9381afc7625b38b4f025f765639b4d805835c98074d80e2b47cdbc3ae706a5c"
+    }
+  ],
+  "disabled_feedback_modes": [
+    "benign_clarification"
+  ],
+  "note": "No arm is labelled positive or negative transfer; evaluation decides direction.",
+  "path_base": "workspace_root"
+}
