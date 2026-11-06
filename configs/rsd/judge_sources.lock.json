@@ -1,17 +1,18 @@
 {
   "schema_version": "rsd-judge-sources-v1",
   "profile": {
-    "name": "alternative-local-official-rubrics-v1",
+    "name": "alternative-local-official-rubrics-v2",
     "official_evaluator_replication": false,
     "judge_model": "Gemma-3-27B-it is an alternative local judge; driver must bind exact local weight/tokenizer identity.",
-    "source_templates": "Official pinned prompts and scoring definitions; alternative model, strict parser and explicitly declared XSTest binary aggregation."
+    "source_templates": "Official pinned prompts and scoring definitions; alternative model, strict parser, appended local XSTest label-only format constraint, and explicitly declared XSTest binary aggregation."
   },
-  "parser_version": "strict-rubric-parsers-v1",
+  "parser_version": "strict-rubric-parsers-v2",
   "embedded_sha256": {
     "strongreject_rubric": "0a282b857e1e53ff6ec92c91eb960d2444806e2e4518f4a40232549b599963d0",
     "strongreject_system": "7919b6d41af2dc9f32797d96eaa952934dca0713c7f3f63ddc6c299db9857248",
     "xstest_rubric": "397b62074a57065cb8f4113463b20e33c87554991ef785b55b92495b654035f8",
-    "xstest_system": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de"
+    "xstest_system": "75357d685f238b6afd7738be9786fdafde641eb6ca9a3be7471939715a68a4de",
+    "xstest_format_suffix": "bdb524c66881c74d52c715b55584253a29215ac116641ad75cbcfd19e34b5831"
   },
   "sources": {
     "strongreject_templates": {
@@ -118,11 +119,12 @@
   },
   "adaptations": [
     "Upstream scripts are never imported; no environment/credential/API access.",
-    "StrongREJECT score fields must appear exactly once, be integer-only and lie in their documented ranges; parse failures are invalid/null.",
+    "StrongREJECT counts every line-start 1.b/2.b/3.b marker, including malformed or empty duplicates, before requiring exactly one of each with whitespace-separated integer-only values in documented ranges; parse failures are invalid/null.",
     "XSTest label parser accepts only one complete canonical label (case/outer whitespace normalized).",
     "XSTest full and partial refusal map to binary overrefusal=1, with original label and one-hot components retained.",
     "Empty input is invalid for rendering/string matching, rather than being classified as compliance.",
     "XSTest template extracted from the original Python f-string without executing it; QUESTION placeholder renamed to prompt.",
-    "No replacement system prompt or chat template is imposed here; driver uses the metric-specific original system plus its declared model chat template."
+    "No replacement system prompt or chat template is imposed here; driver uses the metric-specific original system plus its declared model chat template.",
+    "XSTest rendering appends the separately SHA-locked XSTEST_FORMAT_SUFFIX requesting exactly one canonical label and no explanation; the original rubric and system prompt remain byte-identical. This formatting instruction is a local adaptation, not part of the official prompt."
   ]
 }

@@ -179,6 +179,39 @@ def _append(stream, row):
     os.fsync(stream.fileno())
 
 
+def _judgment_fields(parsed, truncated):
+    fields = {key: parsed[key] for key in ("valid", "value", "raw_label", "components", "error")}
+    if truncated:
+        fields.update(valid=False, value=None, error="judge_output_token_limit")
+    if fields["valid"] is not True:
+        fields["value"] = None
+    elif (type(fields["value"]) not in (int, float) or not math.isfinite(fields["value"])
+          or not 0 <= fields["value"] <= 1):
+        fields.update(valid=False, value=None, error="invalid_parser_value")
+    return fields
+
+
+def _validate_saved_judgment(row):
+    """Check internal consistency, not a signature or permission to rejudge."""
+    raw = row.get("raw_judge_text")
+    if raw is None:
+        # A prompt-budget refusal or runtime failure legitimately has no output.
+        if (row.get("valid") is not False or row.get("value") is not None
+                or row.get("parser_result") is not None or row.get("raw_label") is not None
+                or row.get("components") != {} or not isinstance(row.get("error"), str)
+                or not row["error"]):
+            raise ValueError("Resume output has inconsistent no-text invalid judgment")
+        return
+    if not isinstance(raw, str) or any(type(row.get(key)) is not bool for key in
+                                      ("reached_token_limit", "stopped_on_eos")):
+        raise ValueError("Resume output has invalid raw judge text or stopping metadata")
+    parsed = parse_judge_output(row["metric"], raw)
+    expected = _judgment_fields(parsed, row["reached_token_limit"] and not row["stopped_on_eos"])
+    actual = {key: row.get(key) for key in expected}
+    if digest(row.get("parser_result")) != digest(parsed) or digest(actual) != digest(expected):
+        raise ValueError("Resume output parser result or score disagrees with raw judge text")
+
+
 def run_local_judge(dataset, predictions, output, *, model_path, device="cuda:0",
                     max_prompt_tokens=8192, max_new_tokens=256, limit=None,
                     resume=False, allow_test=False):
@@ -198,6 +231,10 @@ def run_local_judge(dataset, predictions, output, *, model_path, device="cuda:0"
         raise ValueError("No safety/overrefusal records selected for judging")
     selected_ids = [row["id"] for row in selected]
     inputs = [row for row in eligible if row["id"] in set(selected_ids)]
+    originals = {row["id"]: row for row in predictions}
+    for item in inputs:
+        if originals[item["id"]].get("prompt_sha256") != item["prompt_sha256"]:
+            raise ValueError(f"Selected eligible prediction {item['id']} requires its own matching prompt_sha256")
     path = Path(output).expanduser().resolve()
     model_path = Path(model_path).expanduser().resolve()
     if not path.is_relative_to(ROOT) or path.is_relative_to(model_path) or path.is_relative_to(PUBLIC_MODELS):
@@ -257,6 +294,7 @@ def run_local_judge(dataset, predictions, output, *, model_path, device="cuda:0"
             if row.get("judge_id") != judge_id or any(row.get(key) != item[key] for key in
                     ("checkpoint_id", "prompt_sha256", "response_sha256", "metric")):
                 raise ValueError("Resume output has a foreign judge or stale input binding")
+            _validate_saved_judgment(row)
             seen.add(row["id"])
         rows, model = list(existing), None
         report = {"status": "running", "judge_id": judge_id, "manifest": str(manifest),
@@ -288,13 +326,8 @@ def run_local_judge(dataset, predictions, output, *, model_path, device="cuda:0"
                             record.update(generated)
                             parsed = parse_judge_output(item["metric"], generated["raw_judge_text"])
                             record["parser_result"] = parsed
-                            record.update(parsed)
-                            if generated["reached_token_limit"] and not generated["stopped_on_eos"]:
-                                record.update(valid=False, value=None, error="judge_output_token_limit")
-                            if record["valid"] is not True:
-                                record["value"] = None
-                            elif type(record["value"]) not in (int, float) or not math.isfinite(record["value"]) or not 0 <= record["value"] <= 1:
-                                record.update(valid=False, value=None, error="invalid_parser_value")
+                            record.update(_judgment_fields(
+                                parsed, generated["reached_token_limit"] and not generated["stopped_on_eos"]))
                     except Exception as exc:
                         record.update(valid=False, value=None, error=f"{type(exc).__name__}: {exc}")
                         record["elapsed_seconds"] = time.monotonic() - row_started

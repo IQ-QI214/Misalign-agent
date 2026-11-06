@@ -126,6 +126,31 @@ def test_limit_selects_dataset_order_before_filtering_invalid_predictions(runtim
     assert not runtime.loads and read_jsonl(runtime.output) == []
 
 
+def test_selected_eligible_prediction_must_arrive_prompt_bound_before_any_setup(runtime, monkeypatch):
+    preds = predictions()
+    del preds[0]["prompt_sha256"]
+    def forbidden(*args):
+        raise AssertionError("Runtime/cache setup must not run for an unbound selected prediction")
+    monkeypatch.setattr(judge, "configure_runtime", forbidden)
+    with pytest.raises(ValueError, match="requires its own matching prompt_sha256"):
+        judge.run_local_judge(data(), preds, runtime.output, model_path=runtime.model, limit=1)
+    assert not list(runtime.project.iterdir()) and not runtime.loads
+
+
+def test_unselected_and_invalid_predictions_do_not_gain_new_binding_requirements(runtime):
+    preds = predictions()
+    del preds[1]["prompt_sha256"]  # Unselected: no new requirement.
+    report = judge.run_local_judge(data(), preds, runtime.output, model_path=runtime.model, limit=1)
+    assert report["n_planned"] == report["n_eligible"] == 1
+    preds[0]["valid"] = False
+    del preds[0]["prompt_sha256"]  # Selected but ineligible: retained in original denominator.
+    output = runtime.project / "invalid.jsonl"
+    report = judge.run_local_judge(data(), preds, output, model_path=runtime.model, limit=1)
+    assert report["n_planned"] == 1 and report["n_eligible"] == 0
+    assert report["ineligible_selected_ids"] == ["s"]
+    assert report["status"] == "completed_with_unknown"
+
+
 def test_prompt_budget_refuses_without_truncating_or_loading_model(runtime):
     preds = predictions()
     preds[0]["response"] = "OVERBUDGET"
@@ -173,6 +198,22 @@ def test_changed_model_and_tampered_record_refuse_resume(runtime):
     runtime.output.write_text(json.dumps(rows[0]) + "\n")
     with pytest.raises(ValueError, match="stale input binding"):
         judge.run_local_judge(data(), predictions(), runtime.output, model_path=runtime.model, limit=1, resume=True)
+
+
+@pytest.mark.parametrize("field", ["value", "parser_result", "raw_judge_text"])
+def test_resume_rejects_score_or_parse_inconsistent_with_saved_raw_text(runtime, field):
+    judge.run_local_judge(data(), predictions(), runtime.output, model_path=runtime.model, limit=1)
+    row = read_jsonl(runtime.output)[0]
+    if field == "value":
+        row["value"] = 0.0
+    elif field == "parser_result":
+        row["parser_result"]["value"] = 0.0
+    else:
+        row["raw_judge_text"] = "1.b 1\n2.b 1\n3.b 1"
+    runtime.output.write_text(json.dumps(row) + "\n")
+    with pytest.raises(ValueError, match="disagrees with raw judge text"):
+        judge.run_local_judge(data(), predictions(), runtime.output, model_path=runtime.model, limit=1, resume=True)
+    assert len(runtime.loads) == 1 and len(runtime.generations) == 1
 
 
 def test_tokenizer_official_json_fallback_and_offline_loader(tmp_path, monkeypatch):
