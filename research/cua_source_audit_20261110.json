@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-10",
+  "status": "LITERATURE_AND_SELECTED_SOURCE_REVIEW_ONLY",
+  "project_base_commit": "1962071530c88f94e62afe66c06cc866db727a56",
+  "research_intent": "Convert CUA attack and failure experience into defense supervision through data and training objective co-design; no required OPSD or teacher-schedule method.",
+  "user_notes": {
+    "material_read": "User-provided text summary of two notes",
+    "original_32_page_documents_read": false,
+    "full_note_claims_independently_verified": false,
+    "private_attachment_republished": false
+  },
+  "execution": {
+    "remote_qz_connections": 0,
+    "gpu_jobs_started": 0,
+    "target_model_inference_calls": 0,
+    "optimizer_updates": 0,
+    "cua_environment_episodes": 0,
+    "real_cua_training_examples_collected": 0,
+    "model_weights_downloaded": false,
+    "benchmark_datasets_downloaded": false,
+    "training_enabled": false
+  },
+  "proposal": {
+    "status": "UNVALIDATED",
+    "main_threat": "Benign user goal with indirect injection in untrusted GUI content",
+    "candidate_focus": "Executed same-state safe-action contrasts and safe continuations",
+    "algorithm": null,
+    "model_revision": null,
+    "formal_sample_size": null,
+    "gpu_hours": null,
+    "novelty_claim": "NOT_ESTABLISHED",
+    "two_h100_multimodal_capacity": "UNKNOWN"
+  },
+  "repositories": [
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "inspection": "Selected code and documentation, not exhaustive",
+      "files": [
+        {
+          "path": "docs/examples/dagger.md",
+          "git_blob_sha": "7ec78ae509be5ec0ba4fe55bd6bad46a8c8b6abe",
+          "bytes": 4319
+        },
+        {
+          "path": "docs/grpo.md",
+          "git_blob_sha": "74ef3a2af42487bd6075bbb1d36a180804edf6be",
+          "bytes": 17655
+        },
+        {
+          "path": "docs/sft.md",
+          "git_blob_sha": "cf728632b60a51d6890a2e86d4b770c403d4f0da",
+          "bytes": 7914
+        },
+        {
+          "path": "docs/slime.md",
+          "git_blob_sha": "c4b97201604c2437294c0e13cce7225bd2f99253",
+          "bytes": 2793
+        },
+        {
+          "path": "lite/agents/models/qwen3_5/adapter.py",
+          "git_blob_sha": "3f093585f1b9b5f3ee39b251766825636ddba9e0",
+          "bytes": 42730
+        },
+        {
+          "path": "lite/core/samples.py",
+          "git_blob_sha": "6068283624c3c1a31097459111567728b7c14eb1",
+          "bytes": 6410
+        },
+        {
+          "path": "lite/data/README.md",
+          "git_blob_sha": "46704c0a82aa345f56130e7f2fa24ea454c55c2d",
+          "bytes": 10134
+        },
+        {
+          "path": "lite/gym/envs/lite/osworld/README.md",
+          "git_blob_sha": "f2de2245d0b944697541b06a847cdb3f86cdc417",
+          "bytes": 12678
+        },
+        {
+          "path": "lite/train/export/sft_tokenize.py",
+          "git_blob_sha": "40956cd9aa4fdf4aef541a819b2c26094e6c79bd",
+          "bytes": 9905
+        },
+        {
+          "path": "pyproject.toml",
+          "git_blob_sha": "5921a7c9f6e5723535c23695e28db8303b64664c",
+          "bytes": 4250
+        },
+        {
+          "path": "scripts/train/models/Qwen3.5-4B.sh",
+          "git_blob_sha": "dc6c1b7b89ca5b62a1a1bbda9f568b0379a742a8",
+          "bytes": 929
+        },
+        {
+          "path": "scripts/train/run_sft.sh",
+          "git_blob_sha": "cfd4336910f4ed71e8969a33c0f61049e1f03967",
+          "bytes": 17541
+        }
+      ]
+    },
+    {
+      "repository": "AI45Lab/SAfactory",
+      "commit": "55420b81b853b584071659d7c30f447eb5e813d1",
+      "inspection": "README only; no installation or runtime verification",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "d82605176de2ce7317c7bb45d467735dfaa7cae2"
+        }
+      ]
+    },
+    {
+      "repository": "k4ngzy/SCOPE-Gen",
+      "commit": "b38f61c40d15e2d4f67fbac5841a3ce10e9de63a",
+      "inspection": "README only; no installation or runtime verification",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "26bb2f08bcd913ac00ee4f086724c92003fe568a"
+        }
+      ]
+    },
+    {
+      "repository": "Sizhe-Chen/SecPO",
+      "commit": "da0372a0e598badf4e51c98c175a962147cac2ac",
+      "inspection": "README only; no installation or runtime verification",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "b8da46b6578c95e0e0698e2eb503b05c869a27c0"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cua_lite",
+      "title": "CUA-Lite: An Open Platform for Computer Use Agents",
+      "url": "https://arxiv.org/abs/2610.26071",
+      "read_scope": "paper_and_selected_code",
+      "relevance": "Infrastructure; no project runtime validation"
+    },
+    {
+      "id": "osworld",
+      "title": "OSWorld",
+      "url": "https://arxiv.org/abs/2404.07972",
+      "read_scope": "primary_paper",
+      "relevance": "Desktop execution evaluation"
+    },
+    {
+      "id": "visualwebarena",
+      "title": "VisualWebArena",
+      "url": "https://arxiv.org/abs/2401.13649",
+      "read_scope": "primary_paper",
+      "relevance": "Visual web tasks"
+    },
+    {
+      "id": "ui_tars",
+      "title": "UI-TARS",
+      "url": "https://arxiv.org/abs/2501.12326",
+      "read_scope": "primary_paper",
+      "relevance": "Native GUI policy"
+    },
+    {
+      "id": "safearena",
+      "title": "SafeArena",
+      "url": "https://arxiv.org/abs/2503.04957",
+      "read_scope": "primary_paper_and_repository_readme",
+      "relevance": "Data access is not established"
+    },
+    {
+      "id": "wasp",
+      "title": "WASP",
+      "url": "https://arxiv.org/abs/2504.18575",
+      "read_scope": "primary_paper",
+      "relevance": "Attempting an attack action differs from achieving attacker goal"
+    },
+    {
+      "id": "stepjack",
+      "title": "StepJack",
+      "url": "https://arxiv.org/abs/2608.06477",
+      "read_scope": "primary_paper",
+      "relevance": "Multistep indirect injection"
+    },
+    {
+      "id": "os_harm",
+      "title": "OS-Harm",
+      "url": "https://arxiv.org/abs/2506.14866",
+      "read_scope": "primary_paper",
+      "relevance": "Misuse injection and misbehavior"
+    },
+    {
+      "id": "os_blind",
+      "title": "OS-BLIND",
+      "url": "https://arxiv.org/abs/2604.10577",
+      "read_scope": "primary_paper",
+      "relevance": "Benign instructions with environment risks"
+    },
+    {
+      "id": "osguard",
+      "title": "OSGuard",
+      "url": "https://arxiv.org/abs/2606.15034",
+      "read_scope": "primary_paper",
+      "relevance": "Action decisions and execution invariants"
+    },
+    {
+      "id": "autoelicit",
+      "title": "When Benign Inputs Lead to Severe Harms",
+      "url": "https://proceedings.mlr.press/v306/jones26b.html",
+      "read_scope": "primary_publication",
+      "relevance": "Inference vulnerability is not training-induced degradation"
+    },
+    {
+      "id": "agentic_ft",
+      "title": "Unintended Misalignment from Agentic Fine-Tuning: Risks and Mitigation",
+      "url": "https://arxiv.org/abs/2508.14031",
+      "read_scope": "primary_paper",
+      "relevance": "Agent fine-tuning safety degradation already studied"
+    },
+    {
+      "id": "scout",
+      "title": "SCOUT",
+      "url": "https://arxiv.org/abs/2609.36201",
+      "read_scope": "primary_paper",
+      "relevance": "Task-specific post-execution state verification"
+    },
+    {
+      "id": "secalign",
+      "title": "SecAlign: Defending Against Prompt Injection with Preference Optimization",
+      "url": "https://arxiv.org/abs/2410.05451",
+      "read_scope": "primary_abstract",
+      "relevance": "Attack inputs plus secure and insecure preferences"
+    },
+    {
+      "id": "arlas",
+      "title": "Adversarial Reinforcement Learning for Large Language Model Agent Safety",
+      "url": "https://arxiv.org/html/2510.05442v1",
+      "read_scope": "primary_paper_selected_sections",
+      "relevance": "Attacker defender training and historical attackers"
+    },
+    {
+      "id": "fate",
+      "title": "On-Policy Self-Evolution via Failure Trajectories for Agentic Safety Alignment",
+      "url": "https://arxiv.org/html/2605.11882v1",
+      "read_scope": "primary_methods_and_limitations",
+      "relevance": "Failure repair and environment replay already covered"
+    },
+    {
+      "id": "coer",
+      "title": "CoER: Defending against Adaptive Indirect Prompt Injection via Adversarial Co-Evolution and Refinement",
+      "url": "https://arxiv.org/html/2609.07529v3",
+      "read_scope": "primary_methods_and_evaluation",
+      "relevance": "Verifier-grounded co-evolution and teacher refinement already covered"
+    },
+    {
+      "id": "scope",
+      "title": "Beyond Task Completion: Training Capable and Safe Computer-Use Agents",
+      "url": "https://arxiv.org/html/2609.22178v2",
+      "read_scope": "primary_methods_and_selected_repository_readmes",
+      "relevance": "Direct CUA data-training co-design neighbor"
+    },
+    {
+      "id": "agentsafeevo",
+      "title": "AgentSafeEvo: Adversarial Co-Evolution for LLM Agent Safety",
+      "url": "https://arxiv.org/html/2610.19422v1",
+      "read_scope": "primary_methods_and_model_setup",
+      "relevance": "Task synthesis and learnability weighting already covered"
+    },
+    {
+      "id": "secpo",
+      "title": "SecPO: Principled Adversarial Training for Prompt Injection Security",
+      "url": "https://arxiv.org/html/2610.41998v1",
+      "read_scope": "primary_methods_transfer_sections_and_repository_readme",
+      "relevance": "Attack-data objective co-design and visual transfer already covered"
+    },
+    {
+      "id": "srft",
+      "title": "Self-Reflection Fine-Tuning: Enhancing Agent Security against Prompt Injection Attacks from Failure Experience",
+      "url": "https://arxiv.org/html/2610.04269v1",
+      "read_scope": "primary_paper_selected_sections",
+      "relevance": "Failure reflection and safe-action supervision"
+    },
+    {
+      "id": "causalflow",
+      "title": "CausalFlow: Causal Attribution and Counterfactual Repair for LLM Agent Failures",
+      "url": "https://arxiv.org/abs/2605.25338",
+      "read_scope": "primary_abstract",
+      "relevance": "Counterfactual localization and minimal repairs are prior work"
+    },
+    {
+      "id": "last_doubt",
+      "title": "Agents' Last Doubt: Knowing When to Act and When to Step Back in Tool-Using Agents",
+      "url": "https://arxiv.org/abs/2610.24194",
+      "read_scope": "primary_abstract",
+      "relevance": "Same-state action outcomes and frozen-agent controller"
+    },
+    {
+      "id": "copa",
+      "title": "COPA: Continual Preference Optimization for Adaptive Prompt Injection Defense",
+      "url": "https://arxiv.org/html/2608.19982v1",
+      "read_scope": "primary_paper_selected_sections",
+      "relevance": "Continual defense and replay"
+    },
+    {
+      "id": "erase",
+      "title": "Erase the Injected Region: Multimodal Prompt-Injection Defense with On-Policy Self-Distillation",
+      "url": "https://arxiv.org/html/2610.41307v1",
+      "read_scope": "primary_paper",
+      "relevance": "Multimodal injection defense OPSD; not desktop runtime evidence"
+    },
+    {
+      "id": "right_teacher",
+      "title": "Trust the Right Teacher: Quality-Aware Self-Distillation for GUI Grounding",
+      "url": "https://arxiv.org/html/2606.18101v3",
+      "read_scope": "primary_paper",
+      "relevance": "GUI grounding OPSD already studied"
+    },
+    {
+      "id": "teacher_move",
+      "title": "When Should the Teacher Move? Temporal Coupling and Stability in Self On-Policy Distillation",
+      "url": "https://arxiv.org/html/2606.03532v2",
+      "read_scope": "primary_paper",
+      "relevance": "Teacher scheduling already studied"
+    },
+    {
+      "id": "cua_master",
+      "title": "CUA-Master: Scaling Computer-use Agents through Open-World Recursive Improvements",
+      "url": "https://arxiv.org/abs/2611.03126",
+      "read_scope": "primary_abstract_and_project_page",
+      "relevance": "Capability data loop; not identical to self-teacher KL"
+    },
+    {
+      "id": "progressive",
+      "title": "Progressive Misalignment Can Emerge from Benign Recursive Self-Distillation",
+      "url": "https://arxiv.org/abs/2610.22467",
+      "read_scope": "primary_paper",
+      "relevance": "Historical project motivation; not reproduced here"
+    },
+    {
+      "id": "dce",
+      "title": "Recursive Self-Improvement via On-Policy Distillation for Reasoning",
+      "url": "https://arxiv.org/abs/2609.30652",
+      "read_scope": "primary_paper",
+      "relevance": "Historical context; not the new required algorithm"
+    }
+  ],
+  "known_boundaries": [
+    "Text rsd/modeling.py omits vision and cannot directly run screenshot CUA.",
+    "CUA-Lite 2B two-GPU examples do not validate 9B multimodal training on this project's two H100s.",
+    "CUA-Lite paper and inspected code use different filtered desktop evaluation counts.",
+    "CUA-Lite DAgger is online hard-target SFT; not interchangeable with full-distribution KL OPSD.",
+    "Failure repair, counterfactual localization, attack-defense co-evolution and CUA safe-continuation training all have prior work.",
+    "Safe task completion, attack failure, refusal and inability must remain distinct.",
+    "Task and attack-family test isolation must precede generating variants.",
+    "Selected repository inspection does not certify license compatibility, runtime compatibility or full paper reproduction.",
+    "CUA datasets, integrations, verifier calibration, exact sample contracts and capacity tests remain to be done."
+  ]
+}
