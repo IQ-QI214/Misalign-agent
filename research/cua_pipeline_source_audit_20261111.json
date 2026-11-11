@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-11",
+  "project_base_commit": "d88be1850a3a416cf4e285ead10bb014bd2acf37",
+  "status": "SOURCE_REVIEW_AND_DESIGN_ONLY",
+  "decision": {
+    "primary_runtime_training": "cua-lite/cua-lite",
+    "primary_commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+    "optional_attack_source": "AI45Lab/OpenART",
+    "attack_commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+    "integrated": false
+  },
+  "execution": {
+    "gpu_jobs_started": 0,
+    "remote_connections": 0,
+    "model_calls": 0,
+    "environment_episodes": 0,
+    "optimizer_updates": 0,
+    "model_weights_downloaded": false,
+    "dataset_bundles_downloaded": false
+  },
+  "known_gaps": [
+    "CUA-Lite common API reset/step/close does not guarantee arbitrary desktop checkpoint/restore.",
+    "CUA-Lite SFT/GRPO paths inspected; no turnkey multimodal trajectory DPO/SecPO integration verified.",
+    "OpenART EMHA paper keeps attacker/target model parameters frozen; feedback search is not defender training.",
+    "OpenART documented GUI example uses element references; screenshot-only pixel-action training unverified.",
+    "OpenART documented GUI wrapper path fetch returned 404 at the recorded commit; filename search returned documentation only.",
+    "OpenART WorkspaceManager.snapshot_shared records file metadata and hashes, not full restorable GUI/service/process state.",
+    "Two-H100 9B multimodal training capacity and selected task capability remain UNKNOWN."
+  ],
+  "files": [
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "docs/envs.md",
+      "git_blob_sha": "650ceaad6e57e09784017f873f3340336a8f1dc7",
+      "status": "READ_ONLY",
+      "scope": "Selected source/documentation; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "docs/sft.md",
+      "git_blob_sha": "cf728632b60a51d6890a2e86d4b770c403d4f0da",
+      "status": "READ_ONLY",
+      "scope": "Selected source/documentation; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "lite/gym/envs/lite/osworld/README.md",
+      "git_blob_sha": "f2de2245d0b944697541b06a847cdb3f86cdc417",
+      "status": "READ_ONLY",
+      "scope": "Selected source/documentation; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "lite/core/samples.py",
+      "git_blob_sha": "6068283624c3c1a31097459111567728b7c14eb1",
+      "status": "READ_ONLY",
+      "scope": "Selected source/documentation; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "docs/examples/dagger.md",
+      "git_blob_sha": "7ec78ae509be5ec0ba4fe55bd6bad46a8c8b6abe",
+      "status": "READ_ONLY",
+      "scope": "Selected source/documentation; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "lite/gym/base.py",
+      "git_blob_sha": "b25a294797ce1ac31d30fa2fb6a28a71956adf5e",
+      "status": "READ_ONLY",
+      "scope": "Selected interface and implementation lines; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "lite/gym/envs/lite/osworld/main.py",
+      "git_blob_sha": "61e99a6268dd9825fdc7086d5079580d27b0bd10",
+      "status": "READ_ONLY",
+      "scope": "Selected interface and implementation lines; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "scripts/train/run_sft.sh",
+      "git_blob_sha": "cfd4336910f4ed71e8969a33c0f61049e1f03967",
+      "status": "READ_ONLY",
+      "scope": "Selected interface and implementation lines; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "lite/train/export/sft_tokenize.py",
+      "git_blob_sha": "40956cd9aa4fdf4aef541a819b2c26094e6c79bd",
+      "status": "READ_ONLY",
+      "scope": "Selected tokenization contract; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "lite/gym/envs/lite/demo/README.md",
+      "git_blob_sha": "bd211613f5458a2c993d0ea7c4890fe7ba626400",
+      "status": "READ_ONLY",
+      "scope": "README"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "scripts/train/models/Qwen3.5-9B.sh",
+      "git_blob_sha": "f4c1ca5761b61a0618ee03b7657ee8b9f1d802b3",
+      "status": "READ_ONLY",
+      "scope": "Model argument template; not capacity validation"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "lite/train/export/export_sft.py",
+      "git_blob_sha": "e7e8132834107fc9a06ea9d5b51dd190b8b674be",
+      "status": "READ_ONLY",
+      "scope": "Selected export contract; not executed"
+    },
+    {
+      "repository": "cua-lite/cua-lite",
+      "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+      "path": "docs/slime.md",
+      "git_blob_sha": "c4b97201604c2437294c0e13cce7225bd2f99253",
+      "status": "READ_ONLY",
+      "scope": "Training infrastructure instructions"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "OpenART/services/gui-browser/README.md",
+      "git_blob_sha": "2529297d5059f3f93948bf06bb10c6ea3103f0c4",
+      "status": "READ_ONLY",
+      "scope": "Full documentation; not executed"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "OpenART/docs/02_runtime_architecture.md",
+      "git_blob_sha": "1222b3595ec8495046ded37a48e3a8af8f707c7a",
+      "status": "READ_ONLY",
+      "scope": "Full documentation; not executed"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "OpenART/docs/08_graph_rl_attacker.md",
+      "git_blob_sha": "bb4a3823cddf40b12637dd670ff9495aad85511c",
+      "status": "READ_ONLY",
+      "scope": "Full documentation; not executed"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "OpenART/docs/10_extension_guides.md",
+      "git_blob_sha": "6edd77377d5f6aa3be6094fbc8aed80b86851177",
+      "status": "READ_ONLY",
+      "scope": "Full documentation; not executed"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "OpenART/framework/core/workspace.py",
+      "git_blob_sha": "2d854598e86606434d5fd48e98631a95a7465775",
+      "status": "READ_ONLY",
+      "scope": "Selected implementation/evaluation lines; failed path retained"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "OpenART/framework/core/orchestrator.py",
+      "git_blob_sha": "81c7fa710b06e28ce832718b24a5ca3f23630707",
+      "status": "READ_ONLY",
+      "scope": "Selected implementation/evaluation lines; failed path retained"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "OpenART/docs/09_evaluation_and_outputs.md",
+      "git_blob_sha": "9d8fdda4aabb8874891f35b9654978211b75b703",
+      "status": "READ_ONLY",
+      "scope": "Selected implementation/evaluation lines; failed path retained"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": "addc45570f08cc047079f61e7e89f3e233cd17a9",
+      "path": "openart-tools/gui.browser/scripts/gui_browser.py",
+      "git_blob_sha": null,
+      "status": "FETCH_FAILED",
+      "scope": "Selected implementation/evaluation lines; failed path retained",
+      "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/repos/contents#get-repository-content\",\"status\":\"404\"}"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": null,
+      "path": "README.md",
+      "git_blob_sha": "83d037762f6b996eba21ae984d14ca9b957fdf2a",
+      "status": "READ_ONLY",
+      "scope": "Default-branch documentation, blob-identified"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": null,
+      "path": "OpenART/docs/README.md",
+      "git_blob_sha": "24d212f7ceb556ce75b0bcca4324085e5cfb420c",
+      "status": "READ_ONLY",
+      "scope": "Default-branch documentation, blob-identified"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": null,
+      "path": "OpenART/services/README.md",
+      "git_blob_sha": "5907135086e3eeb986f2fd1624ee5b199d7fbfa7",
+      "status": "READ_ONLY",
+      "scope": "Default-branch documentation, blob-identified"
+    },
+    {
+      "repository": "AI45Lab/OpenART",
+      "commit": null,
+      "path": "OpenART/docs/01_quickstart.md",
+      "git_blob_sha": "653aa558a9e6049899f44cd23020e2a343402a06",
+      "status": "READ_ONLY",
+      "scope": "Default-branch documentation, blob-identified"
+    },
+    {
+      "repository": "Sizhe-Chen/SecPO",
+      "commit": "da0372a0e598badf4e51c98c175a962147cac2ac",
+      "path": "REPRODUCIBILITY.md",
+      "git_blob_sha": "ec3938986530fc1a5b45c9a6e1726dd18d49d331",
+      "status": "READ_ONLY",
+      "scope": "Selected reproducibility details"
+    },
+    {
+      "repository": "xu-hu-2002/CUA-Recovery",
+      "commit": null,
+      "path": "README.md",
+      "git_blob_sha": "46af46b9362a2fbd723314269ddff98fc0606044",
+      "status": "READ_ONLY",
+      "scope": "Default-branch README; KVM and dataset-release status"
+    }
+  ]
+}

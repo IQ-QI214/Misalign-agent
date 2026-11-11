@@ -4,6 +4,8 @@
 
 [第一版方法研究方案](research/ADVERSARIAL_TRAJECTORY_TRAINING_V1_20261111.md)核对AgentSafeEvo、FATE、Co-Evolving Agents、SecPO、SCOPE、CUA-Recovery与TACA，提出保留攻击和可重放状态的安全/失败分支构造；先固定训练配方验证转化收益，再验证闭环。梯度选材是可选工具/对照，OPSD、固定/递归教师以及完整SFT→GRPO流程均非必选。具体模型、最终损失与规模尚未冻结，候选方法和新颖性未经实验验证。
 
+[代码基础与第一步实验](research/CUA_PIPELINE_BOOTSTRAP_20261111.md)进一步核查 OpenART：建议 CUA-Lite 承担截图/动作、运行与训练，按需复用 OpenART 的反馈攻击搜索。先验收一个真实 GUI 任务的失败→状态重建→安全续做→验证→SFT 导出和训练重载，再做受控训练对照。OpenART 的冻结参数攻击搜索、文件清单快照及元素引用 GUI 示例，不代表已具备截图 CUA 防御训练；跨框架接口、分支重放和多模态偏好训练仍未实现。版本与缺失路径见[源码审计](research/cua_pipeline_source_audit_20261111.json)。
+
 当前仍是文献、数据和实验设计阶段，尚无CUA轨迹采集、环境联测或训练结果；本轮未开卡，原六组训练计划仍禁用。早期调研保留作参考：[CUA文献地图](research/CUA_ATTACK_TO_DEFENSE_20261110.md)、[SFT/GRPO设计背景](research/CUA_SFT_GRPO_DESIGN_20261111.md)、[数据选择文献](research/DATA_SELECTION_LITERATURE_20261111.md)、[工具到GUI验证边界](research/TOOL_TO_GUI_VALIDATION_20261111.md)。此前“视觉能力混淆选材”候选不再作为当前主线。
 
 下文保留此前文本 RSD/OPSD 的实现、结果和待执行方案，作为工程资产及研究历史；不代表已决定将这些训练组直接迁移到 CUA，也不作为当前自动启动顺序。
