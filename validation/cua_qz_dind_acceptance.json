@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "status": "DIND_SMOKE_PASSED_GUI_NOT_RUN",
+  "observed_utc": "2026-11-11T12:38:14.173770+00:00",
+  "transport": "QZ_HTTPS_WEBSOCKET_SSH_VERIFIED",
+  "ssh_host_fingerprint": "SHA256:Eb0g5hAGBL5/nu/DiLpYQYKyic9LBznilSpPTRK/qTQ",
+  "tls_verification": true,
+  "known_host_checking": "strict",
+  "cgroup_initialization": "SUCCEEDED_AFTER_ROOT_CGROUP_BECAME_EMPTY",
+  "docker": {
+    "ServerVersion": "29.2.0",
+    "Driver": "overlay2",
+    "DockerRootDir": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-dind/cua-test-qi--91bb3a6ab7a7-oxj4j3ju6p/disk/docker",
+    "CgroupVersion": "2",
+    "NCPU": 41,
+    "MemTotal": 421100806144
+  },
+  "image_logical_bytes": 32212254720,
+  "image_allocated_bytes": 520093696,
+  "workspace_free_bytes": 81352720384,
+  "container_exit_code": 0,
+  "container_image_id": "sha256:e2ac70e7319a02c5a477f5825259bd118b94e8b02c279c67afa63adab6d8685b",
+  "receipt": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-dind/cua-test-qi--91bb3a6ab7a7-oxj4j3ju6p/attempt-20261111T123829-9a15321c.json",
+  "first_pull": "CONNECTION_RESET_FAILURE_PRESERVED",
+  "retry": "PASSED_REUSING_DAEMON_AND_DOWNLOADED_LAYER",
+  "gui_runtime": "NOT_RUN",
+  "gpu_training": "NOT_RUN",
+  "guard_tests_passed": 10
+}

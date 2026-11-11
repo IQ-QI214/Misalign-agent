@@ -10,9 +10,9 @@
 /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq
 ```
 
-本次浏览器观察到该实例页面显示开发机模式、40 CPU、400 GB 内存、0 GPU；用户终端输出确认 root、x86_64、cgroup v2，以及 Docker client/daemon 29.2.0 已安装。`/var/run/docker.sock` 不存在，`losetup -a` 未列出绑定。尚无 daemon 或容器成功运行的证据。
+本次浏览器观察到该实例页面显示开发机模式、40 CPU、400 GB 内存、0 GPU；用户终端输出确认 root、x86_64、cgroup v2，以及 Docker client/daemon 29.2.0 已安装。`/var/run/docker.sock` 不存在，`losetup -a` 未列出绑定。这是初检状态；后续 daemon 与小容器均已通过，见下方最新验收。
 
-用户检查中的 460G 可用空间属于旧 `global_user` 挂载；**新 project 挂载的剩余空间仍未知**。旧 CPU SSH 中转能够连接，但看不到新项目挂载，不能在旧机器上创建同名目录代替它。浏览器原生接口可以读取新页面，输入操作却未产生可验证的终端变化；本轮没有借此执行成功的远端修改。
+用户检查中的 460G 可用空间属于旧 `global_user` 挂载；**新 project 挂载的剩余空间仍未知**。旧 CPU SSH 中转能够连接，但看不到新项目挂载，不能在旧机器上创建同名目录代替它。浏览器原生接口可以读取新页面，输入操作却未产生可验证的终端变化；后续通过新实例的 HTTPS/WebSocket SSH 连接完成了远端操作。
 
 新增 `scripts/qz_cua_dind.py`，在新实例内执行：
 
@@ -55,7 +55,7 @@ receipt: ../vm-aria2/status.json
 - 本轮曾在 Mac 的项目 `.runtime/` 下新建轻量 Python 环境，用户纠正部署位置后已删除 `cua-bootstrap`、`cua-cpu`、`uv-cache`、`uv-python` 四个目录。没有拉取模型、桌面镜像，没有启动 Docker、GPU 或远端工作。
 - 删除前完成了上游核心样本和序列化模块的导入检查；完整模型 adapter 导入因稀疏源码缺少 `lite.gym.utils` 失败。此历史检查不是完整依赖验收，更不是 CUA 环境或训练结果。
 - 新增 `scripts/qz_cua_preflight.py`：标准库脚本，只读取系统、挂载、loop 占用及本地 Docker 状态，不安装软件，不启动服务，不挂载或格式化。Mac 平台直接返回未执行状态。
-- 已有新实例页面与用户终端的部分基础检查；Docker daemon、桌面容器与真实 GUI 轨迹均未通过执行验收。
+- 已有新实例页面与用户终端的部分基础检查；Docker daemon 和官方 hello-world 容器已通过执行验收；桌面与真实 GUI 轨迹待验证。
 
 ## 用户提供图片中的安装路线
 
@@ -129,3 +129,13 @@ python3 scripts/qz_cua_preflight.py
 环境部署位置调整不改变研究问题。无效攻击经历怎样转为有效训练监督，仍需最终通过训练后的 CUA 行为结果证明；本轮只有源码固定和 QZ 操作准备。
 
 用户首轮真实执行回执显示项目挂载剩余 81,906,368,512 bytes（约 76.28 GiB），旧默认 64 GiB + 16 GiB 余量触发容量检查，尚未创建数据镜像或启动 daemon。已将默认值改为 30 GiB；现有脚本也可直接传 `--size-gib 30` 接续，无需重新 clone。VM 文件存在且大小符合历史记录，当前 SHA 未检查。
+
+## 最新验收（2026-11-11）
+
+已通过用户提供的 30003 HTTPS 代理接通 SSH，并核对用户提供的 ED25519 指纹。旧中转到新实例内网的 TCP 连接超时。现有 rtunnel 客户端使用额外数据包格式，与本次标准二进制 WebSocket 桥接不兼容，因此采用 `scripts/qz_cua_ws_client.py` 作为 OpenSSH ProxyCommand。客户端仅使用 Python 标准库，TLS 验证和 SSH 严格主机密钥检查均开启。访问 URL、known_hosts 和本机调用入口放在忽略的 `.runtime/qz/` 中。
+
+新连接检查时根 cgroup 已无驻留进程，重试原 `prepare_cgroups()` 成功。原 EBUSY 未捕获具体调用位置，故保留历史失败，不将重试成功当作已证明某个唯一根因。
+
+Docker 29.2.0、cgroup v2、overlay2 与项目专用 ext4 已启用。首次 hello-world 镜像配置下载被重置，失败回执保留；复用 daemon 和已下载 layer 重试成功，容器 ExitCode=0。30 GiB backing file 实际占用 520,093,696 bytes，项目挂载剩余 81,352,720,384 bytes。完整可公开验收摘要见 `validation/cua_qz_dind_acceptance.json`。
+
+CUA-Lite 源码已在 QZ 检出固定 commit，正在进行 CPU 环境部署。小容器验收、源码就绪和真实 GUI 任务分别记录，后续仍需桌面截图、动作与任务重置验证。

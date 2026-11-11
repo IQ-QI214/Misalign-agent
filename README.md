@@ -6,9 +6,9 @@
 
 [代码基础与第一步实验](research/CUA_PIPELINE_BOOTSTRAP_20261111.md)进一步核查 OpenART：建议 CUA-Lite 承担截图/动作、运行与训练，按需复用 OpenART 的反馈攻击搜索。先验收一个真实 GUI 任务的失败→状态重建→安全续做→验证→SFT 导出和训练重载，再做受控训练对照。OpenART 的冻结参数攻击搜索、文件清单快照及元素引用 GUI 示例，不代表已具备截图 CUA 防御训练；跨框架接口、分支重放和多模态偏好训练仍未实现。版本与缺失路径见[源码审计](research/cua_pipeline_source_audit_20261111.json)。
 
-部署位置已按用户要求固定为 **QZ**：Mac 仅维护源码和文档，本轮新建的本机 Python 环境及缓存已清理。CUA-Lite 已固定为 `references/cua_lite` 子模块；[QZ DinD 操作说明](research/QZ_CUA_DIND_SETUP_20261111.md)依据用户提供的 Kata 手册，配有只读检查脚本 `scripts/qz_cua_preflight.py`。QZ Docker、桌面环境和训练均待实际验证。
+部署位置已按用户要求固定为 **QZ**：Mac 仅维护源码和文档，本轮新建的本机 Python 环境及缓存已清理。CUA-Lite 已固定为 `references/cua_lite` 子模块；[QZ DinD 操作说明](research/QZ_CUA_DIND_SETUP_20261111.md)依据用户提供的 Kata 手册，配有只读检查脚本 `scripts/qz_cua_preflight.py`。QZ Docker 已通过真实小容器验收，桌面环境和训练待验证。
 
-新 CPU 开发机已创建，当前授权存储改为 `project/independent-security-research/wenming-253108090054/zjq`。用户检查确认 Docker 程序已安装，但 daemon socket 尚不存在；旧挂载的 460G 剩余空间不能当作新目录预算。新增 `scripts/qz_cua_dind.py`，支持项目专用 ext4 镜像、已有资源保护、启动日志与小容器验收；仅完成标准库保护逻辑检查，尚未在新 QZ 实例执行。首个 Lite.OSWorld 桌面使用 Docker，无需重复下载历史 WeaveBench VM。
+新 CPU 开发机已创建，当前授权存储改为 `project/independent-security-research/wenming-253108090054/zjq`。用户检查确认 Docker 程序已安装，但 daemon socket 尚不存在；旧挂载的 460G 剩余空间不能当作新目录预算。新增 `scripts/qz_cua_dind.py`，支持项目专用 ext4 镜像、已有资源保护、启动日志与小容器验收；已通过新 QZ 实例上的真实小容器验收，见 [验收回执](validation/cua_qz_dind_acceptance.json)。首个 Lite.OSWorld 桌面使用 Docker，无需重复下载历史 WeaveBench VM。
 
 当前仍是文献、数据和实验设计阶段，尚无CUA轨迹采集、环境联测或训练结果；本轮未开卡，原六组训练计划仍禁用。早期调研保留作参考：[CUA文献地图](research/CUA_ATTACK_TO_DEFENSE_20261110.md)、[SFT/GRPO设计背景](research/CUA_SFT_GRPO_DESIGN_20261111.md)、[数据选择文献](research/DATA_SELECTION_LITERATURE_20261111.md)、[工具到GUI验证边界](research/TOOL_TO_GUI_VALIDATION_20261111.md)。此前“视觉能力混淆选材”候选不再作为当前主线。
 
