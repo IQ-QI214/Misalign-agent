@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "task_id": "synth_os_f_os_01__edit_server_name_0001",
+  "model_run": false,
+  "actions_source": "harness_oracle_and_state_mutation",
+  "arbitrary_checkpoint_restore": "NOT_TESTED",
+  "status": "TASK_FILE_REINITIALIZATION_PASSED",
+  "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/state-probe-20261111T160214-3edad2ca",
+  "script_sha256": "5e65f6808c27f6ba103dd28c41c8077a48bf0470b7028b1a7ecdc1d7227ad551",
+  "initial": {
+    "file_sha256": "8faada41b33ae0babbb59778e0fbe51120bb98dc9f2d00061416bd5899a554ff",
+    "marker_absent": true,
+    "task_score": 0.0
+  },
+  "harness_solved": {
+    "file_sha256": "24ca886695143b2a89ac614f48b2de947bffb58e5bd6651f70189c1f80e4960d",
+    "marker_absent": false,
+    "task_score": 1.0
+  },
+  "warm_reset": {
+    "file_sha256": "8faada41b33ae0babbb59778e0fbe51120bb98dc9f2d00061416bd5899a554ff",
+    "marker_absent": false,
+    "task_score": 0.0
+  },
+  "fresh_container": {
+    "file_sha256": "8faada41b33ae0babbb59778e0fbe51120bb98dc9f2d00061416bd5899a554ff",
+    "marker_absent": true,
+    "task_score": 0.0
+  },
+  "interpretation": "Warm reset restores the checked task file but preserves a task-external marker; fresh-container setup restores both checked conditions. Other runtime state and arbitrary checkpoint restore remain untested."
+}

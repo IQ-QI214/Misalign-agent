@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_DEVELOPMENT_COHORT_NOT_EXECUTED",
+  "upstream_commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+  "catalog": "lite/gym/envs/lite/osworld/data/train.synth.jsonl",
+  "catalog_sha256": "af4df9b85e8f54768793a9444219e8e38c33c1e94a821db0d7524ebf357be5c5",
+  "selection": "Per domain, SHA256(cua-dev-v1/parent_family) ascending, first 12 parents; smallest config JSON by character count then task_id within each parent.",
+  "purpose": "Development feasibility and model calibration; any derivatives stay development-only.",
+  "upstream_eval_lineage_audit": "PENDING",
+  "defense_training_samples": 0,
+  "task_count": 24,
+  "tasks": [
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_13",
+      "source": "synthetic:f_calc_13__clean_titles_to_proper",
+      "instruction": "Fill the Clean column with each Raw title lower-cased.",
+      "catalog_row_sha256": "225979b97e57a2d95afc950f7752f841513bd2d4692957290bcc47ded418d2c4"
+    },
+    {
+      "task_id": "synth_calc_f_calc_2__filter_to_new_sheet_0002",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_2",
+      "source": "synthetic:f_calc_2__filter_to_new_sheet",
+      "instruction": "Please help me pull together a short list of students who need extra support this quarter — create a new sheet 'Failing' that holds the header row plus every student whose Score is strictly below 60 so I can share it with the counsellor.",
+      "catalog_row_sha256": "82275ef0ede2a2df3be5cb3a8c5644daba70174bc6b3ada9e1f699d641bcf110"
+    },
+    {
+      "task_id": "synth_calc_f_calc_44__groupby_mode_totals_0002",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_44",
+      "source": "synthetic:f_calc_44__groupby_mode_totals",
+      "instruction": "Add a new sheet 'By Mode' summing Miles per Mode: header row 'Mode','TotalMiles' followed by one row per distinct mode.",
+      "catalog_row_sha256": "33ba9775f56985e02c8c1c2e1def537bab214b65753c1695751d9239d199d446"
+    },
+    {
+      "task_id": "synth_calc_f_calc_102__text_decimals_display_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_102",
+      "source": "synthetic:f_calc_102__text_decimals_display",
+      "instruction": "Could you help me pad each Value to 3 decimal places of text on the Readings sheet — populate the Display column with the Value rendered to 3 decimal digits so the report exports cleanly.",
+      "catalog_row_sha256": "914922bc6be51150467f160887bc4bfaf2ca211b13b6b5bb84f5383801406cf4"
+    },
+    {
+      "task_id": "synth_calc_f_calc_92__transpose_header_block_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_92",
+      "source": "synthetic:f_calc_92__transpose_header_block",
+      "instruction": "Could you help me build the field-mapping fixture for the CRM import — please copy the 5-cell header row A1:E1 on the Orders sheet and write it transposed (as a vertical list) starting at G1 so I can paste it into the mapping template.",
+      "catalog_row_sha256": "1c550e9708ee223eaa8f1d9eb45057e966e4c7abc71f429ad2451978357a53ba"
+    },
+    {
+      "task_id": "synth_calc_f_calc_4__filter_to_new_sheet_by_genre_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_4",
+      "source": "synthetic:f_calc_4__filter_to_new_sheet_by_genre",
+      "instruction": "I'd like to share a drama-only film list with the community screening club next month — create a new sheet named 'Drama' that holds the header row plus every movie whose Genre is Drama so the curator can plan the lineup.",
+      "catalog_row_sha256": "f1a6a5be1f8927f1dd1d3273521e78e5033bed57cb6c2e774d83561f53f875e0"
+    },
+    {
+      "task_id": "synth_calc_f_calc_24__color_low_uptime_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_24",
+      "source": "synthetic:f_calc_24__color_low_uptime",
+      "instruction": "Give every server row whose IncidentCount is 5 or more a yellow fill (high-incident flag) (use Custom Color hex #FFFF00 in the fill picker).",
+      "catalog_row_sha256": "2209dc3bceecee6286a271b825b630504f57854d57f4ec3d0961cc42a419f802"
+    },
+    {
+      "task_id": "synth_calc_f_calc_7__color_by_margin_0002",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_7",
+      "source": "synthetic:f_calc_7__color_by_margin",
+      "instruction": "I'm running a low-margin investigation before the pricing committee meeting — give every row whose Margin is below 0.20 a pink fill so the at-risk SKUs jump out for the team to discuss in the printed handout (use Custom Color hex #FFC0C0 in the fill picker).",
+      "catalog_row_sha256": "45ee712948f0647e0914eadbe3e5cb0246565bdc2718949462bea2cee6f5bde1"
+    },
+    {
+      "task_id": "synth_calc_f_calc_6__filter_by_channel_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_6",
+      "source": "synthetic:f_calc_6__filter_by_channel",
+      "instruction": "I'm preparing the retail-channel report for the brick-and-mortar team's monthly review — create a new sheet named 'Retail Sales' that holds the header row plus every sales row whose Channel is Retail so the store managers see a clean view.",
+      "catalog_row_sha256": "50ffebed8e33f8228f796a1428265b830b234aa625113e7438aadd269e459183"
+    },
+    {
+      "task_id": "synth_calc_f_calc_12__string_clean_proper_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_12",
+      "source": "synthetic:f_calc_12__string_clean_proper",
+      "instruction": "Fill the Clean column with each Code title-cased (capitalise the first letter of each word).",
+      "catalog_row_sha256": "7955c5a7cb369d2d42e6f5fbb924a728175c8c9d51300375e1e91b9608ab22e6"
+    },
+    {
+      "task_id": "synth_calc_f_calc_9__color_by_rate_0001",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_9",
+      "source": "synthetic:f_calc_9__color_by_rate",
+      "instruction": "Give every loan row whose Rate is below 0.05 a pale-green fill (low-rate flag) (use Custom Color hex #D0F0D0 in the fill picker).",
+      "catalog_row_sha256": "0c6120bfbdd313563bd8f8f245398eeaaf7271cf8fd7200caad2434e1308f3b7"
+    },
+    {
+      "task_id": "synth_calc_f_calc_93__sheet_rename_and_delete_0002",
+      "domain": "libreoffice_calc",
+      "parent_family": "synthetic:f_calc_93",
+      "source": "synthetic:f_calc_93__sheet_rename_and_delete",
+      "instruction": "I'm tidying up this workbook before archiving it for the compliance team — rename Sheet1 to 'LARS Resources' and then delete Sheet2 entirely so only the renamed sheet remains.",
+      "catalog_row_sha256": "fbd66312b4f6e2bf12b8f5736925dffe3261cbca65dd4f866c65c0cb8167613a"
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_93",
+      "source": "synthetic:f_writer_93__doc_font",
+      "instruction": "Change the font of the entire Origami reference document to Arial.",
+      "catalog_row_sha256": "934f6ff9f3aafa2039d52c825117f1a33848bbeb99c88f1f46dc0b1c9966e78f"
+    },
+    {
+      "task_id": "synth_writer_f_writer_46__doc_spacing_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_46",
+      "source": "synthetic:f_writer_46__doc_spacing",
+      "instruction": "Set the line spacing of the entire dessert recipe to 1.5.",
+      "catalog_row_sha256": "48c454063bb8f493a622c484c1f9e0360067130a9e8dddd22d313f96135ca907"
+    },
+    {
+      "task_id": "synth_writer_f_writer_72__doc_font_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_72",
+      "source": "synthetic:f_writer_72__doc_font",
+      "instruction": "Change the font of the entire project to-do list to Verdana.",
+      "catalog_row_sha256": "a3a51b0313c9bbfd16baca791215ca42175694c81dd70242e4bed431de75415e"
+    },
+    {
+      "task_id": "synth_writer_f_writer_107__doc_case_upper_register_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_107",
+      "source": "synthetic:f_writer_107__doc_case_upper_register",
+      "instruction": "Please convert every paragraph of this train-record register to uppercase so the printed wall-mounted reference reads at a distance — the change should apply across the whole document.",
+      "catalog_row_sha256": "268955228a3f31b32f3c1e2bc3e9ba0ae3d74cf3615669732eb1fb75cff58d36"
+    },
+    {
+      "task_id": "synth_writer_f_writer_106__doc_case_lower_solar_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_106",
+      "source": "synthetic:f_writer_106__doc_case_lower_solar",
+      "instruction": "I'd like the entire solar briefing converted to lowercase for the casual reading copy — please change every paragraph in the document to lowercase, top to bottom.",
+      "catalog_row_sha256": "cfce66b8dfa786df26e567bb03d0c89ab9bb72ea474c10e5aa9e806ffae7f485"
+    },
+    {
+      "task_id": "synth_writer_f_writer_77__mixed_align_forest_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_77",
+      "source": "synthetic:f_writer_77__mixed_align_forest",
+      "instruction": "Reformat the second paragraph of this photo essay caption so the first six words sit left-aligned (as a lead-in) and the remaining words are right-aligned.",
+      "catalog_row_sha256": "d8696a3cc8a653f58a4f07f03c9175bad69971f530196cbb1f57484048f58053"
+    },
+    {
+      "task_id": "synth_writer_f_writer_59__doc_spacing_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_59",
+      "source": "synthetic:f_writer_59__doc_spacing",
+      "instruction": "Set the line spacing of the entire Moby-Dick excerpt to double.",
+      "catalog_row_sha256": "b542a12acc80ea81e027719f14995c291799ef52ca17e2e75c5cab0a6e1a44c5"
+    },
+    {
+      "task_id": "synth_writer_f_writer_56__append_para_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_56",
+      "source": "synthetic:f_writer_56__append_para",
+      "instruction": "I'd like to credit our desert-trekking office at the foot of this tour itinerary before I hand it to the spring trip leaders — could you append a new paragraph at the end with the text 'Tour notes prepared by the desert-trekking office, March 2026.'?",
+      "catalog_row_sha256": "41a3e079ebb4eb1d40a879abf513e76d380a648632db2b7393120f6f8ee888c2"
+    },
+    {
+      "task_id": "synth_writer_f_writer_15__append_revision_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_15",
+      "source": "synthetic:f_writer_15__append_revision",
+      "instruction": "I'd like the effective date and prior-version reference to appear at the foot of this policy for the records system — could you add a new paragraph at the very end reading 'Effective date: 1 June 2026. Supersedes version 4.1.'?",
+      "catalog_row_sha256": "23413e0d2f0c7af0f5de7389d16c58f7e80767bdcbe6bc459cde00be6c5afd8b"
+    },
+    {
+      "task_id": "synth_writer_f_writer_12__append_para_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_12",
+      "source": "synthetic:f_writer_12__append_para",
+      "instruction": "I'd like every traveller to have a 24-hour number to call in case of trouble — could you append a new paragraph at the end of the guide reading 'Emergency contact: 1-800-555-1119 (24 hours).'?",
+      "catalog_row_sha256": "ccf7fff3ad38ef57facb4600a55a46599fffebf1b67470e801017c376d0d6efd"
+    },
+    {
+      "task_id": "synth_writer_f_writer_60__size18_opener_0001",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_60",
+      "source": "synthetic:f_writer_60__size18_opener",
+      "instruction": "I'd like the opening of this Frankenstein chapter to read as a banner in the printed reading-circle dossier — please set the first paragraph to 18-point font size.",
+      "catalog_row_sha256": "4b59cae525d2a7a4ffc9f9e2160d833a6a5c48a7eb4bf7304f5644efe25c561c"
+    },
+    {
+      "task_id": "synth_writer_f_writer_38__doc_font_0002",
+      "domain": "libreoffice_writer",
+      "parent_family": "synthetic:f_writer_38",
+      "source": "synthetic:f_writer_38__doc_font",
+      "instruction": "I'd like the academic abstract to match the conference submission style guide before I upload it tomorrow — could you change the font of the entire document to Georgia, please?",
+      "catalog_row_sha256": "aabdb84b798753dc90133ffdece1ac0f4d2a052d0161fc2d8ef8deef21605457"
+    }
+  ]
+}

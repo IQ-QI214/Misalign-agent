@@ -160,7 +160,7 @@ Python 3.12.16 与 uv 0.13.7 已安装在 `zjq/.runtime/cua-host`。PyPI 访问�
 
 ## 恢复网络后的 CPU 主机验收
 
-CPU Torch 重新安装完成，`torch==2.15.0+cpu`、`torchvision==0.29.2+cpu` 的导入与 2×2 矩阵乘法已通过。完整 OSWorld 主机依赖安装完成后再次验证，`torch.version.cuda` 为 null，已安装的 NVIDIA 包列表为空。回执见 `validation/cua_cpu_host_acceptance.json`，159 项实际包版本见 `configs/cua/cpu_host_requirements.lock.txt`。
+CPU Torch 重新安装完成，`torch==2.15.0+cpu`、`torchvision==0.29.2+cpu` 的导入与 2×2 矩阵乘法已通过。完整 OSWorld 主机依赖安装完成后再次验证，`torch.version.cuda` 为 null，已安装的 NVIDIA 包列表为空。回执见 `validation/cua_cpu_host_acceptance.json`，初次 159 项依赖及后续模型客户端补充包的实际版本见 `configs/cua/cpu_host_requirements.lock.txt`。
 
 固定 CPU 包约束保存在 `configs/cua/cpu_constraints.txt`。`scripts/qz_cua_osworld_prepare.sh` 使用阿里 PyPI 与南大 CPU PyTorch 源，关闭项目 GPU 索引来源配置并应用 CPU 约束，再调用未修改的上游 provision 入口。hf-mirror.com 在资源下载时返回 503，切换到官方 huggingface.co 后完成了固定 revision 的资源准备和目录检查，注册了 2,429 条训练来源任务。
 
@@ -173,3 +173,17 @@ CPU Torch 重新安装完成，`torch==2.15.0+cpu`、`torchvision==0.29.2+cpu` �
 本轮 `model_run=false`、`goal_completion_evaluated=false`、`reset_state_identity=NOT_TESTED`。reset 返回截图与点击后截图相同，完整任务状态重建还需独立执行验证。接下来先补轨迹记录和状态重建，再连接 GPU 视觉模型，构造攻击失败与安全续做分支并验证训练数据。
 
 清理了 uv 下载/构建缓存和临时解压目录，并对本项目 ext4 数据盘回收空闲块。Docker daemon 已移除临时 Mac 代理配置，重新启动后可访问，活动容器为 0。运行环境、桌面镜像、任务资产、截图和小型回执保留，最终占用见 `validation/cua_qz_storage_final.json`。
+
+## 任务状态重建补充检查
+
+2026-11-12 补充运行 `scripts/qz_cua_state_probe.py`。初始任务判分 0，控制端执行 oracle 后为 1，warm reset 后恢复原任务文件 SHA 与 0 分，但额外创建的 `/tmp` marker 保留。关闭后新建容器，原文件 SHA、0 分和 marker 不存在三项均恢复。首轮独立执行使用新建容器路径；任意中间状态 checkpoint/restore 仍待验证。此检查执行者为控制程序，模型调用为 0。见 `validation/cua_state_probe_v1.json`。
+
+## Qwen3-VL 首轮真实模型轨迹
+
+已恢复 dev-misalign-qi 的项目中转，通过新 CPU 可以访问的 global_user 共享目录调用既有 gpu-exec，启动独占单客户端的 HF 推理 worker。GPU 镜像和既有 .venv-rsd 已可运行 Qwen3-VL-4B，CPU 补充 Transformers、jsonschema 和 PyArrow，当前环境锁定为 174 个包。旧 GPU 看不到新 project 模型目录，本轮临时暂存已有 4B 权重，结束后清理该副本与中转目录，原模型仍在用户提供目录。
+
+固定上游 Qwen3-VL adapter 和 TrajectoryLogger，使用 greedy、每轮最多 1,024 输出 token、单任务最多 20 步。初次尝试在 9 次生成后遇到缺 jsonschema，第二次在获得任务分后因缺 PyArrow 未导出 Parquet，记录均保留。核查后将 loop_detect 从示例配置的 5 恢复到 registry 默认的 0，再执行一轮 20 步诊断，以避免连续合法按键被提前终止。模型在文本编辑器中反复退格，20 步用尽仍未完成目标，任务得分 0。原生轨迹 Parquet 可读取，包含 1 个 episode；所有尝试对应 1 个独立任务。
+
+完整执行闭环为 CPU 截图→GPU 模型生成→原生动作解析→CPU GUI 执行→任务判分→原生轨迹保存。本轮采集的是干净任务轨迹，安全攻击、修复转化与训练评测待继续。验收见 `validation/cua_qwen3vl_pilot_v1.json`，文件哈希清单见 `validation/cua_qwen3vl_artifacts_v1.json`。
+
+`model_io` 在各次 QZ 输出目录保存了 GPU 请求、响应和输入图片。复放这些原始请求时，图片绝对路径应从原共享 mailbox 前缀映射到该次输出的 `model_io` 目录。初始环境重建仍采用新建容器，任意中间状态恢复需另行验证。

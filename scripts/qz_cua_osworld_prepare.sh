@@ -20,3 +20,7 @@ uv pip install --python "$task_runtime/venv/bin/python" \
   -r "$UV_CONSTRAINT"
 cd "$task_project/references/cua_lite"
 bash lite/gym/envs/lite/osworld/scripts/install.sh provision
+
+# CPU-side processor, canonical tool schema validation, and model adapters.
+uv pip install --python "$task_runtime/venv/bin/python" \
+  "transformers==5.22.2" "jsonschema==4.26.0" "pyarrow==26.0.1"

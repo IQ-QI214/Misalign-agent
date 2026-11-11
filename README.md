@@ -12,6 +12,8 @@
 
 当前已完成 CPU 桌面环境联测，获得 1920×1080 截图并通过手写动作打开 Files，见[桌面验收回执](validation/cua_gui_smoke_acceptance.json)。已注册的 2,429 条任务来自上游任务目录，防御训练数据构造、模型自主轨迹与 CUA 训练评测仍待完成。本轮使用 CPU，原六组训练计划仍禁用。早期调研保留作参考：[CUA文献地图](research/CUA_ATTACK_TO_DEFENSE_20261110.md)、[SFT/GRPO设计背景](research/CUA_SFT_GRPO_DESIGN_20261111.md)、[数据选择文献](research/DATA_SELECTION_LITERATURE_20261111.md)、[工具到GUI验证边界](research/TOOL_TO_GUI_VALIDATION_20261111.md)。此前“视觉能力混淆选材”候选不再作为当前主线。
 
+[首轮数据与 benchmark 方案](research/CUA_DATA_AND_BENCHMARK_PLAN_20261112.md)记录了参考论文的数据生成方式、固定的 24 题开发集，以及 OS-Harm / OSWorld 外部评测候选。单任务执行检查确认 warm reset 恢复任务文件、保留任务外 marker，新建容器恢复了两项检查条件，见[状态检查回执](validation/cua_state_probe_v1.json)。已在一张 H100 上运行共享目录中的 Qwen3-VL-4B-Instruct，取得一个干净任务的 20 步轨迹并导出原生 Parquet。20 步上限下任务分为 0，详见[模型联测回执](validation/cua_qwen3vl_pilot_v1.json)。模型能力、攻击转化与训练收益仍需后续实测。
+
 下文保留此前文本 RSD/OPSD 的实现、结果和待执行方案，作为工程资产及研究历史；不代表已决定将这些训练组直接迁移到 CUA，也不作为当前自动启动顺序。
 
 第一版面向 **Qwen3.5-9B、2×H100**，基于公开 [OPSD](https://github.com/siyan-zhao/OPSD) 的固定版本独立适配。2026-11-06 已完成真实 9B 的双 H100 ZeRO-2 两步更新、最终模型重载和16条任务成对评测，并完成10条dev回答的本地Gemma3安全/误拒评分联测。首次联测暴露的训练/评测EOS问题已修复，并从初始模型重新完成两步验证；安全迁移和论文现象仍未验证。
