@@ -21,6 +21,9 @@ fi
 task_sshd=$(command -v sshd || echo /usr/sbin/sshd)
 printf '%s\n' "$task_key" >"$task_state/authorized_keys"
 ssh-keygen -lf "$task_state/authorized_keys" >/dev/null
+mkdir -p /run/cua-ssh
+chmod 700 /run/cua-ssh
+install -m 600 "$task_state/authorized_keys" /run/cua-ssh/authorized_keys
 if [[ ! -e "$task_state/host_key" ]]; then
   ssh-keygen -q -t ed25519 -N '' -f "$task_state/host_key"
 fi
@@ -30,7 +33,7 @@ Port 22224
 ListenAddress 0.0.0.0
 HostKey $task_state/host_key
 PidFile $task_state/sshd.pid
-AuthorizedKeysFile $task_state/authorized_keys
+AuthorizedKeysFile /run/cua-ssh/authorized_keys
 PermitRootLogin prohibit-password
 PasswordAuthentication no
 KbdInteractiveAuthentication no
