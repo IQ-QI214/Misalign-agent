@@ -2,13 +2,60 @@
 
 日期：2026-11-11。用户明确要求环境搭建全部放在 QZ；Mac 仅用于源码、文档和版本管理。此文件替代此前本机轻量环境准备的执行位置。
 
+## 本轮新实例与下一步
+
+用户已创建 `cua-test-qi` CPU 开发机，并明确将本轮文件与数据的写入目录改为：
+
+```text
+/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq
+```
+
+本次浏览器观察到该实例页面显示开发机模式、40 CPU、400 GB 内存、0 GPU；用户终端输出确认 root、x86_64、cgroup v2，以及 Docker client/daemon 29.2.0 已安装。`/var/run/docker.sock` 不存在，`losetup -a` 未列出绑定。尚无 daemon 或容器成功运行的证据。
+
+用户检查中的 460G 可用空间属于旧 `global_user` 挂载；**新 project 挂载的剩余空间仍未知**。旧 CPU SSH 中转能够连接，但看不到新项目挂载，不能在旧机器上创建同名目录代替它。浏览器原生接口可以读取新页面，输入操作却未产生可验证的终端变化；本轮没有借此执行成功的远端修改。
+
+新增 `scripts/qz_cua_dind.py`，在新实例内执行：
+
+```bash
+python3 -B scripts/qz_cua_preflight.py
+python3 -B scripts/qz_cua_dind.py --apply --kata-confirmed
+```
+
+不带 `--apply` 只打印计划；在 Mac 上即使带 `--apply` 也拒绝执行。`--kata-confirmed` 指本次用户已选择的 QZ 开发机模式，不能在普通共享 CPU 节点上使用。
+
+执行版遵循图片中的 cgroup v2 → ext4 loop → overlay2 路线，并增加以下资源边界：
+
+- 持久数据、配置、daemon 日志和逐次 JSON 回执位于 `zjq/.runtime/cua-dind/<hostname>/`。实例内的 `/run`、loop 设备节点及 cgroup 是启动所需的临时系统状态。
+- 初始镜像逻辑容量 64 GiB；新建前要求项目挂载至少 80 GiB 可用。这是初始工程容量与余量，不是 CUA 完整运行预算，也不是底层已预留 64 GiB。已有镜像不扩容、不重新格式化。
+- 只对以排他方式新建的普通文件运行 `mkfs.ext4`，从不把 `/dev/loopN` 作为格式化目标。使用空闲 loop 和 `--nooverlap`；挂载之后再核实 backing file 身份。
+- 检查已有 daemon、socket、实例 boot ID 和存储所有权。冲突时停止；失败时保留文件、挂载和日志以便排查，不进行全局清理或盲目重启。
+- 显式选择 classic `overlay2`，关闭 containerd snapshotter，使用项目 data-root；仅监听实例 Unix socket。与平台全局 `/etc/docker/daemon.json` 分开，不覆盖它。
+- daemon 通过后运行一个官方 `hello-world` 小容器，限制为 1 CPU、64 MiB、无容器网络；记录实际 image ID、退出状态与输出。镜像下载失败和 daemon 失败分别记录。
+
+最终只有出现 `DIND_SMOKE_PASSED_GUI_NOT_RUN` 才表示该次 Docker 小容器验收通过；它不代表 GUI 环境、截图、动作、状态重建或训练已打通。脚本失败时贴出最后的 JSON 与 `RECEIPT=...`，保留现场。
+
+## 已有 WeaveBench VM 的位置
+
+已查阅用户指定的《排查 WeaveBench 虚拟机下载失败》会话。历史完成记录为 2026-11-07 03:01（北京时间）：
+
+```text
+/inspire/hdd/project/independent-security-research/wenming-253108090054/czk/weavebench/cache/vm/Ubuntu.qcow2
+bytes: 28457500672
+sha256: 3c1caf41cb75b8482a30d1a251545393aee8175375ab405e0d6870f8a07fa3f8
+receipt: ../vm-aria2/status.json
+```
+
+这是历史校验结果；当前新实例中的文件存在性和内容尚未重新核验。只读 preflight 会检查存在性/大小，不将旧 SHA 当成当前已验证的 SHA。该资产不属于本轮写入目录，不能直接启动成可写磁盘；如以后需要，先核验，再在 `zjq` 内创建独立 overlay。
+
+第一步采用固定版本 CUA-Lite 的 **Lite.OSWorld（VM-free Docker desktop）**，因此目前不需要重新下载或复制这份约 26.50 GiB 的 VM，也不需要为此先解决嵌套 KVM。源码依据：`references/cua_lite` commit `2af69268c0573f4c12aac391cc03125e6d5c7974` 的 `lite/gym/envs/lite/osworld/README.md`。
+
 ## 当前实际状态
 
 - CUA-Lite 作为 Git submodule 固定在 `2af69268c0573f4c12aac391cc03125e6d5c7974`；本机只保留源码，未修改上游文件。
 - 本轮曾在 Mac 的项目 `.runtime/` 下新建轻量 Python 环境，用户纠正部署位置后已删除 `cua-bootstrap`、`cua-cpu`、`uv-cache`、`uv-python` 四个目录。没有拉取模型、桌面镜像，没有启动 Docker、GPU 或远端工作。
 - 删除前完成了上游核心样本和序列化模块的导入检查；完整模型 adapter 导入因稀疏源码缺少 `lite.gym.utils` 失败。此历史检查不是完整依赖验收，更不是 CUA 环境或训练结果。
 - 新增 `scripts/qz_cua_preflight.py`：标准库脚本，只读取系统、挂载、loop 占用及本地 Docker 状态，不安装软件，不启动服务，不挂载或格式化。Mac 平台直接返回未执行状态。
-- QZ 实例是否为 Kata、是否支持 Docker、桌面容器是否可运行均未验证。未运行任何真实 GUI 轨迹。
+- 已有新实例页面与用户终端的部分基础检查；Docker daemon、桌面容器与真实 GUI 轨迹均未通过执行验收。
 
 ## 用户提供图片中的安装路线
 
@@ -30,11 +77,11 @@
 | GPU | 0 | 当前环境验收不需要 GPU；之后模型推理和训练使用独立 GPU 实例 |
 | CPU / RAM | 优先 8 vCPU / 32 GiB；先 1 个桌面容器 | 工程起步建议，不是平台硬性要求或已测资源预算 |
 | 存储 | 先核对共享盘可用空间，再分配 Docker 镜像/容器预算 | 手册 30G 是示例，不能当完整 CUA 与训练镜像所需空间保证 |
-| 项目路径 | `/inspire/hdd/global_user/wenming-253108090054/zhujiaqi/codex-workspace/Misalign-agent` | 延续已授权 QZ 写入边界 |
+| 项目路径 | `/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent` | 用户本轮明确指定的新写入目录 |
 
 若平台不提供 0-GPU 的 Kata 规格，先记录可用的 CPU 开发机配置；不要为环境排障直接占用两张 H100。GPU 透传和 CUDA 支持需要单独确认，不因为 CPU DinD 成功就视为通过。
 
-## 用户需要先做的操作
+## 基础只读检查（首轮已部分完成）
 
 创建上述实例，打开 Terminal，执行下面的只读检查。代码可直接粘贴；没有安装、挂载、格式化、启动 Docker 或模型的命令。
 
@@ -47,7 +94,7 @@ cat /sys/fs/cgroup/cgroup.controllers 2>/dev/null
 printf '\n--- commands ---\n'
 command -v docker dockerd dockerd-entrypoint.sh losetup mkfs.ext4
 printf '\n--- disk ---\n'
-df -h / /inspire/hdd/global_user/wenming-253108090054/zhujiaqi
+df -h / /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq
 printf '\n--- loop devices ---\n'
 losetup -a
 printf '\n--- local docker ---\n'

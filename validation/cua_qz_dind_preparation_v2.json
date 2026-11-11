@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-11T11:57:32.712207+00:00",
+  "status": "LOCAL_GUARD_TESTS_PASSED_REMOTE_EXECUTION_PENDING",
+  "deployment": "QZ_ONLY",
+  "local_environment_installed": false,
+  "authorized_qz_root": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq",
+  "user_supplied_observations": {
+    "uid": 0,
+    "architecture": "x86_64",
+    "cgroup": "cgroup2fs",
+    "controllers": [
+      "cpuset",
+      "cpu",
+      "io",
+      "memory",
+      "hugetlb",
+      "pids"
+    ],
+    "docker_client": "29.2.0",
+    "local_daemon_socket": "ABSENT",
+    "listed_loop_bindings": 0,
+    "old_global_user_mount_free": "460G",
+    "new_project_mount_free": "UNKNOWN"
+  },
+  "ui_observations": {
+    "instance_name": "cua-test-qi",
+    "development_mode": true,
+    "allocated_cpu": 40,
+    "allocated_memory_gb": 400,
+    "allocated_gpu": 0,
+    "terminal_command_execution": "NOT_VERIFIED"
+  },
+  "checks": {
+    "unittest": {
+      "command": "python3 -B -m unittest discover -s tests -p 'test_qz_cua_dind.py' -v",
+      "passed": 9,
+      "failed": 0,
+      "real_docker_mount_or_mkfs_executed": false
+    },
+    "mac_preflight": {
+      "returncode": 2,
+      "status": "NOT_QZ_LINUX_NO_CHECKS_EXECUTED"
+    },
+    "diff_check": "PASSED"
+  },
+  "initial_test_attempt": {
+    "passed": 6,
+    "failed": 1,
+    "reason": "Fixture did not isolate the Mac Docker socket; corrected fixture before final nine-check run"
+  },
+  "remote_dind": "NOT_RUN",
+  "gui_environment": "NOT_RUN",
+  "gui_trajectories": 0,
+  "gpu_training": "NOT_RUN",
+  "vm_asset": {
+    "historical_completion_verified_in_prior_chat": true,
+    "current_file_verification": "NOT_RUN",
+    "required_for_first_lite_osworld_desktop": false
+  },
+  "files_sha256": {
+    "scripts/qz_cua_dind.py": "d0953bbe6daf7ff0e7319392264fb1ad2359ea62639560ce428e5ba2b83601eb",
+    "scripts/qz_cua_preflight.py": "47da4a456f3c1c42b5db4d058fbe3d702503c77df7bdd864ccb15856bfc4b067",
+    "tests/test_qz_cua_dind.py": "6de2750b7bcf09cd90d14a8368799a516dc778c90ef0a67000993e9293a33872"
+  }
+}

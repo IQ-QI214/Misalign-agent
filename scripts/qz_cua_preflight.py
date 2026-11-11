@@ -11,8 +11,8 @@ import shutil
 import subprocess
 
 
-WRITE_BOUNDARY = Path('/inspire/hdd/global_user/wenming-253108090054/zhujiaqi')
-DEFAULT_PROJECT = WRITE_BOUNDARY / 'codex-workspace/Misalign-agent'
+WRITE_BOUNDARY = Path('/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq')
+DEFAULT_PROJECT = WRITE_BOUNDARY / 'Misalign-agent'
 
 
 def command(argv):
@@ -59,6 +59,7 @@ def main():
     if project != boundary and boundary not in project.parents:
         parser.error('--project-root must be under the authorized QZ workspace')
     report['uid'] = os.geteuid()
+    report['hostname'] = platform.node()
     report['kernel'] = platform.release()
     report['project_root'] = str(project)
     report['project_exists'] = project.is_dir()
@@ -80,6 +81,15 @@ def main():
         'docker_mount': command(['findmnt', '-T', '/var/lib/docker', '-o', 'TARGET,SOURCE,FSTYPE']),
         'loop_devices': command(['losetup', '--list', '--output', 'NAME,BACK-FILE']),
     }
+    vm = WRITE_BOUNDARY.parent / 'czk/weavebench/cache/vm/Ubuntu.qcow2'
+    try:
+        report['existing_vm'] = {
+            'path': str(vm), 'bytes': vm.stat().st_size,
+            'sha256': 'NOT_CHECKED', 'access': 'STAT_ONLY_NO_WRITE',
+            'required_for_lite_osworld': False,
+        }
+    except OSError as exc:
+        report['existing_vm'] = {'status': 'UNAVAILABLE', 'reason': str(exc)}
     # Probe only the local socket; ignore an unrelated context or remote endpoint.
     docker = ['docker', '--host', 'unix:///var/run/docker.sock']
     report['docker_version'] = command(docker + ['version', '--format', '{{json .}}'])
