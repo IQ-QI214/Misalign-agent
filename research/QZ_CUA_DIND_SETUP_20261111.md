@@ -139,3 +139,11 @@ python3 scripts/qz_cua_preflight.py
 Docker 29.2.0、cgroup v2、overlay2 与项目专用 ext4 已启用。首次 hello-world 镜像配置下载被重置，失败回执保留；复用 daemon 和已下载 layer 重试成功，容器 ExitCode=0。30 GiB backing file 实际占用 520,093,696 bytes，项目挂载剩余 81,352,720,384 bytes。完整可公开验收摘要见 `validation/cua_qz_dind_acceptance.json`。
 
 CUA-Lite 源码已在 QZ 检出固定 commit，正在进行 CPU 环境部署。小容器验收、源码就绪和真实 GUI 任务分别记录，后续仍需桌面截图、动作与任务重置验证。
+
+## 存储管理
+
+按用户最新说明采用常规总量检查，保留运行必需内容，及时清理明显冗余缓存。代码、配置、脱敏结果及重建记录随批次推送 GitHub；连接凭据保存在私有目录。后续 CPU 依赖安装使用 `--no-cache`，源码使用 cone sparse checkout 保留 `lite`、`scripts` 与根目录元数据。QZ 的 Git 版本需要先 `git sparse-checkout init --cone`，再 `git sparse-checkout set lite scripts`。
+
+初次存储审计按 `du -sx -B1 zjq` 统计实际分配量，避免重复计算 ext4 mount 与 backing file。清理前 1,082,491,904 bytes，清理后 1,015,703,040 bytes，已清理 66,788,864 bytes。清单见 `validation/cua_qz_storage_v1.json`。此后若安装依赖或镜像，需要更新实际占用。
+
+Python 3.12.16 与 uv 0.13.7 已安装在 `zjq/.runtime/cua-host`。PyPI 访问超时的日志已保留，切换到可访问的阿里云 PyPI 镜像。`scripts/qz_cua_gym_install.sh` 提供仅安装 `[gym]` 的 CPU 主机依赖入口。完整桌面仍需镜像、环境专用依赖及真实动作验证。GHCR 元数据预检显示 Lite.OSWorld 镜像的压缩 layers 合计 2,579,478,557 bytes，解压后的实际占用需要拉取后测量。

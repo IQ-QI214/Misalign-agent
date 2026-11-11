@@ -9,6 +9,7 @@ import ssl
 import struct
 import sys
 import threading
+import time
 from urllib.parse import urlsplit
 
 
@@ -54,7 +55,15 @@ def connect(url):
 
 
 def main():
-    sock = connect(Path(sys.argv[1]).read_text().strip())
+    url = Path(sys.argv[1]).read_text().strip()
+    for attempt in range(3):
+        try:
+            sock = connect(url)
+            break
+        except OSError:
+            if attempt == 2:
+                raise
+            time.sleep(1)
     lock = threading.Lock()
 
     def send(opcode, data):

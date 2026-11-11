@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "accounting": "du -sx -B1, sparse backing allocation counted, mounted contents excluded to avoid duplication",
+  "before_bytes": 1082491904,
+  "after_bytes": 1015703040,
+  "removed": [
+    ".runtime/cua-host/pycache",
+    ".runtime/cua-host/pip-cache",
+    ".runtime/cua-host/uv-cache",
+    ".runtime/cua-host/tmp",
+    ".runtime/cua-ssh/cua-test-qi--91bb3a6ab7a7-oxj4j3ju6p/pip-cache"
+  ],
+  "retained": [
+    "Docker ext4 backing file",
+    "Python 3.12 and uv",
+    "SSH and WebSocket runtime",
+    "pinned CUA-Lite working tree",
+    "small logs and recovery receipts"
+  ],
+  "credentials": "PRIVATE_NOT_FOR_GITHUB"
+}
