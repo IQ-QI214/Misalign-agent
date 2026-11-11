@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "READY_AFTER_GUI_SMOKE",
+  "project_allocated_bytes": 12431854592,
+  "docker_backing_logical_bytes": 32212254720,
+  "docker_backing_allocated_bytes": 8153726976,
+  "docker_image_size_bytes": 6769946710,
+  "docker_proxy": "NONE",
+  "active_containers": 0,
+  "cleared": [
+    "uv download/build cache",
+    "temporary extraction directories",
+    "unused ext4 blocks reclaimed with fstrim"
+  ],
+  "retained": [
+    "runtime Python and dependencies",
+    "desktop image",
+    "task assets/catalogs",
+    "source checkout",
+    "screenshots and small receipts",
+    "private SSH connection files"
+  ],
+  "measurement": "du -sx -B1 project root; backing allocation from stat blocks * 512"
+}

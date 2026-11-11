@@ -6,11 +6,11 @@
 
 [代码基础与第一步实验](research/CUA_PIPELINE_BOOTSTRAP_20261111.md)进一步核查 OpenART：建议 CUA-Lite 承担截图/动作、运行与训练，按需复用 OpenART 的反馈攻击搜索。先验收一个真实 GUI 任务的失败→状态重建→安全续做→验证→SFT 导出和训练重载，再做受控训练对照。OpenART 的冻结参数攻击搜索、文件清单快照及元素引用 GUI 示例，不代表已具备截图 CUA 防御训练；跨框架接口、分支重放和多模态偏好训练仍未实现。版本与缺失路径见[源码审计](research/cua_pipeline_source_audit_20261111.json)。
 
-部署位置已按用户要求固定为 **QZ**：Mac 仅维护源码和文档，本轮新建的本机 Python 环境及缓存已清理。CUA-Lite 已固定为 `references/cua_lite` 子模块；[QZ DinD 操作说明](research/QZ_CUA_DIND_SETUP_20261111.md)依据用户提供的 Kata 手册，配有只读检查脚本 `scripts/qz_cua_preflight.py`。QZ Docker 已通过真实小容器验收，桌面环境和训练待验证。
+部署位置已按用户要求固定为 **QZ**：Mac 仅维护源码和文档，本轮新建的本机 Python 环境及缓存已清理。CUA-Lite 已固定为 `references/cua_lite` 子模块；[QZ DinD 操作说明](research/QZ_CUA_DIND_SETUP_20261111.md)依据用户提供的 Kata 手册，配有只读检查脚本 `scripts/qz_cua_preflight.py`。QZ Docker、CPU 依赖和真实桌面截图/点击已通过验收，reset 接口可返回；完整状态重建、模型自主轨迹和训练评测待完成。
 
-新 CPU 开发机已创建，当前授权存储改为 `project/independent-security-research/wenming-253108090054/zjq`。用户检查确认 Docker 程序已安装，但 daemon socket 尚不存在；旧挂载的 460G 剩余空间不能当作新目录预算。新增 `scripts/qz_cua_dind.py`，支持项目专用 ext4 镜像、已有资源保护、启动日志与小容器验收；已通过新 QZ 实例上的真实小容器验收，见 [验收回执](validation/cua_qz_dind_acceptance.json)。首个 Lite.OSWorld 桌面使用 Docker，无需重复下载历史 WeaveBench VM。
+新 CPU 开发机已创建，当前授权存储改为 `project/independent-security-research/wenming-253108090054/zjq`。初检时 Docker 程序已安装、daemon socket 尚不存在，现已启动并完成验收；旧挂载的 460G 剩余空间不能当作新目录预算。新增 `scripts/qz_cua_dind.py`，支持项目专用 ext4 镜像、已有资源保护、启动日志与小容器验收；已通过新 QZ 实例上的真实小容器验收，见 [验收回执](validation/cua_qz_dind_acceptance.json)。首个 Lite.OSWorld 桌面使用 Docker，无需重复下载历史 WeaveBench VM。
 
-当前仍是文献、数据和实验设计阶段，尚无CUA轨迹采集、环境联测或训练结果；本轮未开卡，原六组训练计划仍禁用。早期调研保留作参考：[CUA文献地图](research/CUA_ATTACK_TO_DEFENSE_20261110.md)、[SFT/GRPO设计背景](research/CUA_SFT_GRPO_DESIGN_20261111.md)、[数据选择文献](research/DATA_SELECTION_LITERATURE_20261111.md)、[工具到GUI验证边界](research/TOOL_TO_GUI_VALIDATION_20261111.md)。此前“视觉能力混淆选材”候选不再作为当前主线。
+当前已完成 CPU 桌面环境联测，获得 1920×1080 截图并通过手写动作打开 Files，见[桌面验收回执](validation/cua_gui_smoke_acceptance.json)。已注册的 2,429 条任务来自上游任务目录，防御训练数据构造、模型自主轨迹与 CUA 训练评测仍待完成。本轮使用 CPU，原六组训练计划仍禁用。早期调研保留作参考：[CUA文献地图](research/CUA_ATTACK_TO_DEFENSE_20261110.md)、[SFT/GRPO设计背景](research/CUA_SFT_GRPO_DESIGN_20261111.md)、[数据选择文献](research/DATA_SELECTION_LITERATURE_20261111.md)、[工具到GUI验证边界](research/TOOL_TO_GUI_VALIDATION_20261111.md)。此前“视觉能力混淆选材”候选不再作为当前主线。
 
 下文保留此前文本 RSD/OPSD 的实现、结果和待执行方案，作为工程资产及研究历史；不代表已决定将这些训练组直接迁移到 CUA，也不作为当前自动启动顺序。
 

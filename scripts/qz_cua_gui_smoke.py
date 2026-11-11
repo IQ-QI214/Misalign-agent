@@ -18,9 +18,10 @@ TASK_ID = 'synth_os_f_os_01__edit_server_name_0001'
 
 
 async def check(output, report):
-    from PIL import Image
+    from PIL import Image, ImageChops
     import lite.gym as gym
     from lite.core.tools import make_tool_call
+    from lite.core.tools.action_space.geometry import pixel_to_norm
 
     image_name = 'cua-lite/lite.osworld:latest'
     while subprocess.run(['docker', '--host', 'unix:///var/run/docker.sock', 'image', 'inspect', image_name],
@@ -52,9 +53,10 @@ async def check(output, report):
         env = gym.make(f'lite.osworld@{TASK_ID}', max_steps=5)
         initial = await env.reset()
         report['initial'] = save_frame(initial.image, 'initial.png')
+        coordinate = pixel_to_norm(35, 610, *report['initial']['size'])
         print('STAGE=initial_screenshot_passed', flush=True)
         step = await env.step([make_tool_call('computer', {'actions': [
-            {'action': 'click', 'coordinate': [500, 300]},
+            {'action': 'click', 'coordinate': coordinate},
         ]}, call_id='cua_smoke_click')])
         if not step.results or any(result.error for result in step.results):
             raise RuntimeError('Click returned an empty result or a tool error')
@@ -62,7 +64,15 @@ async def check(output, report):
         if not frames:
             raise RuntimeError('Click returned no follow-up screenshot')
         report['after_click'] = save_frame(frames[-1], 'after_click.png')
-        report['click'] = {'coordinate': [500, 300], 'result_count': len(step.results),
+        before = Image.open(io.BytesIO(initial.image)).convert('RGB')
+        after = Image.open(io.BytesIO(frames[-1])).convert('RGB')
+        histogram = ImageChops.difference(before, after).convert('L').histogram()
+        changed_pixels = sum(histogram[1:])
+        if changed_pixels < 10000:
+            raise RuntimeError('Files dock click did not produce a substantial visible change')
+        report['click'] = {'coordinate': coordinate, 'coordinate_space': 'normalized_0_1000',
+                           'pixel_target': [35, 610], 'target': 'Files dock icon',
+                           'changed_pixels': changed_pixels, 'result_count': len(step.results),
                            'reward': step.reward, 'terminated': step.terminated}
         print('STAGE=click_passed', flush=True)
         reset = await env.reset()

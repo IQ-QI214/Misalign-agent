@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "status": "GUI_IO_SMOKE_PASSED",
+  "task_id": "synth_os_f_os_01__edit_server_name_0001",
+  "model_run": false,
+  "goal_completion_evaluated": false,
+  "reset_state_identity": "NOT_TESTED",
+  "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/gui-smoke-20261111T151252-0698001c",
+  "initial": {
+    "filename": "initial.png",
+    "bytes": 1670284,
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "75323e23d9fd500d018b19d980fa4d0e95980fbbec1fb4f724747b51a76c7708"
+  },
+  "after_click": {
+    "filename": "after_click.png",
+    "bytes": 1361426,
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "2db59adff1a956008ba0176c507c92c8137a7240f78553785f6f149446926a47"
+  },
+  "click": {
+    "coordinate": [
+      18,
+      565
+    ],
+    "coordinate_space": "normalized_0_1000",
+    "pixel_target": [
+      35,
+      610
+    ],
+    "target": "Files dock icon",
+    "changed_pixels": 539359,
+    "result_count": 1,
+    "reward": null,
+    "terminated": false,
+    "target_visually_verified": true
+  },
+  "reset": {
+    "filename": "reset.png",
+    "bytes": 1361426,
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "2db59adff1a956008ba0176c507c92c8137a7240f78553785f6f149446926a47"
+  },
+  "prior_attempts": [
+    {
+      "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/gui-smoke-20261111T150902-1ae28f87",
+      "gui_io": "PASSED",
+      "intended_target": "Files dock icon",
+      "observed_app": "Ubuntu Software",
+      "target_match": false,
+      "cause": "Pixel coordinates passed to normalized action space"
+    },
+    {
+      "status": "GUI_IO_SMOKE_PASSED",
+      "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/gui-smoke-20261111T144056-1e6a9655"
+    }
+  ]
+}

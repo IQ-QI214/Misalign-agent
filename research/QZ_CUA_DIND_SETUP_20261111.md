@@ -55,7 +55,7 @@ receipt: ../vm-aria2/status.json
 - 本轮曾在 Mac 的项目 `.runtime/` 下新建轻量 Python 环境，用户纠正部署位置后已删除 `cua-bootstrap`、`cua-cpu`、`uv-cache`、`uv-python` 四个目录。没有拉取模型、桌面镜像，没有启动 Docker、GPU 或远端工作。
 - 删除前完成了上游核心样本和序列化模块的导入检查；完整模型 adapter 导入因稀疏源码缺少 `lite.gym.utils` 失败。此历史检查不是完整依赖验收，更不是 CUA 环境或训练结果。
 - 新增 `scripts/qz_cua_preflight.py`：标准库脚本，只读取系统、挂载、loop 占用及本地 Docker 状态，不安装软件，不启动服务，不挂载或格式化。Mac 平台直接返回未执行状态。
-- 已有新实例页面与用户终端的部分基础检查；Docker daemon 和官方 hello-world 容器已通过执行验收；桌面与真实 GUI 轨迹待验证。
+- 已有新实例页面与用户终端的部分基础检查；Docker daemon、官方 hello-world 容器与桌面手写动作已通过执行验收；模型自主 GUI 轨迹待验证。
 
 ## 用户提供图片中的安装路线
 
@@ -164,6 +164,12 @@ CPU Torch 重新安装完成，`torch==2.15.0+cpu`、`torchvision==0.29.2+cpu` �
 
 固定 CPU 包约束保存在 `configs/cua/cpu_constraints.txt`。`scripts/qz_cua_osworld_prepare.sh` 使用阿里 PyPI 与南大 CPU PyTorch 源，关闭项目 GPU 索引来源配置并应用 CPU 约束，再调用未修改的上游 provision 入口。hf-mirror.com 在资源下载时返回 503，切换到官方 huggingface.co 后完成了固定 revision 的资源准备和目录检查，注册了 2,429 条训练来源任务。
 
-桌面镜像持续下载，Docker 下载并发通过 SIGHUP 从 3 更新为 8，保留现有下载任务。该配置项支持热更新，依据 [Docker 官方说明](https://docs.docker.com/reference/cli/dockerd/#configuration-reload-behavior)。
+桌面镜像下载已完成，下载期间 Docker 并发通过 SIGHUP 从 3 更新为 8、再更新为 16，复用已有下载任务。该配置项支持热更新，依据 [Docker 官方说明](https://docs.docker.com/reference/cli/dockerd/#configuration-reload-behavior)。
 
-`scripts/qz_cua_gui_smoke.py` 已在 QZ 后台排队，等已验证的镜像本地 tag 可用后，使用训练来源任务完成 reset 截图、手写点击、再次 reset 与关闭。该检查记录 `model_run=false`、`goal_completion_evaluated=false`、`reset_state_identity=NOT_TESTED`。它验证 GUI I/O 通路，后续仍需模型轨迹、任务完成、状态重建以及训练评测。
+`scripts/qz_cua_gui_smoke.py` 已在 QZ 执行通过，完成 reset 截图、手写点击打开 Files、再次 reset 与关闭。1920×1080 截图在点击后有 539,359 个像素变化，并人工查看确认目标窗口。首次目标点击误将像素坐标传给归一化动作接口，已使用上游 `pixel_to_norm` 修正为 `[18, 565]` 并重新执行，原尝试保留在回执中。见 `validation/cua_gui_smoke_acceptance.json`。
+
+桌面镜像来自南大 GHCR 镜像，manifest 为 `sha256:2d51f12e1bff4a8621c3a810cd5399c2c678aafae0db310f757c8c240cf954b1`，image ID 为 `sha256:e183a3cece5069bd5eeb3c89187ea35f972f2b8afbb81e1f0f1117fc289603e1`，镜像展开大小为 6,769,946,710 bytes。源哈希标签与固定 CUA-Lite 版本的期望值一致。
+
+本轮 `model_run=false`、`goal_completion_evaluated=false`、`reset_state_identity=NOT_TESTED`。reset 返回截图与点击后截图相同，完整任务状态重建还需独立执行验证。接下来先补轨迹记录和状态重建，再连接 GPU 视觉模型，构造攻击失败与安全续做分支并验证训练数据。
+
+清理了 uv 下载/构建缓存和临时解压目录，并对本项目 ext4 数据盘回收空闲块。Docker daemon 已移除临时 Mac 代理配置，重新启动后可访问，活动容器为 0。运行环境、桌面镜像、任务资产、截图和小型回执保留，最终占用见 `validation/cua_qz_storage_final.json`。
