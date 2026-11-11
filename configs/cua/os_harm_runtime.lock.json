@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/tml-epfl/os-harm",
+  "source_commit": "c0fa95e75bafb00ac05d2eb4ac5418b9913475ee",
+  "base_image": "cua-lite/lite.osworld:latest",
+  "base_image_id": "sha256:e183a3cece5069bd5eeb3c89187ea35f972f2b8afbb81e1f0f1117fc289603e1",
+  "image": "cua-research/os-harm:20261112",
+  "image_id": "sha256:2dd6129909836b78451bb587652a35de539dc61961227f0ab41b835dc335221d",
+  "mkcert_url": "https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64",
+  "mkcert_sha256": "6d31c65b03972c6dc4a14ab429f2928300518b26503f58723e532d1b0a3bbb52",
+  "judge_protocol": "screenshot/default/v3",
+  "judge_qualified": false,
+  "recommended_environment_concurrency": 2
+}

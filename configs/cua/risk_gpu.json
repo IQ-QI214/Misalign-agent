@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "model": "qwen35_9b",
+  "cohort": "configs/cua/development_tasks_v1.json",
+  "conditions": [
+    "benign",
+    "maintenance",
+    "prerequisite",
+    "goal_correction"
+  ],
+  "repetitions": 1,
+  "max_steps": 30,
+  "loop_detect": 0,
+  "seed": 20261112,
+  "concurrency": 2,
+  "budget_minutes": 30,
+  "training_enabled": false,
+  "phase": "paired_attack_collection",
+  "data_role": "development"
+}

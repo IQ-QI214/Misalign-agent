@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "catalog": "lite/gym/envs/lite/osworld/data/eval.jsonl",
+  "catalog_sha256": "c6fea2868e34d46f65d4d1c590bbd03366be52e4b7dbb75faca722b1b9ee3937",
+  "selection": "Frozen 12-task validation panel, first two IDs per application. Repeated milestone use makes this a validation panel. Remaining held-out tasks are reserved for final evaluation.",
+  "domains": [
+    "chrome",
+    "gimp",
+    "libreoffice_impress",
+    "thunderbird",
+    "vlc",
+    "vs_code"
+  ],
+  "task_count": 12,
+  "tasks": [
+    {
+      "task_id": "osworld_chrome_030eeff7",
+      "domain": "chrome",
+      "catalog_row_sha256": "04876acb4c2900fc854faf525beafb8e981629b1643862a2f3cec4426f84cc72"
+    },
+    {
+      "task_id": "osworld_chrome_06fe7178",
+      "domain": "chrome",
+      "catalog_row_sha256": "743e089882225cad2e9c81ae9663a9965cedf6d8648e682d3ee45511bcaf72e9"
+    },
+    {
+      "task_id": "osworld_gimp_06ca5602",
+      "domain": "gimp",
+      "catalog_row_sha256": "da64170b19d381fc4a727d9ce44dc78fc3471d83088245cd9010352d8031838b"
+    },
+    {
+      "task_id": "osworld_gimp_2a729ded",
+      "domain": "gimp",
+      "catalog_row_sha256": "64544c4e77fb95ff9cf880f5b76059faf444bb4e5290db51350b069b6c217aac"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_04578141",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "8c7bdd017a5f4a39b740a641abeec16e2a63ad2e8c0ced4fe7d21bf2e5e0a352"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_05dd4c1d",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "6305eb0ac86b93be33235660dbe0bd23c3da1c666b03944f4e07f09cb7c51982"
+    },
+    {
+      "task_id": "osworld_thunderbird_08c73485",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "494d79efd6efd1a97f8f1f62d6ea633d6dfdfee1c16054f988ce9cd1a1b28841"
+    },
+    {
+      "task_id": "osworld_thunderbird_10a730d5",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "59687ad234f26d7fdce0001eafc0345b76d226fcd568cb3f3fead7c4ffcbdcd1"
+    },
+    {
+      "task_id": "osworld_vlc_215dfd39",
+      "domain": "vlc",
+      "catalog_row_sha256": "5eb02e1f3f1f3d41a223cc55c4d383e29186234a8681c1a79555baeb1cbb2d5a"
+    },
+    {
+      "task_id": "osworld_vlc_386dbd0e",
+      "domain": "vlc",
+      "catalog_row_sha256": "eb1b7b1c0d868893ba8726abcd033a9bfeadac3d8e0bace99be9c81939472da0"
+    },
+    {
+      "task_id": "osworld_vs_code_0512bb38",
+      "domain": "vs_code",
+      "catalog_row_sha256": "8816e582ad371a6c8c7e6e1948820bf55b83b2e78533e2c495cc993134ca6868"
+    },
+    {
+      "task_id": "osworld_vs_code_0ed39f63",
+      "domain": "vs_code",
+      "catalog_row_sha256": "ab242d51b1db8dda1301beba77626273084cd2e3e9f60b70307d32555b7b4f03"
+    }
+  ]
+}

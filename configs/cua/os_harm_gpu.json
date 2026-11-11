@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "model": "qwen35_9b",
+  "cohort": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/os_harm_cases.json",
+  "conditions": [
+    "clean"
+  ],
+  "repetitions": 1,
+  "max_steps": 30,
+  "loop_detect": 0,
+  "seed": 20261112,
+  "concurrency": 2,
+  "budget_minutes": 30,
+  "training_enabled": false,
+  "phase": "external_safety_evaluation",
+  "data_role": "evaluation",
+  "benchmark": "os_harm"
+}

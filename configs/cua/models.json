@@ -1,0 +1,12 @@
+{
+  "qwen35_9b": {
+    "model_id": "Qwen/Qwen3.5-9B",
+    "processor_path": "/inspire/hdd/global_public/public_models/Qwen/Qwen3.5-9B",
+    "gpu_model_path": "/inspire/hdd/global_public/public_models/Qwen/Qwen3.5-9B"
+  },
+  "qwen3vl_4b": {
+    "model_id": "Qwen/Qwen3-VL-4B-Instruct",
+    "processor_path": "/inspire/hdd/project/independent-security-research/wenming-253108090054/models/Qwen__Qwen3-VL-4B-Instruct",
+    "gpu_model_path": "/inspire/hdd/global_user/wenming-253108090054/zhujiaqi/codex-workspace/Misalign-agent/.runtime/cua-vlm/Qwen3-VL-4B-Instruct"
+  }
+}

@@ -1,0 +1,772 @@
+{
+  "schema_version": 1,
+  "catalog": "lite/gym/envs/lite/osworld/data/eval.jsonl",
+  "catalog_sha256": "c6fea2868e34d46f65d4d1c590bbd03366be52e4b7dbb75faca722b1b9ee3937",
+  "selection": "Retain the six listed applications after upstream exclusions; Calc/Writer development, OS bootstrap, and multi-app tasks are outside this panel.",
+  "domains": [
+    "chrome",
+    "gimp",
+    "libreoffice_impress",
+    "thunderbird",
+    "vlc",
+    "vs_code"
+  ],
+  "task_count": 151,
+  "tasks": [
+    {
+      "task_id": "osworld_chrome_030eeff7",
+      "domain": "chrome",
+      "catalog_row_sha256": "04876acb4c2900fc854faf525beafb8e981629b1643862a2f3cec4426f84cc72"
+    },
+    {
+      "task_id": "osworld_chrome_06fe7178",
+      "domain": "chrome",
+      "catalog_row_sha256": "743e089882225cad2e9c81ae9663a9965cedf6d8648e682d3ee45511bcaf72e9"
+    },
+    {
+      "task_id": "osworld_chrome_0d8b7de3",
+      "domain": "chrome",
+      "catalog_row_sha256": "0714302c50aff8e4c433c341a7e4c0a2884bdf1860a827aee77ad0ab67c5334e"
+    },
+    {
+      "task_id": "osworld_chrome_12086550",
+      "domain": "chrome",
+      "catalog_row_sha256": "8dd5195dae8f99b7d8e76e5c5ab687ec0767368955625cd671fd91af1cd249c2"
+    },
+    {
+      "task_id": "osworld_chrome_121ba48f",
+      "domain": "chrome",
+      "catalog_row_sha256": "80cddd16abe1dbd39d46823be71fe4949099268fb76233c156f6b886a80518af"
+    },
+    {
+      "task_id": "osworld_chrome_1704f00f",
+      "domain": "chrome",
+      "catalog_row_sha256": "9c7c16fc586a15717da60fe4e6ed822755689ec9254a316e4fe202fcc3c344d3"
+    },
+    {
+      "task_id": "osworld_chrome_2ad9387a",
+      "domain": "chrome",
+      "catalog_row_sha256": "b1b8aee616950719da4049c6d521eaa1da157de58a0384b8fcf6477496c613ad"
+    },
+    {
+      "task_id": "osworld_chrome_2ae9ba84",
+      "domain": "chrome",
+      "catalog_row_sha256": "9814c20d5dc4ab0867bbcb4a7d050d73b1a4f7ae243ece71cdc53fb5f014145e"
+    },
+    {
+      "task_id": "osworld_chrome_3299584d",
+      "domain": "chrome",
+      "catalog_row_sha256": "1076856baedf397e2ad795b11bdf1ab2e07da94701bc5b8620517d6b092c6262"
+    },
+    {
+      "task_id": "osworld_chrome_35253b65",
+      "domain": "chrome",
+      "catalog_row_sha256": "6e6a9f6c66c96859e54becfead0b338216d9e8007ec85c1b0dfa1894468b5280"
+    },
+    {
+      "task_id": "osworld_chrome_368d9ba4",
+      "domain": "chrome",
+      "catalog_row_sha256": "b4b1da9f80dbb0f2ca242ca69ea0d5047083c30451651b6a1d4a02ccb89048c8"
+    },
+    {
+      "task_id": "osworld_chrome_44ee5668",
+      "domain": "chrome",
+      "catalog_row_sha256": "add51a9f8d0fc84ad1363f3b9c1be6ead16b50e751cb87718ff1c72a34cdf460"
+    },
+    {
+      "task_id": "osworld_chrome_47543840",
+      "domain": "chrome",
+      "catalog_row_sha256": "654cc46f652f5539b4a99a456f3dce55586434c2c8db6390b561d468e99557e8"
+    },
+    {
+      "task_id": "osworld_chrome_59155008",
+      "domain": "chrome",
+      "catalog_row_sha256": "3455465a9f63a497f172f0adb6d3cb4a96be1a7823a1d210c421e4c2b2a2fd9d"
+    },
+    {
+      "task_id": "osworld_chrome_6766f2b8",
+      "domain": "chrome",
+      "catalog_row_sha256": "309c9e0c94ad592749bcd849abd4b15056d70f9c8584131f52edc490817c724f"
+    },
+    {
+      "task_id": "osworld_chrome_6c4c23a1",
+      "domain": "chrome",
+      "catalog_row_sha256": "a92c4a63969ed85be3eb11d85f48c64c18601b86ffdd7974d5e42728ebdc448a"
+    },
+    {
+      "task_id": "osworld_chrome_7a5a7856",
+      "domain": "chrome",
+      "catalog_row_sha256": "2210dfa28d113035dbf0b88fe03a4e8b17c71be673d5575dbefbe827e6cc336f"
+    },
+    {
+      "task_id": "osworld_chrome_7b6c7e24",
+      "domain": "chrome",
+      "catalog_row_sha256": "03eaa6440e47556d2f0426ffce670cafe55f9182192118163520d5dcaf468597"
+    },
+    {
+      "task_id": "osworld_chrome_7f52cab9",
+      "domain": "chrome",
+      "catalog_row_sha256": "4c45e2e908a84e0cd1d863e31f4a6705fdccac3436e11cbb0235ee2ba7115fc2"
+    },
+    {
+      "task_id": "osworld_chrome_82279c77",
+      "domain": "chrome",
+      "catalog_row_sha256": "5b40b13d418ca35e7054e27bae6c6081db308d3f87b3b9493e1ac59266997bdd"
+    },
+    {
+      "task_id": "osworld_chrome_82bc8d6a",
+      "domain": "chrome",
+      "catalog_row_sha256": "edd49b84b58012035182d94016d01e8b5ab42b78d9cca2d179a9c7ef76d6ceb1"
+    },
+    {
+      "task_id": "osworld_chrome_93eabf48",
+      "domain": "chrome",
+      "catalog_row_sha256": "fcdfd54c5b3bd05b107b556c429dce74299c8f71c297b318e0901ec66eda8e3f"
+    },
+    {
+      "task_id": "osworld_chrome_9656a811",
+      "domain": "chrome",
+      "catalog_row_sha256": "cfb60ee7857d5feb6d285c2b4e884f0ba199d1beba2a63125a551b6d19ee014d"
+    },
+    {
+      "task_id": "osworld_chrome_99146c54",
+      "domain": "chrome",
+      "catalog_row_sha256": "315a8959c1ed47a9dda6a60ab5e612cecfbe3a83982fd4b3ecbe80818e5bb64e"
+    },
+    {
+      "task_id": "osworld_chrome_9f3f70fc",
+      "domain": "chrome",
+      "catalog_row_sha256": "748058a790b2bea5ec262a31486ce37297227921c075cc2fb98858386299da78"
+    },
+    {
+      "task_id": "osworld_chrome_9f935cce",
+      "domain": "chrome",
+      "catalog_row_sha256": "e4a35de7a2c99e3756ea7675f5ba1698547e111731218bd7ccf3c25b71dc864b"
+    },
+    {
+      "task_id": "osworld_chrome_a728a36e",
+      "domain": "chrome",
+      "catalog_row_sha256": "44751f35069508caa60aa5c159fbb284cc0f5ce55b5ede6ae4883cab1e683705"
+    },
+    {
+      "task_id": "osworld_chrome_a96b564e",
+      "domain": "chrome",
+      "catalog_row_sha256": "9f7306ce817c238632b0fe9c1b27a4025c044e2a30304ee319774f30197a03d9"
+    },
+    {
+      "task_id": "osworld_chrome_af630914",
+      "domain": "chrome",
+      "catalog_row_sha256": "4385005af5b76dedae535584768ab41a671cdd1d30aef569338bc03294030613"
+    },
+    {
+      "task_id": "osworld_chrome_b070486d",
+      "domain": "chrome",
+      "catalog_row_sha256": "739fcdc1867e032169644cca4bff9ee955db5ea6139f6f95a8730529bc12287f"
+    },
+    {
+      "task_id": "osworld_chrome_b7895e80",
+      "domain": "chrome",
+      "catalog_row_sha256": "9b7391b4d57a106a9ab25b2a9298a792966d3ee6d70c5d6d64a3e10a7e67286e"
+    },
+    {
+      "task_id": "osworld_chrome_bb5e4c0d",
+      "domain": "chrome",
+      "catalog_row_sha256": "d24f6e83ff8ca186bb1f33ff8a165887b39a670dbed432b62610e0935cc3d08c"
+    },
+    {
+      "task_id": "osworld_chrome_c1fa57f3",
+      "domain": "chrome",
+      "catalog_row_sha256": "c0d0c669ba212165abcd1241e7feebd3c73b18766d9be803fdee90a28a8c6f2f"
+    },
+    {
+      "task_id": "osworld_chrome_cabb3bae",
+      "domain": "chrome",
+      "catalog_row_sha256": "2839d23c9db828e6723abdb07751f67af6173af30ac6ebfbf277977e434da04b"
+    },
+    {
+      "task_id": "osworld_chrome_da46d875",
+      "domain": "chrome",
+      "catalog_row_sha256": "1693cd544f9e4e2da139804885db0f3e3179dc92b810d2c064790f856e7053e6"
+    },
+    {
+      "task_id": "osworld_chrome_e1e75309",
+      "domain": "chrome",
+      "catalog_row_sha256": "d7e77088f8eaf371954a4b41403daba7b688ee1b4dc7a31168e1dc104547bb37"
+    },
+    {
+      "task_id": "osworld_chrome_f0b971a1",
+      "domain": "chrome",
+      "catalog_row_sha256": "f083895e947138ce89fe05d0a7abc5478aa2d80c6c9a6af58990df1d6b5647a0"
+    },
+    {
+      "task_id": "osworld_chrome_f3b19d1e",
+      "domain": "chrome",
+      "catalog_row_sha256": "0308d6c2e09bfde7106b8a8c3c3b69564d584c56fba4f607b108fa1b17cfaccb"
+    },
+    {
+      "task_id": "osworld_chrome_f5d96daf",
+      "domain": "chrome",
+      "catalog_row_sha256": "4277edb6633c281cd414c7c326445a59d88a31c974db642bef52222e4d0a579b"
+    },
+    {
+      "task_id": "osworld_chrome_f79439ad",
+      "domain": "chrome",
+      "catalog_row_sha256": "276317ffa8308919ca71fe1961db43e9c22abac3c17a371e6ff35ad3d496fb63"
+    },
+    {
+      "task_id": "osworld_chrome_fc6d8143",
+      "domain": "chrome",
+      "catalog_row_sha256": "b78a769075e4071bc74f7baf438f7ec6aec3081c951f1aa29897c9f75eb533ee"
+    },
+    {
+      "task_id": "osworld_gimp_06ca5602",
+      "domain": "gimp",
+      "catalog_row_sha256": "da64170b19d381fc4a727d9ce44dc78fc3471d83088245cd9010352d8031838b"
+    },
+    {
+      "task_id": "osworld_gimp_2a729ded",
+      "domain": "gimp",
+      "catalog_row_sha256": "64544c4e77fb95ff9cf880f5b76059faf444bb4e5290db51350b069b6c217aac"
+    },
+    {
+      "task_id": "osworld_gimp_554785e9",
+      "domain": "gimp",
+      "catalog_row_sha256": "30ddb65aac1238fec04feb5f1167cd9a59e78a4a0aa390d05201e3f708e68fed"
+    },
+    {
+      "task_id": "osworld_gimp_72f83cdc",
+      "domain": "gimp",
+      "catalog_row_sha256": "e8af40ee04d5a96959248a251ddeeb8f7bd10df97fe15de19ceca7dbb6c24b0d"
+    },
+    {
+      "task_id": "osworld_gimp_734d6579",
+      "domain": "gimp",
+      "catalog_row_sha256": "b62a3547597f44c57b1b2fad5590372e324938c23a8b3a1d27f606e66784e6e6"
+    },
+    {
+      "task_id": "osworld_gimp_7767eef2",
+      "domain": "gimp",
+      "catalog_row_sha256": "6bb926b1c025595cd0d3d534abdb30cc84b62eff0749ac36b9bb121dc18b444c"
+    },
+    {
+      "task_id": "osworld_gimp_77b8ab4d",
+      "domain": "gimp",
+      "catalog_row_sha256": "84d21e95f23cab85ab08ec63947e6a650ca180aa2def749659713ea2633f3a27"
+    },
+    {
+      "task_id": "osworld_gimp_7a4deb26",
+      "domain": "gimp",
+      "catalog_row_sha256": "91546869ae9a948d6040013ef9fd72fed97cac6fc9cdd7a7d00772b64642b602"
+    },
+    {
+      "task_id": "osworld_gimp_7b7617bd",
+      "domain": "gimp",
+      "catalog_row_sha256": "3cae2a022edee3e68fa15747c1b424b94d380ac35b93aa329e5392077a436459"
+    },
+    {
+      "task_id": "osworld_gimp_a746add2",
+      "domain": "gimp",
+      "catalog_row_sha256": "b24217c9870b9552b6cbaa823b6f8c8b3fe4f3f957d43d81b0b9aaea80d6e75e"
+    },
+    {
+      "task_id": "osworld_gimp_b148e375",
+      "domain": "gimp",
+      "catalog_row_sha256": "3e78da8516d5283e9e9e0a0e24056024e9fe44df418b8ac3fcb176b9bfee33d4"
+    },
+    {
+      "task_id": "osworld_gimp_d16c99dc",
+      "domain": "gimp",
+      "catalog_row_sha256": "4612e146c3ea98a6740cb5fcba5cfb048fb646a16bbd37f01a1867bbec0b2a38"
+    },
+    {
+      "task_id": "osworld_gimp_d52d6308",
+      "domain": "gimp",
+      "catalog_row_sha256": "98da4066a8f5390500e4a8bac7396a9730da2c7059a218ae878c089326dded52"
+    },
+    {
+      "task_id": "osworld_gimp_e2dd0213",
+      "domain": "gimp",
+      "catalog_row_sha256": "2218b9b181102f881f4f6ed323658083a2e79ff714c3ec8235f6259f8a937fce"
+    },
+    {
+      "task_id": "osworld_gimp_f4aec372",
+      "domain": "gimp",
+      "catalog_row_sha256": "e7fab49c35bd0763351ac67dd211c540b1368a48eccf2c234bd1b9e08507f330"
+    },
+    {
+      "task_id": "osworld_gimp_f723c744",
+      "domain": "gimp",
+      "catalog_row_sha256": "a36072450f692ca60ecd65c3012428a2604cd80b4b0816fdcaaee8d4c46d6c67"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_04578141",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "8c7bdd017a5f4a39b740a641abeec16e2a63ad2e8c0ced4fe7d21bf2e5e0a352"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_05dd4c1d",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "6305eb0ac86b93be33235660dbe0bd23c3da1c666b03944f4e07f09cb7c51982"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_08aced46",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "d0b9d99f7d77c1157336ebf2692d71589c6caf7afea9b548386255371db80c05"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_0a211154",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "b13c2be20897b6349ed0be3977c42174b810f91b875140c8dca046195bdb78a6"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_0f84bef9",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "e6521d9949c0427ef341797b8d119ac6a60bd14b6df7d8572e0412617a86be34"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_15aece23",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "535d8d6f513e28c4d144c93bde6e2dd272629aea6927012bb59751b52575336c"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_21760ecb",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "10dff51f87898e2f6efeb4ef8edd22da1b2f7d6d07a5ed0f121db019e2b2cc2d"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_2b94c692",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "76e9cb7b1f3ea1cd49428403aff5026b1237d22118b16cc5a97f4601f39925c5"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_2cd43775",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "1cfe372d9c36e7bdc5200ab80e4be4a48d9887bf8a81bf8bf41c154dc205543c"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_3161d64e",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "5835158ae0127a6a98526b166a5e7f4cc6559309a79faa076462ee98a692b855"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_358aa0a7",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "2e05c9850d8d87d73ebede6f4dc2c971c77001b1d8ed794ec3b24cee17d7c885"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_39be0d19",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "168b22bf0b5c88cec21a24c9b137f180896778a3ce15270795e6842168da8846"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_3b27600c",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "4d42e0f9c3aeb925472e3826c2b2aa724211f7b3d89dcd771453660d75dfe143"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_455d3c66",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "d76555d5ae52f21ed72037148c2cf9f8879129971a636bc12f297b0c8b66fdef"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_4ed5abd0",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "6d79a96f58a747de32ea29d78eab3a3e0de8d60a9025186df903198997ca8e1a"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_550ce7e7",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "f60f8d2d23bbec74ef61d60c8e5455c20bd27615fe38f7a60e5740224dd2296f"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_57667013",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "a340b3a408976797e20ae140692545d9e143278060c406e84b1816e7f48d7b31"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_5c1a6c3d",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "578aa5ec0a92483a132b3a6aed19aafb69858d084428b4c858368a0b2c43c6d3"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_5cfb9197",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "ba698af73f6af6cfafc740a0474deb971cdd2165804c841d1f3969838eb6b122"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_5d901039",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "3db631429b067db0859adf14142a1c9ed875d17b3d61fd2b74ba8f2548a8fd34"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_70bca0cc",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "4e6a168b03a3417792e074a6e40f51c12f1929ed06dd11f022b3a575f36027ba"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_73c99fb9",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "9db50e9190394716ce1f71ed16778ed0d28bbdfec9bbe5877b9e3a82a7be7b5c"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_7ae48c60",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "4c0b309f09c75f730396e3b8d432e1d1ecff23511c1ede7f641537d010f90d6b"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_7dbc52a6",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "728e9ccb2148d39b88069704c9489993ba7a57a12f56fc9b7439fdf880e69225"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_841b50aa",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "1a406851cdeaa10e7d1aa2bc9c5801a392c518263a07c2ce237ce910aa821e24"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_8979838c",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "e8b06cf784709eb9a504e7fc6fed2c0364ee8b14de2514ba6ee7af244ead8d45"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_986fc832",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "5e03803770bc190b57e965abd11b6b9c2ced49e065c0689bd55e924e0b23dd7e"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_9cf05d24",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "743845fa91cd670a18913aac3ebe08af793561808168f6d622cdfb3401bbebbb"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_9ec204e4",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "4795ad8481d18ff7ac64569fbd3946b506b2c46b1d945eecb1e18ff4091f33ea"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_a097acff",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "dcdd69fe34e841e9ccf041b8fb675cbc0dc4e2493218f24b3a876eb62c654814"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_a434992a",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "66df4c31cc70e7ded08671403f9ffcb1f6f00123f55e4e56577c2f07e2c14edf"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_a53f80cd",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "035ec4cb15711bf0eb7114129b0ed50a1e6162e7c3283809f126331033664b3a"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_a669ef01",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "801fdffc00a750e17720de56d69dfe82bd6a1cfdfdf79f7c5b212f1a20065e3f"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_ac1b39ff",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "28ebdf925f5c6c0a4c32ceaf4a8c62f893a34b3403b81306922c4be17e481f20"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_ac9bb6cb",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "ae4831e0bd179b7ea66555fd851a244bb791024295cf8af77fa3f75cc457ad30"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_af23762e",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "ae20f2bf10a6a01b14cc25bf5c72e5d01d3d7b2d18fb17a95385ecd54d92b945"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_af2d657a",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "bbab830a04ba7cdcb3756c406c6ec3b3099a099782ab9ebd6dbd76e6e4449275"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_b8adbc24",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "36f5c85599121b6d7e982b9577edf20bd0c6aaaf5aea902087f72425fc9a3995"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_bf4e9888",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "e2930b6c52f50abb009c527783ce35dcc67e7c1d9f39dedf26dd3c94c369e331"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_c59742c0",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "1188f64561619c842c70ab1140fa6ee846af7c9b83ce1b0fdf94138c2aa5800e"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_c82632a4",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "9e93026408cdbe666caed00b73fc406b8a2a2ba8f7f45b1b3e5124dfbefe230a"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_ce88f674",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "b8d6d4c6c897cc61357c3204603938cfbccd4ff2c0c5d5708cf90127b53cc610"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_e4ef0baf",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "4662dfc4d673a19990282245f0e946b12f417d8ba7e78209e4bb87ebe011f8de"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_ed43c15f",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "c990043c935647849605165449dc3d576919ac20f6d94a422dba22cabec6805e"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_edb61b14",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "a741d5ab2b7a21ba1b2039d08919d1f321a36736ceabb8c3ca9cc746ce8b6ef7"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_ef9d12bd",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "85c2d8e3279433f15d5cc3931de87db518ff29f950f6c36095937512cb92ac1f"
+    },
+    {
+      "task_id": "osworld_libreoffice_impress_f23acfd2",
+      "domain": "libreoffice_impress",
+      "catalog_row_sha256": "2896d9039d6165d7be6c9f115b0ae0f49f7ee47508dd13e698e682e75ce04bfa"
+    },
+    {
+      "task_id": "osworld_thunderbird_08c73485",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "494d79efd6efd1a97f8f1f62d6ea633d6dfdfee1c16054f988ce9cd1a1b28841"
+    },
+    {
+      "task_id": "osworld_thunderbird_10a730d5",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "59687ad234f26d7fdce0001eafc0345b76d226fcd568cb3f3fead7c4ffcbdcd1"
+    },
+    {
+      "task_id": "osworld_thunderbird_15c3b339",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "c165f4b70ab6ff0a801c8f891780e6eeb83becaa339fd0d194191943e1cd57bd"
+    },
+    {
+      "task_id": "osworld_thunderbird_3f28fe4f",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "275c6c9f7ebe60357c4d0bd0a3ae466a22036e29ac006cce1ba569ff67e9b72c"
+    },
+    {
+      "task_id": "osworld_thunderbird_3f49d2cc",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "aa72dcd52f97e67af98ef4cdee2e61a9c71bfc4c63389ea80c31eb1183a8b31a"
+    },
+    {
+      "task_id": "osworld_thunderbird_5203d847",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "a30efc3c036ba8e2d30b113dba0bb4ba8ce7605a9206dd4a15f2c18467c5c1ae"
+    },
+    {
+      "task_id": "osworld_thunderbird_7b1e1ff9",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "4125b41e66948ba771b797c0e80289cdfddd88a4858653531bb29650a605e882"
+    },
+    {
+      "task_id": "osworld_thunderbird_9b7bc335",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "0080cef1b76acb8dcff5fc764d0120e32ec28bdb3ec771ff6460a06aad36cb84"
+    },
+    {
+      "task_id": "osworld_thunderbird_9bc3cc16",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "9b05ddfafc94e1cb1523a144cd29d231592083fe2a564ac06d5ed2a8681daf12"
+    },
+    {
+      "task_id": "osworld_thunderbird_a10b69e1",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "7470eaac1e6946cda0aebd1cdfbe3b334643a38c9a7a27bb16eb96ab92c292b8"
+    },
+    {
+      "task_id": "osworld_thunderbird_d38192b0",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "7fe35361a9f11b58d99bc2921c5a755b4419a90f38ad533d00eebb4dc1d1016d"
+    },
+    {
+      "task_id": "osworld_thunderbird_dd84e895",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "035139493ae11b48eea07acb325072ec0b2ff63798f1b77caa9dea84c87fac36"
+    },
+    {
+      "task_id": "osworld_thunderbird_dfac9ee8",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "d221c905ae7e5e92bd3bda8207fb6efaabad4fe9bc4128b726743121438cafaa"
+    },
+    {
+      "task_id": "osworld_thunderbird_f201fbc3",
+      "domain": "thunderbird",
+      "catalog_row_sha256": "f820646533f4ba838eb3beb1e9285b79e7f0f204c4b2120e44f5ec9bbcaafea0"
+    },
+    {
+      "task_id": "osworld_vlc_215dfd39",
+      "domain": "vlc",
+      "catalog_row_sha256": "5eb02e1f3f1f3d41a223cc55c4d383e29186234a8681c1a79555baeb1cbb2d5a"
+    },
+    {
+      "task_id": "osworld_vlc_386dbd0e",
+      "domain": "vlc",
+      "catalog_row_sha256": "eb1b7b1c0d868893ba8726abcd033a9bfeadac3d8e0bace99be9c81939472da0"
+    },
+    {
+      "task_id": "osworld_vlc_59f21cfb",
+      "domain": "vlc",
+      "catalog_row_sha256": "73d7637a9364431d2d80ae1a35496f014d1338bc96eb7957440a405e9e7b3245"
+    },
+    {
+      "task_id": "osworld_vlc_5ac2891a",
+      "domain": "vlc",
+      "catalog_row_sha256": "bfde1fe77056867e543832df2243db6c3b813416dd4747cd49b5e7e722871da8"
+    },
+    {
+      "task_id": "osworld_vlc_8ba5ae7a",
+      "domain": "vlc",
+      "catalog_row_sha256": "dc336b3e6699ee7a068e97be2a1111f653d7a1f0bf7b6a3423586d633a140b4b"
+    },
+    {
+      "task_id": "osworld_vlc_8d9fd4e2",
+      "domain": "vlc",
+      "catalog_row_sha256": "c91724787188553769bd573414c32a0ce1f6a6858ed4487a7ca6dad90aa9f953"
+    },
+    {
+      "task_id": "osworld_vlc_8f080098",
+      "domain": "vlc",
+      "catalog_row_sha256": "f3f8432ab0e6bb6c7d5637b42e790afa992d0befd8a4f388be9ea90a55b54436"
+    },
+    {
+      "task_id": "osworld_vlc_9195653c",
+      "domain": "vlc",
+      "catalog_row_sha256": "fefc50d28e3d5e9583076f2ce9d79db586f840e188c4d0663f65eaac6e832ddc"
+    },
+    {
+      "task_id": "osworld_vlc_a5bbbcd5",
+      "domain": "vlc",
+      "catalog_row_sha256": "48562000001cd1d524473ca550a47c0568beef046f641dc7414ebe7c5b13887c"
+    },
+    {
+      "task_id": "osworld_vlc_aa4b5023",
+      "domain": "vlc",
+      "catalog_row_sha256": "4ed25012914431d021eefc91a53cd922568d4985921ae755e04af79ffbdc884c"
+    },
+    {
+      "task_id": "osworld_vlc_bba3381f",
+      "domain": "vlc",
+      "catalog_row_sha256": "ee39b152c905526bf1bad53878f46cd31e06af75c578b8537ac3ae981b19bca6"
+    },
+    {
+      "task_id": "osworld_vlc_d06f0d4d",
+      "domain": "vlc",
+      "catalog_row_sha256": "bd53523207fd39d5fb7b07fddaea7ed63179bf97a3111d088698751ebbd67108"
+    },
+    {
+      "task_id": "osworld_vlc_efcf0d81",
+      "domain": "vlc",
+      "catalog_row_sha256": "6c191ad32d632916300dbfab47904f33ec61e4716f69dd292f5f88442a4f9e77"
+    },
+    {
+      "task_id": "osworld_vlc_f3977615",
+      "domain": "vlc",
+      "catalog_row_sha256": "0d0b91dce45b6f4845657b9ef806eb2d8f19e6f678aacb855d883aee441f12bf"
+    },
+    {
+      "task_id": "osworld_vlc_fba2c100",
+      "domain": "vlc",
+      "catalog_row_sha256": "3b476981e11ae7604754e3a1db66d628da854d224e54ba4d7e3912c69daccff3"
+    },
+    {
+      "task_id": "osworld_vs_code_0512bb38",
+      "domain": "vs_code",
+      "catalog_row_sha256": "8816e582ad371a6c8c7e6e1948820bf55b83b2e78533e2c495cc993134ca6868"
+    },
+    {
+      "task_id": "osworld_vs_code_0ed39f63",
+      "domain": "vs_code",
+      "catalog_row_sha256": "ab242d51b1db8dda1301beba77626273084cd2e3e9f60b70307d32555b7b4f03"
+    },
+    {
+      "task_id": "osworld_vs_code_276cc624",
+      "domain": "vs_code",
+      "catalog_row_sha256": "8ffe3e9f935ca70e7d16ae4a85c59534399bcef116965c30b6886ab93eed8a39"
+    },
+    {
+      "task_id": "osworld_vs_code_4e60007a",
+      "domain": "vs_code",
+      "catalog_row_sha256": "fef2a871997595d73b713b67d7e808132596daf7731135f523a65a03975d84f7"
+    },
+    {
+      "task_id": "osworld_vs_code_53ad5833",
+      "domain": "vs_code",
+      "catalog_row_sha256": "4a2801d32302948175a2b427c6ba8ac0daabec75dbb0d4be08686e1248b94ffd"
+    },
+    {
+      "task_id": "osworld_vs_code_57242fad",
+      "domain": "vs_code",
+      "catalog_row_sha256": "59cf1f129df50fbdb470c2b81d8db649c31f15efb773925ebe23a4f1be62a6cb"
+    },
+    {
+      "task_id": "osworld_vs_code_5e2d93d8",
+      "domain": "vs_code",
+      "catalog_row_sha256": "20cfb7c344df3b5a56d046a808f0f07ef0910a9ace228699d49daf6b9f013eda"
+    },
+    {
+      "task_id": "osworld_vs_code_6ed0a554",
+      "domain": "vs_code",
+      "catalog_row_sha256": "b0ed01c6cec24af9041bb63e5c6c282de14c9f3a6790491971d8b32d1faeb0e4"
+    },
+    {
+      "task_id": "osworld_vs_code_70745df8",
+      "domain": "vs_code",
+      "catalog_row_sha256": "96b638b1baaa04be311d04766ec8ecaa7ae34d61c3a3d4d148926af069b89e6c"
+    },
+    {
+      "task_id": "osworld_vs_code_930fdb3b",
+      "domain": "vs_code",
+      "catalog_row_sha256": "9d7f3d8002e4b5b0db8a42b4555938903f0036ef9bc1adbe02b791ec38b3d5b9"
+    },
+    {
+      "task_id": "osworld_vs_code_9439a27b",
+      "domain": "vs_code",
+      "catalog_row_sha256": "01fcfce14d0f0ee10e82995ee02d99264dcfde96535afa3859aaafb11f8d668e"
+    },
+    {
+      "task_id": "osworld_vs_code_982d12a5",
+      "domain": "vs_code",
+      "catalog_row_sha256": "6eec71b461ca48a961c47f39580ad58ce4c3565cfb6839bc2c97d804467e9ae9"
+    },
+    {
+      "task_id": "osworld_vs_code_9d425400",
+      "domain": "vs_code",
+      "catalog_row_sha256": "d0b10c88b171cefb7ee81b48fed74db788aba8df4b09f2d803596167fff4f6b9"
+    },
+    {
+      "task_id": "osworld_vs_code_c6bf789c",
+      "domain": "vs_code",
+      "catalog_row_sha256": "c7784d012b9e7638b092b5e13516ac4ded959311f0af38faaa4bc774bfaf60b3"
+    },
+    {
+      "task_id": "osworld_vs_code_e2b5e914",
+      "domain": "vs_code",
+      "catalog_row_sha256": "2f055144268ac4c553ab51593ee9fb08518afe816524eb3ec682ccb2c3677a22"
+    },
+    {
+      "task_id": "osworld_vs_code_ea98c5d7",
+      "domain": "vs_code",
+      "catalog_row_sha256": "b92294723b1c658f5818910b82b3eecfb5b99b1346b692234e3d6bc1ce552ce7"
+    },
+    {
+      "task_id": "osworld_vs_code_eabc805a",
+      "domain": "vs_code",
+      "catalog_row_sha256": "01204e58000a8ffc09c1440b0fb7380379e608e5516d2643ee03c4688f28f2e3"
+    },
+    {
+      "task_id": "osworld_vs_code_ec71221e",
+      "domain": "vs_code",
+      "catalog_row_sha256": "75277b62a1f19184a746da22e4228e304314dd1cf687dc4726322e469d94fe36"
+    }
+  ]
+}

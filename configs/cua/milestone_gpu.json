@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "model": "qwen35_9b",
+  "cohort": "configs/cua/milestone_tasks_v1.json",
+  "conditions": [
+    "clean"
+  ],
+  "repetitions": 1,
+  "max_steps": 30,
+  "loop_detect": 0,
+  "seed": 20261112,
+  "concurrency": 2,
+  "budget_minutes": 30,
+  "training_enabled": false,
+  "phase": "milestone_validation",
+  "data_role": "evaluation"
+}
