@@ -147,3 +147,13 @@ CUA-Lite 源码已在 QZ 检出固定 commit，正在进行 CPU 环境部署。�
 初次存储审计按 `du -sx -B1 zjq` 统计实际分配量，避免重复计算 ext4 mount 与 backing file。清理前 1,082,491,904 bytes，清理后 1,015,703,040 bytes，已清理 66,788,864 bytes。清单见 `validation/cua_qz_storage_v1.json`。此后若安装依赖或镜像，需要更新实际占用。
 
 Python 3.12.16 与 uv 0.13.7 已安装在 `zjq/.runtime/cua-host`。PyPI 访问超时的日志已保留，切换到可访问的阿里云 PyPI 镜像。`scripts/qz_cua_gym_install.sh` 提供仅安装 `[gym]` 的 CPU 主机依赖入口。完整桌面仍需镜像、环境专用依赖及真实动作验证。GHCR 元数据预检显示 Lite.OSWorld 镜像的压缩 layers 合计 2,579,478,557 bytes，解压后的实际占用需要拉取后测量。
+
+## 国内源与断网接续
+
+清华 PyPI 入口本轮探测返回 403，阿里 PyPI 返回 200，普通依赖已通过阿里源安装。[南大 GHCR 镜像](https://doc.nju.edu.cn/books/e1654)与官方镜像的 manifest SHA256 均为 `2d51f12e1bff4a8621c3a810cd5399c2c678aafae0db310f757c8c240cf954b1`，配置摘要和各层摘要也已逐项比对。桌面下载改用 `ghcr.nju.edu.cn/cua-lite/lite.osworld:latest`；CPU PyTorch 改用 `https://mirror.nju.edu.cn/pytorch/whl/cpu/`。
+
+新 WebSocket 桥接下的长连接多次中断。已将旧中转机实际使用的 `fkqz` 程序通过 SSH 内存流复制到新实例并比对 SHA256，配合本机已有 rtunnel 使用。新的本机隧道由独立 launchd label `com.zhujiaqi.cua-cpu-tunnel` 管理，私有连接配置位于 `~/.config/qz-cua/`，既有中转连接保持可用。原标准 WebSocket 客户端保留为初始接入工具，已验证 4,980,736 bytes SSH 流的 SHA256 一致。
+
+当前下载为 QZ 上的 nohup 后台进程，标准输入来自 `/dev/null`，日志写在 `.runtime/cua-host/`。CPU 包下载的 HTTP/HTTPS 代理为空，Docker 对 `.nju.edu.cn`、`.sjtu.edu.cn` 配置直连。断网交接时 Docker 的活动 TCP 连接全部指向南大镜像站 IP `210.28.130.20:443`。本机断网会影响观察和控制连接，当前两项国内源下载可在 QZ 继续。交接回执见 `validation/cua_download_handoff_20261111.json`，QZ 同步副本位于 `.runtime/cua-host/download-handoff.json`。
+
+恢复后先检查现有 PID 和日志，避免重复启动。CPU Torch 曾在安装未完成时出现不完整导入，已启动重新安装；需等安装结束再验证 CPU 计算。OSWorld 完整依赖解析已停止，后续应固定 CPU Torch 约束并忽略项目中的 GPU 索引来源配置，再继续环境专用依赖和 GUI 验收。桌面镜像、CPU Torch 与完整 GUI 均以各自成功回执为准，目前仍记录为下载中或待验收。

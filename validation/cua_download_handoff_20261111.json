@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-11-11T13:52:15.916452+00:00",
+  "status": "REMOTE_DOWNLOADS_IN_PROGRESS",
+  "jobs": [
+    {
+      "pid": 388539,
+      "running": true,
+      "log": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/cpu-torch-repair.log",
+      "proxy_environment": {
+        "HTTPS_PROXY": "",
+        "HTTP_PROXY": ""
+      }
+    },
+    {
+      "pid": 350784,
+      "running": true,
+      "log": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/desktop-mirror-pull.log",
+      "proxy_environment": {}
+    }
+  ],
+  "pypi_source": "https://mirrors.aliyun.com/pypi/simple",
+  "tsinghua_probe": "HTTP_403",
+  "torch_source": "https://mirror.nju.edu.cn/pytorch/whl/cpu/",
+  "desktop_source": "ghcr.nju.edu.cn/cua-lite/lite.osworld:latest",
+  "desktop_manifest_sha256": "2d51f12e1bff4a8621c3a810cd5399c2c678aafae0db310f757c8c240cf954b1",
+  "mirror_vs_canonical_manifest": "MATCHED",
+  "docker_direct_domains": [
+    ".nju.edu.cn",
+    ".sjtu.edu.cn"
+  ],
+  "nju_registry_ipv4": [
+    "210.28.130.20"
+  ],
+  "background_mode": "nohup, stdin /dev/null, logs on QZ",
+  "cpu_torch_import_validation": "PENDING_AFTER_INSTALL",
+  "gui_runtime": "NOT_RUN",
+  "next_step": "Validate CPU torch then install pinned OSWorld dependencies with CPU constraints; verify desktop image and run one GUI reset/action check.",
+  "vendor_tunnel_sha256": "854e98eefee7f91d2716a9c7e06ce3181c53e4c2fbfd8b22731a0d1233d4695a"
+}
