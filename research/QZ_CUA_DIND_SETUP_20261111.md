@@ -26,7 +26,7 @@ python3 -B scripts/qz_cua_dind.py --apply --kata-confirmed
 执行版遵循图片中的 cgroup v2 → ext4 loop → overlay2 路线，并增加以下资源边界：
 
 - 持久数据、配置、daemon 日志和逐次 JSON 回执位于 `zjq/.runtime/cua-dind/<hostname>/`。实例内的 `/run`、loop 设备节点及 cgroup 是启动所需的临时系统状态。
-- 初始镜像逻辑容量 64 GiB；新建前要求项目挂载至少 80 GiB 可用。这是初始工程容量与余量，不是 CUA 完整运行预算，也不是底层已预留 64 GiB。已有镜像不扩容、不重新格式化。
+- 初始镜像逻辑容量 30 GiB（按平台手册示例）；新建前要求项目挂载至少 46 GiB 可用。这是初始工程容量与余量，不是 CUA 完整运行预算，也不是底层已预留 30 GiB。已有镜像不扩容、不重新格式化。
 - 只对以排他方式新建的普通文件运行 `mkfs.ext4`，从不把 `/dev/loopN` 作为格式化目标。使用空闲 loop 和 `--nooverlap`；挂载之后再核实 backing file 身份。
 - 检查已有 daemon、socket、实例 boot ID 和存储所有权。冲突时停止；失败时保留文件、挂载和日志以便排查，不进行全局清理或盲目重启。
 - 显式选择 classic `overlay2`，关闭 containerd snapshotter，使用项目 data-root；仅监听实例 Unix socket。与平台全局 `/etc/docker/daemon.json` 分开，不覆盖它。
@@ -127,3 +127,5 @@ python3 scripts/qz_cua_preflight.py
 实例只读核验 → 项目专用 DinD 启动 → 一个真实桌面容器与截图/动作验收 → 固定训练来源任务与安全验证器 → 状态重建和分支记录 → GPU 推理/转化 → 训练与独立评测。
 
 环境部署位置调整不改变研究问题。无效攻击经历怎样转为有效训练监督，仍需最终通过训练后的 CUA 行为结果证明；本轮只有源码固定和 QZ 操作准备。
+
+用户首轮真实执行回执显示项目挂载剩余 81,906,368,512 bytes（约 76.28 GiB），旧默认 64 GiB + 16 GiB 余量触发容量检查，尚未创建数据镜像或启动 daemon。已将默认值改为 30 GiB；现有脚本也可直接传 `--size-gib 30` 接续，无需重新 clone。VM 文件存在且大小符合历史记录，当前 SHA 未检查。

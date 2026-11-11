@@ -211,7 +211,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--apply', action='store_true')
     parser.add_argument('--kata-confirmed', action='store_true', help='Only in the new QZ development-mode instance')
-    parser.add_argument('--size-gib', type=int, choices=range(30, 129), default=64, metavar='30..128')
+    parser.add_argument('--size-gib', type=int, choices=range(30, 129), default=30, metavar='30..128')
     args = parser.parse_args(argv)
     if platform.system() != 'Linux':
         print('NOT_QZ_LINUX_NO_CHANGES')

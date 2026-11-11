@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "source": "user_pasted_qz_terminal",
+  "attempt_utc": "2026-11-11T12:00:47.069377+00:00",
+  "status": "STOPPED_BEFORE_STORAGE_CREATION",
+  "workspace_free_bytes": 81906368512,
+  "old_default_image_gib": 64,
+  "old_required_free_gib": 80,
+  "new_default_image_gib": 30,
+  "new_required_free_gib": 46,
+  "docker_daemon": "NOT_STARTED",
+  "gui_runtime": "NOT_RUN",
+  "existing_vm_bytes": 28457500672,
+  "existing_vm_sha256": "NOT_CHECKED",
+  "next_command": "python3 -B scripts/qz_cua_dind.py --apply --kata-confirmed --size-gib 30"
+}
