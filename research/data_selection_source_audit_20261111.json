@@ -1,0 +1,244 @@
+{
+  "date": "2026-11-11",
+  "scope": "Public literature and read-only source review. No GPU, model calls, upstream script execution or CUA experiment.",
+  "sources": [
+    {
+      "id": "fat",
+      "title": "Attacks Which Do Not Kill Training Make Adversarial Learning Stronger",
+      "publication": "ICML 2020",
+      "url": "https://proceedings.mlr.press/v119/zhang20z.html",
+      "read_scope": "publisher abstract and paper first-page excerpt; method summary",
+      "boundary": "Established adversarial-training analogy, not a CUA result"
+    },
+    {
+      "id": "rho",
+      "title": "Prioritized Training on Points that are Learnable, Worth Learning, and not yet Learnt",
+      "publication": "ICML 2022",
+      "url": "https://proceedings.mlr.press/v162/mindermann22a.html",
+      "read_scope": "publisher abstract and PDF algorithm 1 / equation 3",
+      "boundary": "Reducible holdout loss, not universally preferring intermediate difficulty"
+    },
+    {
+      "id": "reweight",
+      "title": "Learning to Reweight Examples for Robust Deep Learning",
+      "publication": "ICML 2018",
+      "url": "https://proceedings.mlr.press/v80/ren18a.html",
+      "read_scope": "publisher abstract and introduction excerpt",
+      "boundary": "Gradient-direction selection precedent"
+    },
+    {
+      "id": "selective_dpo",
+      "title": "Principled Data Selection for Alignment: The Hidden Risks of Difficult Examples",
+      "publication": "ICML 2025",
+      "url": "https://proceedings.mlr.press/v267/gao25f.html",
+      "read_scope": "publisher abstract and paper section 2 excerpt",
+      "boundary": "Preference difficulty depends on model capacity; not GUI safety evidence"
+    },
+    {
+      "id": "less",
+      "title": "LESS: Selecting Influential Data for Targeted Instruction Tuning",
+      "publication": "ICML 2024",
+      "url": "https://arxiv.org/html/2402.04333v2",
+      "read_scope": "abstract, introduction, method outline; official README and matching.py",
+      "boundary": "SFT loss influence proxy"
+    },
+    {
+      "id": "nice",
+      "title": "NICE Data Selection for Instruction Tuning in LLMs with Non-differentiable Evaluation Metric",
+      "publication": "ICML 2025",
+      "url": "https://proceedings.mlr.press/v267/wang25bm.html",
+      "read_scope": "official PDF pages 1-7; README, launcher, scoring and model-loading entrypoints",
+      "boundary": "Policy-gradient evaluation signal used for SFT selection; not online RL training requirement"
+    },
+    {
+      "id": "gradalign",
+      "title": "GradAlign: Gradient-Aligned Data Selection for LLM Reinforcement Learning",
+      "publication": "arXiv v1, 2026; conference status not independently verified",
+      "url": "https://arxiv.org/html/2602.21492v1",
+      "read_scope": "sections 1-4.2, 5.2, 6.1; official README and select_data.py",
+      "boundary": "Dynamic GRPO problem selection; stronger assumptions than general CUA rewards"
+    },
+    {
+      "id": "dapo",
+      "title": "DAPO: An Open-Source LLM Reinforcement Learning System at Scale",
+      "publication": "arXiv v1, 2025",
+      "url": "https://arxiv.org/html/2503.14476v1",
+      "read_scope": "section 3.2",
+      "boundary": "Filters groups with no reward variation, not an SFT utility theorem"
+    },
+    {
+      "id": "cartography",
+      "title": "Dataset Cartography: Mapping and Diagnosing Datasets with Training Dynamics",
+      "publication": "EMNLP 2020",
+      "url": "https://aclanthology.org/2020.emnlp-main.746/",
+      "read_scope": "publisher abstract and paper section 2 excerpt",
+      "boundary": "Confidence and variability; ambiguous examples helped OOD in studied classification tasks"
+    },
+    {
+      "id": "dsir",
+      "title": "Data Selection for Language Models via Importance Resampling",
+      "publication": "NeurIPS 2023",
+      "url": "https://arxiv.org/abs/2302.03169v3",
+      "read_scope": "author abstract and arXiv publication metadata",
+      "boundary": "Text pretraining distribution matching; multimodal representation remains to design"
+    },
+    {
+      "id": "entropy20",
+      "title": "Beyond the 80/20 Rule: High-Entropy Minority Tokens Drive Effective Reinforcement Learning for LLM Reasoning",
+      "publication": "arXiv v1, 2025",
+      "url": "https://arxiv.org/html/2506.01939v1",
+      "read_scope": "abstract and entropy/RL method passages",
+      "boundary": "Token-level gradient selection, not automatically sample-level selection or GUI risk localization"
+    },
+    {
+      "id": "hes",
+      "title": "Unified Data Selection for LLM Reasoning",
+      "publication": "arXiv v1, 2026",
+      "url": "https://arxiv.org/html/2605.22389v1",
+      "read_scope": "abstract, sections 2.2 and 3.2, length and positive/negative selection analysis",
+      "boundary": "HES within evaluated reasoning settings; entropy is not a correctness guarantee"
+    },
+    {
+      "id": "benign",
+      "title": "Benign Samples Matter! Fine-tuning On Outlier Benign Samples Severely Breaks Safety",
+      "publication": "ICML 2025",
+      "url": "https://proceedings.mlr.press/v267/guan25c.html",
+      "read_scope": "publisher abstract",
+      "boundary": "Safety sample selection already exists; attack on fine-tuning rather than GUI inference"
+    },
+    {
+      "id": "continual",
+      "title": "Continual Safety Alignment via Gradient-Based Sample Selection",
+      "publication": "arXiv v1, 2026",
+      "url": "https://arxiv.org/html/2604.17215v1",
+      "read_scope": "abstract and introduction / reported mechanism",
+      "boundary": "Gradient-magnitude selection for benign continual fine-tuning; findings not universal causal law"
+    },
+    {
+      "id": "spard",
+      "title": "SPARD: Defending Harmful Fine-Tuning Attack via Safety Projection with Relevance-Diversity Data Selection",
+      "publication": "ICML 2026",
+      "url": "https://proceedings.mlr.press/v306/chen26ba.html",
+      "read_scope": "publisher abstract",
+      "boundary": "Relevance and diversity selection already used in safety; different threat model"
+    },
+    {
+      "id": "agentsafeevo",
+      "title": "AgentSafeEvo: Adversarial Co-Evolution for LLM Agent Safety",
+      "publication": "arXiv v1, 2026",
+      "url": "https://arxiv.org/html/2610.19422v1",
+      "read_scope": "sections 3.2 and 4.1",
+      "boundary": "Direct Agent-safety learnability weighting neighbor"
+    },
+    {
+      "id": "scope",
+      "title": "Beyond Task Completion: Training Capable and Safe Computer-Use Agents",
+      "publication": "arXiv v2, 2026",
+      "url": "https://arxiv.org/html/2609.22178v2",
+      "read_scope": "sections 3.2-3.4 and 4.1, rechecked in preceding review",
+      "boundary": "CUA safe-continuation training neighbor; RL on capability tasks"
+    }
+  ],
+  "source_files": [
+    {
+      "url": "https://github.com/JTWang2000/NICE/blob/main/README.md",
+      "git_blob_sha": "28d865b31fa8f1307634c2552b3ed9e09b1200f4",
+      "lines": 35,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/princeton-nlp/LESS/blob/main/README.md",
+      "git_blob_sha": "e8300bd1458931a19d4595dafa22c4680929941d",
+      "lines": 149,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/StigLidu/GradAlign/blob/main/README.md",
+      "git_blob_sha": "233d3f2039bac5d40aefc8a31e143f2471dfb6ad",
+      "lines": 240,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/JTWang2000/NICE/blob/main/running_commands.sh",
+      "git_blob_sha": "768135c159714cb3e0f3dee11dce62e66dd9c72e",
+      "lines": 100,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/princeton-nlp/LESS/blob/main/less/data_selection/matching.py",
+      "git_blob_sha": "6121dd859520176582647802caa1a906c6aa69bd",
+      "lines": 87,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/StigLidu/GradAlign/blob/main/automated/select_data.py",
+      "git_blob_sha": "3c7bb6b58aa0691af6ba88b1b41ef7d2e76ce7ed",
+      "lines": 251,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/JTWang2000/NICE/blob/main/nice/scripts/get_info/grad/get_eval_lora_grads.sh",
+      "git_blob_sha": "274de8e07bfb9123a0ec13039f6077eac8383ce9",
+      "lines": 70,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/JTWang2000/NICE/blob/main/nice/scripts/data_selection/matching_nice.sh",
+      "git_blob_sha": "c09a598443eb5b70c5e7b4701c7c776900e8b7c0",
+      "lines": 24,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/JTWang2000/NICE/blob/main/nice/scripts/train/lora_train.sh",
+      "git_blob_sha": "f37ff1df80274d3ccf26729d505b82acbe191a64",
+      "lines": 22,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/JTWang2000/NICE/blob/main/nice/data_selection/matching_nice.py",
+      "git_blob_sha": "01ac730a0026589f1cb844bd0cae3c4bb81076b7",
+      "lines": 87,
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "url": "https://github.com/JTWang2000/NICE/blob/main/nice/data_selection/get_info.py",
+      "git_blob_sha": "b3d3babdd37aa4f49f6272465a4d675afe2de91b",
+      "lines": 285,
+      "read_only": true,
+      "executed": false
+    }
+  ],
+  "source_identity_note": "GitHub connector returned individual blob SHA values; these are not repository commit pins and not execution validation.",
+  "nice_pdf": {
+    "url": "https://raw.githubusercontent.com/mlresearch/v267/main/assets/wang25bm/wang25bm.pdf",
+    "sha256": "76605308b4fb5c5ca1a53dab467e32ad416954050d21f4e62e5fba1ce448664e",
+    "bytes": 742184,
+    "pages": 28,
+    "read_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "retention": "Private local reference only, not committed"
+  },
+  "results": {
+    "cua_trajectories_generated_this_review": 0,
+    "training_runs_this_review": 0,
+    "observed_defense_effect": "NOT_MEASURED",
+    "novelty": "CANDIDATE_NOT_ESTABLISHED"
+  }
+}
