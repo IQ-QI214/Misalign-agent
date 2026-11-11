@@ -103,6 +103,13 @@ def main():
     shutdown_deadline = time.monotonic() + 45
     while not (session / 'exit_code').exists() and time.monotonic() < shutdown_deadline:
         time.sleep(1)
+    adapter = session / 'output/adapter'
+    if (session / 'exit_code').exists() and adapter.exists():
+        identities = {str(path.relative_to(adapter)): hashlib.sha256(path.read_bytes()).hexdigest()
+                      for path in adapter.rglob('*') if path.is_file()}
+        write_json(args.output / 'interrupted_adapter_retirement.json', {'files_sha256': identities,
+            'reason': 'Owned training process exited with transient adapter files remaining.'})
+        shutil.rmtree(adapter)
     if (session / 'output').exists():
         shutil.copytree(session / 'output', args.output / 'training', dirs_exist_ok=True)
     shutil.copyfile(session / 'training.log', args.output / 'training.log')
@@ -111,7 +118,7 @@ def main():
         'completed_milestones': sorted(evaluated), 'requested_milestones': milestones,
         'training_result_present': (session / 'output/training_result.json').exists(),
         'temporary_session_retained': str(session),
-        'retirement_policy': 'Normal completion reloads, hashes, and retires adapter weights. Inspect interrupted output before cleanup.'})
+        'retirement_policy': 'Normal completion reloads, hashes, and retires adapter weights. Interrupted adapter files are hashed and retired after process exit.'})
     print('OUTPUT=' + str(args.output))
 
 

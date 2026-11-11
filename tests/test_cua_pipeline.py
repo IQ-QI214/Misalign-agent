@@ -108,10 +108,12 @@ class PipelineContracts(unittest.TestCase):
             with self.assertRaises(BlockingIOError):
                 MailboxClient(root)
             def answer(model, processor, data):
+                if data['prompt'] == 'reject':
+                    raise ValueError('Invalid request fixture')
                 return {'response': data['prompt'], 'finish_reason': 'stop', 'input_tokens': 1, 'output_tokens': 1}
             def serve():
                 with patch('cua_defense.inference.answer_request', side_effect=answer):
-                    serve_requests(None, None, root, max_requests=3, idle_timeout=10)
+                    serve_requests(None, None, root, max_requests=4, idle_timeout=10)
             worker = threading.Thread(target=serve)
             worker.start()
             async def first():
@@ -123,11 +125,15 @@ class PipelineContracts(unittest.TestCase):
             second = MailboxClient(root)
             output2 = root / 'output2'
             output2.mkdir()
-            asyncio.run(second.generator(output2)(prompt='third', images=[]))
+            generate = second.generator(output2)
+            with self.assertRaisesRegex(RuntimeError, 'Invalid request'):
+                asyncio.run(generate(prompt='reject', images=[]))
+            self.assertFalse((root / 'stop').exists())
+            asyncio.run(generate(prompt='third', images=[]))
             second.close()
             worker.join(timeout=5)
             self.assertFalse(worker.is_alive())
-            self.assertEqual(len(list(root.glob('request-*.json'))), 3)
+            self.assertEqual(len(list(root.glob('request-*.json'))), 4)
 
 
 if __name__ == '__main__':

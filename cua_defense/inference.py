@@ -42,7 +42,10 @@ def serve_requests(model, processor, mailbox, *, max_requests=10000, idle_timeou
             time.sleep(0.25)
         if (mailbox / 'stop').exists() or (deadline is not None and time.monotonic() > deadline):
             return
-        result = answer_request(model, processor, json.loads(request.read_text()))
+        try:
+            result = answer_request(model, processor, json.loads(request.read_text()))
+        except ValueError as error:
+            result = {'error': f'{type(error).__name__}: {error}'}
         target = mailbox / f'response-{number}.json'
         temporary = target.with_suffix('.tmp')
         temporary.write_text(json.dumps(result, ensure_ascii=False) + '\n')

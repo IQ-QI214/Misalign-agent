@@ -188,9 +188,9 @@ def train(data, model_path, output, *, steps, learning_rate, accumulation, seed,
     retirement = {'adapter_reload_verified': reload_verified, 'files_sha256': identities,
                   'evaluation_milestones_completed': sorted(evaluator.completed) if evaluator else []}
     (Path(output) / 'adapter_receipt.json').write_text(json.dumps(retirement, indent=2) + '\n')
-    if not reload_verified:
-        raise RuntimeError('Final adapter reload changed probe loss; preserved for diagnosis')
     shutil.rmtree(adapter_path)
+    if not reload_verified:
+        raise RuntimeError('Final adapter reload changed probe loss; hashes and results were preserved')
     if trainer.is_world_process_zero():
         (Path(output) / 'training_result.json').write_text(json.dumps({
             'data_sha256': hashlib.file_digest(Path(data).open('rb'), 'sha256').hexdigest(),

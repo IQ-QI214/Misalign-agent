@@ -90,8 +90,16 @@ async def run(args, output, config, model):
         return identity, job_id
     completed = [existing[job_identity(*job)[1]] for job in jobs if job_identity(*job)[1] in existing]
     if len(completed) == len(jobs):
+        if args.external_mailbox:
+            with (args.external_mailbox / '.client.lock').open('a') as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                write_json(args.external_mailbox / 'evaluation_result.json', {'results': completed, 'planned': len(jobs)})
+                if not args.keep_external_worker:
+                    (args.external_mailbox / 'stop').touch()
         report = {'status': 'NO_PENDING_JOBS', 'planned': len(jobs), 'completed': len(completed),
-                  'invalid': 0, 'results': completed, 'metrics': summarize(completed), 'gpu_dispatched': False}
+                  'invalid': 0, 'results': completed, 'metrics': summarize(completed), 'gpu_dispatched': False,
+                  'source_task_count': config.get('source_task_count', len(rows)),
+                  'known_unavailable_task_ids': config.get('known_unavailable_task_ids', [])}
         write_json(output / 'receipt.json', report)
         return report
     processor = AutoProcessor.from_pretrained(model['processor_path'], local_files_only=True)
@@ -241,11 +249,14 @@ async def run(args, output, config, model):
     valid = [r for r in results if r['execution_valid']]
     report = {'schema_version': 1, 'status': 'BATCH_RETURNED', 'model_run': environment['model_run'],
               'planned': len(jobs), 'completed': len(results), 'valid': len(valid),
+              'source_task_count': config.get('source_task_count', len(rows)),
+              'known_unavailable_task_ids': config.get('known_unavailable_task_ids', []),
               'invalid': len(results) - len(valid), 'remaining': len(jobs) - len(results),
               'task_successes': sum(r['task_score'] == 1 for r in valid),
               'budget_minutes': args.minutes, 'config': config, 'results': results,
               'seconds': round(time.monotonic() - start, 2), 'metrics': summarize(results),
-              'eval_session_closed': not mailbox.exists() or (mailbox / 'stopped.json').exists(), 'gpu_worker_stopped': not mailbox.exists() and not bool(args.external_mailbox)}
+              'eval_session_closed': not mailbox.exists() or (mailbox / 'stopped.json').exists(),
+              'gpu_worker_stopped': environment['model_run'] and not mailbox.exists() and not bool(args.external_mailbox)}
     write_json(output / 'receipt.json', report)
     return report
 
@@ -281,6 +292,10 @@ def main():
             rows = load_os_harm_rows(PROJECT / config['cohort'])
         else:
             rows = load_rows(PROJECT / 'references/cua_lite', PROJECT / config['cohort'])
+        if config.get('task_ids'):
+            rows = [row for row in rows if row['task_id'] in config['task_ids']]
+        if args.limit:
+            rows = rows[:args.limit]
         print(json.dumps({'status': 'CPU_PLAN_PASSED_WAITING_GPU', 'model_run': False,
                           'tasks': len(rows), 'config': config, 'model': model}, indent=2))
         return 0

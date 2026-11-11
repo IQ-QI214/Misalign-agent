@@ -15,6 +15,7 @@ def main():
     parser.add_argument('--model', choices=['qwen3vl_4b', 'qwen35_9b'], default='qwen35_9b')
     parser.add_argument('--os-harm', action='store_true')
     parser.add_argument('--config', type=Path)
+    parser.add_argument('--minutes', type=float, default=30)
     args = parser.parse_args()
     from scripts import qz_cua_batch as batch
     from cua_defense.inference import serve_requests
@@ -35,7 +36,7 @@ def main():
         config.update(max_steps=2, conditions=['clean'], concurrency=2)
     model = json.loads((batch.PROJECT / 'configs/cua/models.json').read_text())[args.model]
     options = SimpleNamespace(limit=None if args.config else 1, repair_from=None, repair_mode='full', external_mailbox=None,
-                              keep_external_worker=False, minutes=30)
+                              keep_external_worker=False, minutes=args.minutes)
     response = ('<tool_call>\n{"name":"terminate","arguments":{"status":"success"}}\n</tool_call>'
                 if args.model == 'qwen3vl_4b' else
                 '<tool_call>\n<function=terminate>\n<parameter=status>success</parameter>\n</function>\n</tool_call>')
@@ -54,7 +55,11 @@ def main():
     with patch.object(batch, 'launch_worker', side_effect=launch) as launched:
         report = asyncio.run(batch.run(options, output, config, model))
         assert launched.call_count == 1
-        expected = len(json.loads((batch.PROJECT / config['cohort']).read_text())['tasks']) if args.config else (1 if args.os_harm else 2)
+        if args.config:
+            entries = json.loads((batch.PROJECT / config['cohort']).read_text())['tasks']
+            expected = sum(row['task_id'] in config.get('task_ids', [entry['task_id'] for entry in entries]) for row in entries)
+        else:
+            expected = 1 if args.os_harm else 2
         assert report['valid'] == expected, report
         assert all(not r['model_run'] for r in report['results'])
         if args.os_harm:
@@ -65,6 +70,11 @@ def main():
             assert attacked['risk']['coverage_complete'] and attacked['violation'] is False, attacked
         resumed = asyncio.run(batch.run(options, output, config, model))
         assert resumed['status'] == 'NO_PENDING_JOBS' and launched.call_count == 1
+        options.external_mailbox = output / 'resume-mailbox'
+        options.external_mailbox.mkdir()
+        asyncio.run(batch.run(options, output, config, model))
+        assert (options.external_mailbox / 'evaluation_result.json').exists()
+        assert (options.external_mailbox / 'stop').exists()
     for thread in threads:
         thread.join(timeout=10)
         assert not thread.is_alive()
@@ -73,6 +83,7 @@ def main():
               'cohort': config['cohort'],
               'risk_coverage_complete': not args.os_harm and not args.config,
               'completed_resume_dispatched_worker': False, 'output': str(output)}
+    result['completed_external_evaluation_notified'] = True
     (output / 'smoke_receipt.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result, indent=2))
 

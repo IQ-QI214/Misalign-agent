@@ -48,6 +48,7 @@ class MailboxClient:
                 (output / f'response-{turn}.json').write_text(json.dumps({**result, 'source': 'prefix_replay'}) + '\n')
                 return {'response': result['response'], 'finish_reason': result['finish_reason']}
             number = next(self.counter)
+            posted = False
             try:
                 paths = []
                 for index, image in enumerate(images or []):
@@ -62,6 +63,7 @@ class MailboxClient:
                 temporary = self.directory / f'request-{number}.tmp'
                 temporary.write_text(json.dumps(request) + '\n')
                 temporary.replace(self.directory / f'request-{number}.json')
+                posted = True
                 deadline = time.monotonic() + self.timeout
                 response = self.directory / f'response-{number}.json'
                 while not response.exists():
@@ -84,6 +86,7 @@ class MailboxClient:
                     'generation_prompt_sha256': request['generation_prompt_sha256']}, ensure_ascii=False) + '\n')
                 return {'response': result['response'], 'finish_reason': result['finish_reason']}
             except BaseException:
-                (self.directory / 'stop').touch()
+                if not posted:
+                    (self.directory / 'stop').touch()
                 raise
         return generate
