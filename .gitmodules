@@ -1,3 +1,6 @@
 [submodule "references/opsd_upstream"]
 	path = references/opsd_upstream
 	url = https://github.com/siyan-zhao/OPSD.git
+[submodule "references/cua_lite"]
+	path = references/cua_lite
+	url = https://github.com/cua-lite/cua-lite.git

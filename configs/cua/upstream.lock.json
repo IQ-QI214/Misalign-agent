@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/cua-lite/cua-lite.git",
+  "commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+  "path": "references/cua_lite",
+  "modifications": false,
+  "python_requirement": ">=3.12,<3.13",
+  "deployment": "QZ_ONLY",
+  "runtime_validation": "NOT_RUN",
+  "files": {
+    "pyproject.toml": "26c4916ff7b72066cc384405dd0b4a12a05a204c47165545bf3a4f5ce81b0d4a",
+    "lite/core/samples.py": "ad6160474656b4a2fc5903b8985f80cec15c1ac6c8c7655e1ca53705f6b9e35a",
+    "lite/core/metadata.py": "02e2eabc8b6c2d0d8147daa41c1928282c585c2d281b4eaa6d5d3bbc00a33516",
+    "lite/train/export/sft_tokenize.py": "965cca86893511ed77b0327659abb31c6485eadc269bc9a0e6f38da870488a02"
+  }
+}

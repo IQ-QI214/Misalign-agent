@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-11",
+  "status": "SOURCE_PIN_AND_LOCAL_STATIC_CHECK_ONLY",
+  "preflight_syntax": "PASS",
+  "mac_platform_guard": "PASS_NO_LINUX_CHECKS_EXECUTED",
+  "project_local_environments_removed": [
+    "cua-bootstrap",
+    "cua-cpu",
+    "uv-cache",
+    "uv-python"
+  ],
+  "upstream_commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+  "upstream_clean": true,
+  "qz_connections": 0,
+  "docker_jobs_started": 0,
+  "gpu_jobs_started": 0,
+  "cua_episodes": 0,
+  "optimizer_updates": 0,
+  "remaining": [
+    "QZ instance identity and Kata mode",
+    "DinD startup and real container test",
+    "CUA screenshot/action test",
+    "Trajectory reconstruction and training integration"
+  ]
+}
