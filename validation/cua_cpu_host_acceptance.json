@@ -1,0 +1,24 @@
+{
+  "torch": "2.15.0+cpu",
+  "torchvision": "0.29.2+cpu",
+  "cuda_runtime": null,
+  "cpu_matmul": [
+    [
+      2.0,
+      2.0
+    ],
+    [
+      2.0,
+      2.0
+    ]
+  ],
+  "cuda_packages": [],
+  "schema_version": 1,
+  "status": "CPU_HOST_DEPS_VERIFIED_GUI_PENDING",
+  "train_catalog_rows": 2429,
+  "cua_lite_commit": "2af69268c0573f4c12aac391cc03125e6d5c7974",
+  "asset_revision": "426008284b98a1ab13ef4addbc11bc2e99a3391d",
+  "asset_endpoint": "https://huggingface.co",
+  "mirror_failure_preserved": "HF_MIRROR_503",
+  "gpu_training": "NOT_RUN"
+}

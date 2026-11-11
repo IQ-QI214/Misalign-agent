@@ -157,3 +157,13 @@ Python 3.12.16 与 uv 0.13.7 已安装在 `zjq/.runtime/cua-host`。PyPI 访问�
 当前下载为 QZ 上的 nohup 后台进程，标准输入来自 `/dev/null`，日志写在 `.runtime/cua-host/`。CPU 包下载的 HTTP/HTTPS 代理为空，Docker 对 `.nju.edu.cn`、`.sjtu.edu.cn` 配置直连。断网交接时 Docker 的活动 TCP 连接全部指向南大镜像站 IP `210.28.130.20:443`。本机断网会影响观察和控制连接，当前两项国内源下载可在 QZ 继续。交接回执见 `validation/cua_download_handoff_20261111.json`，QZ 同步副本位于 `.runtime/cua-host/download-handoff.json`。
 
 恢复后先检查现有 PID 和日志，避免重复启动。CPU Torch 曾在安装未完成时出现不完整导入，已启动重新安装；需等安装结束再验证 CPU 计算。OSWorld 完整依赖解析已停止，后续应固定 CPU Torch 约束并忽略项目中的 GPU 索引来源配置，再继续环境专用依赖和 GUI 验收。桌面镜像、CPU Torch 与完整 GUI 均以各自成功回执为准，目前仍记录为下载中或待验收。
+
+## 恢复网络后的 CPU 主机验收
+
+CPU Torch 重新安装完成，`torch==2.15.0+cpu`、`torchvision==0.29.2+cpu` 的导入与 2×2 矩阵乘法已通过。完整 OSWorld 主机依赖安装完成后再次验证，`torch.version.cuda` 为 null，已安装的 NVIDIA 包列表为空。回执见 `validation/cua_cpu_host_acceptance.json`，159 项实际包版本见 `configs/cua/cpu_host_requirements.lock.txt`。
+
+固定 CPU 包约束保存在 `configs/cua/cpu_constraints.txt`。`scripts/qz_cua_osworld_prepare.sh` 使用阿里 PyPI 与南大 CPU PyTorch 源，关闭项目 GPU 索引来源配置并应用 CPU 约束，再调用未修改的上游 provision 入口。hf-mirror.com 在资源下载时返回 503，切换到官方 huggingface.co 后完成了固定 revision 的资源准备和目录检查，注册了 2,429 条训练来源任务。
+
+桌面镜像持续下载，Docker 下载并发通过 SIGHUP 从 3 更新为 8，保留现有下载任务。该配置项支持热更新，依据 [Docker 官方说明](https://docs.docker.com/reference/cli/dockerd/#configuration-reload-behavior)。
+
+`scripts/qz_cua_gui_smoke.py` 已在 QZ 后台排队，等已验证的镜像本地 tag 可用后，使用训练来源任务完成 reset 截图、手写点击、再次 reset 与关闭。该检查记录 `model_run=false`、`goal_completion_evaluated=false`、`reset_state_identity=NOT_TESTED`。它验证 GUI I/O 通路，后续仍需模型轨迹、任务完成、状态重建以及训练评测。
