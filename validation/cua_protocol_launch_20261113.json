@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "date_local": "2026-11-13",
+  "status": "BLOCKED_GPU_RELAY_OFFLINE",
+  "planned_episodes": 6,
+  "model_requests_posted": 0,
+  "model_responses": 0,
+  "task_episodes_started": 0,
+  "task_scores": "UNKNOWN_NOT_RUN",
+  "worker_ready_received": false,
+  "cpu_controller_alive_at_last_check": false,
+  "last_observation_utc": "2026-11-12T16:37:59.352746+00:00",
+  "relay_heartbeat_age_seconds": 20011.4,
+  "source_commit": "78e2456dce8fcdf5d377b482c7b084cc7bf6a814",
+  "source_sha256": {
+    "scripts/qz_cua_batch.py": "2795afc380b12f3528983457ed1f32d7f70143a598471d3fdc51e070fd4e963e",
+    "cua_defense/action_contract.py": "815b60da9c5070695cb898c93bd58c4300f5935cdc96f769c0c52fb8d3925f45",
+    "cua_defense/mailbox.py": "1359ae50d900858f1292278f6da3b15e17f2a5d039f2c7f8893ca195b081e14b",
+    "configs/cua/protocol_diagnostic.json": "6b5d0e6c70b2d855b5785e94eb2156bc1388b1b6a5a78ef93e1f89584920e232"
+  },
+  "session_budget_minutes": 30,
+  "session_start_utc_estimate": "2026-11-12T16:32:30Z",
+  "original_absolute_deadline_utc": "2026-11-12T17:02:30Z",
+  "diagnosis": "The CPU controller reached a mailbox stop without worker readiness or requests. The GPU relay heartbeat was over five hours old. launch_worker requires a heartbeat newer than 30 seconds.",
+  "evidence_scope": "Mailbox and process state observed directly. The controller ran in the user terminal, so its terminal traceback was not captured. The GPU-side read-only probe timed out, and the browser entry point also timed out.",
+  "required_recovery": "Run the existing qz_cua_gpu_connect.sh in the newly allocated GPU instance terminal, then resume within the original session time budget.",
+  "observation": {
+    "time_utc": "2026-11-12T16:37:59.352746+00:00",
+    "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/batch-20261112T163230",
+    "relay_heartbeat_age_seconds": 20011.4,
+    "controller_alive": false,
+    "episodes": [],
+    "mailbox.json": {
+      "directory": "/inspire/hdd/global_user/wenming-253108090054/zhujiaqi/codex-workspace/Misalign-agent/.runtime/cua-vlm/batch-0ea576570f98",
+      "external": false
+    },
+    "mailbox_state": {
+      "requests": 0,
+      "responses": 0,
+      "stop": true
+    }
+  }
+}
