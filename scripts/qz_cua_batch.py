@@ -42,9 +42,38 @@ def select_rows(rows, config, limit=None):
             groups.setdefault(domain, []).append(row)
         rows = [row for group in itertools.zip_longest(*groups.values())
                 for row in group if row is not None]
+    elif order == 'configured':
+        positions = {task: index for index, task in enumerate(config['task_ids'])}
+        rows.sort(key=lambda row: positions[row['task_id']])
     elif order is not None:
         raise ValueError('Unknown task ordering: ' + str(order))
     return rows[:limit] if limit else rows
+
+
+def protocol_arms(config):
+    arms = config.get('protocols', [{'name': 'baseline'}])
+    names = [arm['name'] for arm in arms]
+    if not names or any(not isinstance(name, str) or not name for name in names) or len(set(names)) != len(names):
+        raise ValueError('Protocol names must be nonempty and unique')
+    for arm in arms:
+        if not isinstance(arm.get('guidance', ''), str) or not isinstance(arm.get('argument_feedback', False), bool):
+            raise ValueError('Protocol guidance must be text and argument_feedback must be boolean')
+    return arms
+
+
+def summarize_protocols(results, arms, planned_per_protocol):
+    from cua_defense.metrics import summarize
+    groups = {arm['name']: [row for row in results if row['protocol']['name'] == arm['name']] for arm in arms}
+    completed = [{(row['task_id'], row['condition'], row['repeat']) for row in group
+                  if row['execution_valid'] and row['task_score'] is not None} for group in groups.values()]
+    common = set.intersection(*completed)
+    matched = sorted(common)
+    return {'protocol_metrics': {name: summarize(group) for name, group in groups.items()},
+            'planned_episodes_per_protocol': planned_per_protocol,
+            'matched_protocol_metrics': {name: summarize([row for row in group
+                if (row['task_id'], row['condition'], row['repeat']) in common]) for name, group in groups.items()},
+            'matched_completed_cases': [{'task_id': task, 'condition': condition, 'repeat': repeat}
+                                        for task, condition, repeat in matched]}
 
 
 def launch_worker(model, mailbox, budget_seconds=1800):
@@ -84,24 +113,27 @@ async def run(args, output, config, model):
     else:
         rows = load_rows(PROJECT / 'references/cua_lite', PROJECT / config['cohort'])
     rows = select_rows(rows, config, args.limit)
-    jobs = [(row, condition, repeat, None) for repeat in range(config['repetitions'])
-            for row in rows for condition in config['conditions']]
+    jobs = [(row, condition, repeat, None, arm) for repeat in range(config['repetitions'])
+            for row in rows for condition in config['conditions'] for arm in protocol_arms(config)]
     if args.repair_from:
         by_id = {r['task_id']: r for r in rows}
         jobs = []
         for path in args.repair_from.glob('episodes/*/receipt.json'):
             old = json.loads(path.read_text())
             if old['task_id'] in by_id and old['execution_valid'] and old['condition'] != 'clean' and old.get('safe_completion') is not True:
-                jobs.append((by_id[old['task_id']], old['condition'], old['repeat'], old))
+                jobs.extend((by_id[old['task_id']], old['condition'], old['repeat'], old, arm)
+                            for arm in protocol_arms(config))
     existing = {}
     for path in (output / 'episodes').glob('*/receipt.json'):
         record = json.loads(path.read_text())
         if record['execution_valid']:
             existing[record['job_id']] = record
-    def job_identity(row, condition, repeat, previous):
+    def job_identity(row, condition, repeat, previous, protocol):
         identity = {'task_id': row['task_id'], 'condition': condition, 'repeat': repeat,
                     'model_id': model['model_id'], 'max_steps': config['max_steps'],
                     'seed': config['seed'] + repeat, 'repair_mode': args.repair_mode if previous else None}
+        if 'protocols' in config:
+            identity['protocol'] = protocol
         job_id = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()[:20]
         return identity, job_id
     completed = [existing[job_identity(*job)[1]] for job in jobs if job_identity(*job)[1] in existing]
@@ -116,19 +148,21 @@ async def run(args, output, config, model):
                   'invalid': 0, 'results': completed, 'metrics': summarize(completed), 'gpu_dispatched': False,
                   'source_task_count': config.get('source_task_count', len(rows)),
                   'known_unavailable_task_ids': config.get('known_unavailable_task_ids', [])}
+        if 'protocols' in config:
+            report.update(summarize_protocols(completed, protocol_arms(config), len(jobs) // len(protocol_arms(config))))
         write_json(output / 'receipt.json', report)
         return report
     processor = AutoProcessor.from_pretrained(model['processor_path'], local_files_only=True)
     mailbox = args.external_mailbox or SHARED / ('batch-' + uuid.uuid4().hex[:12])
     mailbox.mkdir(parents=True, exist_ok=bool(args.external_mailbox))
     write_json(output / 'mailbox.json', {'directory': str(mailbox), 'external': bool(args.external_mailbox)})
-    shutil.copyfile(PROJECT / 'scripts/qz_cua_hf_worker.py', SHARED / 'qz_cua_hf_worker.py')
-    shutil.copytree(PROJECT / 'cua_defense', SHARED / 'code/cua_defense', dirs_exist_ok=True)
     client = MailboxClient(mailbox)
     results = []
     (output / 'episodes').mkdir(exist_ok=True)
     try:
         if not args.external_mailbox:
+            shutil.copyfile(PROJECT / 'scripts/qz_cua_hf_worker.py', SHARED / 'qz_cua_hf_worker.py')
+            shutil.copytree(PROJECT / 'cua_defense', SHARED / 'code/cua_defense', dirs_exist_ok=True)
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 raise TimeoutError('CPU preparation exhausted the session time budget')
@@ -144,8 +178,8 @@ async def run(args, output, config, model):
         write_json(output / 'gpu_environment.json', environment)
         sem = asyncio.Semaphore(config['concurrency'])
 
-        async def one(row, condition, repeat, previous):
-            identity, job_id = job_identity(row, condition, repeat, previous)
+        async def one(row, condition, repeat, previous, protocol):
+            identity, job_id = job_identity(row, condition, repeat, previous, protocol)
             if job_id in existing:
                 results.append(existing[job_id])
                 return
@@ -217,14 +251,25 @@ async def run(args, output, config, model):
                         if previous and turn == prefix:
                             record['replay_check'] = verify_checkpoint(Path(previous['output']), point, directory, turn)
                         turn += 1
+                        if protocol.get('guidance'):
+                            from cua_defense.mailbox import teacher_prompt
+                            generation['prompt'] = teacher_prompt(generation['prompt'], protocol['guidance'],
+                                                                  heading='GUI operation guidance')
                         return await underlying(**generation)
                     agent = make(model['model_id'], env=env, processor=processor, generate_fn=generate)
+                    if protocol.get('argument_feedback'):
+                        from cua_defense.action_contract import feedback_generator
+                        underlying = feedback_generator(client, agent.adapter, directory,
+                            seed=config['seed'] + repeat, feedback=feedback, replay=replay, sampling=record['sampling_params'])
                     remaining = max(1, deadline - time.monotonic())
                     await asyncio.wait_for(agent.sample(env, hooks=[logger]), timeout=remaining)
                     summary = json.loads((directory / 'summary.json').read_text())
                     record.update(execution_valid=True, task_score=summary['episode_return'], summary=summary, setup_attempts=env.setup_attempts)
-                except Exception:
+                except Exception as error:
                     record['error'] = traceback.format_exc()
+                    from cua_defense.action_contract import ActionContractError
+                    if isinstance(error, ActionContractError):
+                        record['failure_kind'] = 'ACTION_CONTRACT_EXHAUSTED'
                 finally:
                     if env is not None:
                         try:
@@ -239,6 +284,19 @@ async def run(args, output, config, model):
                                 directory, agent.adapter.action_space.get_tool_schemas())
                         except Exception:
                             record['action_contract_error'] = traceback.format_exc()
+                    try:
+                        proposals = list(directory.glob('action_feedback/turn-*/response-*.json'))
+                        proposals = proposals or list(directory.glob('response-*.json'))
+                        candidate_results = [json.loads(path.read_text()) for path in proposals]
+                        candidate_results = [item for item in candidate_results if item.get('source') != 'prefix_replay']
+                        record['proposal_accounting'] = {'responses': len(candidate_results)}
+                        for field in ['input_tokens', 'output_tokens']:
+                            values = [item.get(field) for item in candidate_results]
+                            record['proposal_accounting'][field] = sum(values) if all(value is not None for value in values) else None
+                        if (directory / 'action_feedback.json').exists():
+                            record['action_feedback'] = json.loads((directory / 'action_feedback.json').read_text())
+                    except Exception:
+                        record['proposal_accounting_error'] = traceback.format_exc()
                     if (directory / 'summary.json').exists():
                         record['summary'] = json.loads((directory / 'summary.json').read_text())
                         record['task_score'] = record['summary']['episode_return']
@@ -283,6 +341,8 @@ async def run(args, output, config, model):
               'seconds': round(time.monotonic() - start, 2), 'metrics': summarize(results),
               'eval_session_closed': not mailbox.exists() or (mailbox / 'stopped.json').exists(),
               'gpu_worker_stopped': environment['model_run'] and not mailbox.exists() and not bool(args.external_mailbox)}
+    if 'protocols' in config:
+        report.update(summarize_protocols(results, protocol_arms(config), len(jobs) // len(protocol_arms(config))))
     write_json(output / 'receipt.json', report)
     return report
 
@@ -303,6 +363,7 @@ def main():
     if platform.system() != 'Linux' or not ROOT.is_dir():
         raise SystemExit('QZ_LINUX_REQUIRED')
     config = json.loads(args.config.read_text())
+    protocols = protocol_arms(config)
     if args.model:
         config['model'] = args.model
     model = json.loads((PROJECT / 'configs/cua/models.json').read_text())[config['model']]
@@ -321,6 +382,9 @@ def main():
         rows = select_rows(rows, config, args.limit)
         print(json.dumps({'status': 'CPU_PLAN_PASSED_WAITING_GPU', 'model_run': False,
                           'tasks': len(rows), 'planned_task_ids': [row['task_id'] for row in rows],
+                          'planned_episodes': len(rows) * len(config['conditions']) * config['repetitions'] * len(protocols),
+                          'model_request_upper_bound': len(rows) * len(config['conditions']) * config['repetitions'] *
+                              sum(config['max_steps'] * (2 if arm.get('argument_feedback') else 1) for arm in protocols),
                           'config': config, 'model': model}, indent=2))
         return 0
     output = args.output or STATE / ('batch-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S'))

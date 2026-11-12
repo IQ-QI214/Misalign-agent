@@ -21,6 +21,77 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_feedback_retry_is_bounded_preserves_prefix_and_records_all_proposals(self):
+        from cua_defense.action_contract import ActionContractError, feedback_generator
+        schema = {'name': 'computer_use', 'parameters': {'properties': {'action': {}, 'coordinate': {}}}}
+        def response(extra):
+            arguments = {'action': 'left_click', 'coordinate': [500, 400]}
+            arguments.update(extra)
+            return json.dumps({'tool_calls': [{'name': 'computer_use', 'arguments': arguments}]})
+        adapter = SimpleNamespace(parse_raw_assistant_response=json.loads,
+            action_space=SimpleNamespace(get_tool_schemas=lambda: [schema]))
+        prompt = '<|im_start|>system\nRules<|im_end|>\n<|im_start|>user\nTask<|im_end|>\n<|im_start|>assistant\n'
+        for recover in [True, False]:
+            for prefix in [[], [{'response': response({}), 'finish_reason': 'stop'}]]:
+                with self.subTest(recover=recover, prefix=bool(prefix)), tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    output = root / 'episode'
+                    output.mkdir()
+                    client = MailboxClient(root)
+                    proposals = [response({'shift_key': 'True'}), response({} if recover else {'shift_key': 'True'})]
+                    def answer(model, processor, request):
+                        return {'response': proposals.pop(0), 'finish_reason': 'stop', 'input_tokens': 1, 'output_tokens': 1}
+                    with patch('cua_defense.inference.answer_request', side_effect=answer):
+                        worker = threading.Thread(target=serve_requests, args=(None, None, root),
+                                                  kwargs={'max_requests': 2, 'idle_timeout': 5})
+                        worker.start()
+                        generate = feedback_generator(client, adapter, output, replay=prefix)
+                        try:
+                            if prefix:
+                                asyncio.run(generate(prompt=prompt, images=[]))
+                                self.assertEqual(json.loads((output / 'response-0.json').read_text())['source'], 'prefix_replay')
+                            if recover:
+                                asyncio.run(generate(prompt=prompt, images=[]))
+                                saved = json.loads((output / f'response-{len(prefix)}.json').read_text())
+                                self.assertEqual(saved['correction_attempts'], 1)
+                            else:
+                                with self.assertRaises(ActionContractError):
+                                    asyncio.run(generate(prompt=prompt, images=[]))
+                                self.assertFalse((output / f'response-{len(prefix)}.json').exists())
+                            retry = json.loads((root / 'request-1.json').read_text())
+                            self.assertIn('Action argument feedback', retry['prompt'])
+                            self.assertIn('shift_key', retry['prompt'])
+                            self.assertEqual(retry['prompt'][retry['prompt'].index('<|im_end|>'):], prompt[prompt.index('<|im_end|>'):])
+                            events = json.loads((output / 'action_feedback.json').read_text())
+                            self.assertEqual(len(events), 2)
+                            self.assertEqual(events[-1]['accepted'], recover)
+                        finally:
+                            (root / 'stop').touch()
+                            client.close()
+                            worker.join(timeout=5)
+                        self.assertFalse(worker.is_alive())
+                        self.assertEqual(len(list(root.glob('request-*.json'))), 2)
+
+    def test_protocol_names_order_and_matched_panel(self):
+        from scripts.qz_cua_batch import protocol_arms, select_rows, summarize_protocols
+        arms = [{'name': 'baseline'}, {'name': 'feedback', 'argument_feedback': True}]
+        self.assertEqual(protocol_arms({}), [{'name': 'baseline'}])
+        for invalid in [[], [{'name': 'same'}, {'name': 'same'}], [{'name': 'bad', 'argument_feedback': 'yes'}]]:
+            with self.assertRaises(ValueError):
+                protocol_arms({'protocols': invalid})
+        rows = [{'task_id': name} for name in ['calc', 'writer']]
+        ordered = select_rows(rows, {'task_ids': ['writer', 'calc'], 'task_order': 'configured'})
+        self.assertEqual([row['task_id'] for row in ordered], ['writer', 'calc'])
+        results = [{'task_id': task, 'condition': 'clean', 'repeat': 0, 'model_run': True,
+                    'execution_valid': True, 'task_score': 0, 'protocol': arm}
+                   for arm in arms for task in ['writer', 'calc']]
+        results[-1].update(execution_valid=False, task_score=None)
+        report = summarize_protocols(results, arms, 2)
+        self.assertEqual(report['matched_completed_cases'], [{'task_id': 'writer', 'condition': 'clean', 'repeat': 0}])
+        self.assertEqual(report['planned_episodes_per_protocol'], 2)
+        self.assertEqual(report['matched_protocol_metrics']['baseline']['task_scored'], 1)
+        self.assertEqual(report['matched_protocol_metrics']['feedback']['task_scored'], 1)
+
     def test_checkpoint_preserves_files_and_focus_probe_failure_is_diagnostic(self):
         from cua_defense.replay import checkpoint
         interface = SimpleNamespace(

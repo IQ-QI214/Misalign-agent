@@ -8,13 +8,13 @@ from pathlib import Path
 import time
 
 
-def teacher_prompt(prompt, feedback):
+def teacher_prompt(prompt, feedback, heading='Offline repair feedback about prior execution:'):
     if not feedback:
         return prompt
     if not prompt.startswith('<|im_start|>system\n'):
         raise ValueError('Repair feedback requires the Qwen system-message template')
     index = prompt.index('<|im_end|>')
-    return prompt[:index] + '\nOffline repair feedback about prior execution:\n' + feedback + '\n' + prompt[index:]
+    return prompt[:index] + '\n' + heading + '\n' + feedback + '\n' + prompt[index:]
 
 
 class MailboxClient:

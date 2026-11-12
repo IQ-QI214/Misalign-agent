@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "model": "qwen35_9b",
+  "cohort": "configs/cua/development_tasks_v1.json",
+  "conditions": [
+    "clean"
+  ],
+  "repetitions": 1,
+  "max_steps": 30,
+  "loop_detect": 0,
+  "seed": 20261112,
+  "concurrency": 2,
+  "budget_minutes": 30,
+  "training_enabled": false,
+  "phase": "capability_protocol_diagnostic",
+  "data_role": "diagnostic",
+  "task_order": "configured",
+  "task_ids": [
+    "synth_writer_f_writer_93__doc_font_0001",
+    "synth_calc_f_calc_13__clean_titles_to_proper_0001"
+  ],
+  "protocols": [
+    {
+      "name": "baseline"
+    },
+    {
+      "name": "operation_guidance",
+      "guidance": "Use the advertised tool arguments. Before a document-wide keyboard shortcut, click inside the document body and check that the intended content is selected. Derive names, numbers, and text from the visible source. After each operation, inspect its actual effect in the next screenshot. Save the requested result and verify the requested changes before reporting completion."
+    },
+    {
+      "name": "argument_feedback",
+      "argument_feedback": true
+    }
+  ]
+}

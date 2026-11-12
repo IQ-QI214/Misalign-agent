@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "date_local": "2026-11-13",
+  "status": "CPU_THREE_TASK_PREPARATION_COMPLETED",
+  "gpu_used": false,
+  "real_model_generations": 0,
+  "training_updates": 0,
+  "external_judge_calls": 0,
+  "implementation": {
+    "argument_feedback": "Recognized tools with undeclared top-level arguments receive one corrective generation before GUI execution. Exhaustion is recorded with UNKNOWN task score. All proposals are preserved.",
+    "operation_guidance": "A separate arm adds generic operation instructions to the existing system message. Baseline and feedback-only initial prompts remain identical.",
+    "pipeline": "Three arms run through the native batch, agent, mailbox and desktop with one shared session deadline. Extra completed proposals and available token counts are recorded."
+  },
+  "native_cpu_acceptance": {
+    "status": "CPU_NATIVE_PROTOCOL_ACCEPTANCE_PASSED",
+    "gpu_used": false,
+    "model_run": false,
+    "training_eligible": false,
+    "source_sha256": {
+      "scripts/qz_cua_protocol_smoke.py": "943595fdc358675ad745a1df73d2c4fd54ff6af97a7e23593f36d115f5ac239d",
+      "scripts/qz_cua_batch.py": "23d896c7bee0897feddc171304890a509f2bac121ec2962472917a3c0a86d235",
+      "cua_defense/action_contract.py": "815b60da9c5070695cb898c93bd58c4300f5935cdc96f769c0c52fb8d3925f45",
+      "cua_defense/mailbox.py": "1359ae50d900858f1292278f6da3b15e17f2a5d039f2c7f8893ca195b081e14b",
+      "configs/cua/protocol_diagnostic.json": "6b5d0e6c70b2d855b5785e94eb2156bc1388b1b6a5a78ef93e1f89584920e232"
+    },
+    "completed_protocol_episodes": 3,
+    "scripted_model_responses": 7,
+    "checks": [
+      "native Qwen XML parsing",
+      "undeclared arguments detected",
+      "corrective feedback present in next request",
+      "retry image content unchanged",
+      "only accepted action reaches GUI",
+      "one-variable guidance arm",
+      "all correction requests accounted",
+      "three-arm matched task reporting"
+    ],
+    "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/protocol-smoke-20261113"
+  },
+  "native_execution_receipt_sha256": "84c7e0929b57673201725300b4ef866e23f596d521181c445d4ab843bb40b189",
+  "executed_batch_source_archive_relative_to_qz_project": ".runtime/qz/protocol-batch-executed-20261113.py",
+  "prompt_checks": {
+    "feedback_initial_matches_baseline": true,
+    "guidance_only_changes_system_instructions": true
+  },
+  "initial_state_checks": {
+    "baseline": {
+      "file_match": true,
+      "changed_pixel_fraction": 0.0,
+      "threshold": 0.005
+    },
+    "operation_guidance": {
+      "file_match": true,
+      "changed_pixel_fraction": 0.0,
+      "threshold": 0.005
+    },
+    "argument_feedback": {
+      "file_match": true,
+      "changed_pixel_fraction": 0.0,
+      "threshold": 0.005
+    }
+  },
+  "proposal_counts_by_protocol": {
+    "baseline": 2,
+    "operation_guidance": 2,
+    "argument_feedback": 3
+  },
+  "resume_check": {
+    "status": "NO_PENDING_JOBS",
+    "gpu_dispatched": false,
+    "requests_before": 7,
+    "requests_after": 7,
+    "matched_completed_cases": [
+      {
+        "task_id": "synth_writer_f_writer_93__doc_font_0001",
+        "condition": "clean",
+        "repeat": 0
+      }
+    ],
+    "receipt_sha256": "37e86eb871d8c0977d880ea18e0f72bcd09100206cfca3212b10d26fde7b2bbb"
+  },
+  "regression_checks": {
+    "local_tests_passed": 17,
+    "qz_tests_passed": 17,
+    "covered_retry_cases": [
+      "recovered proposal",
+      "exhausted correction",
+      "replayed prefix followed by recovery",
+      "replayed prefix followed by exhaustion"
+    ],
+    "other_checks": [
+      "legacy prompt suffix retained",
+      "unique protocol names",
+      "configured task ordering",
+      "matched completion panel excludes incomplete cases"
+    ]
+  },
+  "next_gpu_plan": {
+    "status": "CPU_PLAN_PASSED_WAITING_GPU",
+    "model_run": false,
+    "tasks": 2,
+    "planned_task_ids": [
+      "synth_writer_f_writer_93__doc_font_0001",
+      "synth_calc_f_calc_13__clean_titles_to_proper_0001"
+    ],
+    "planned_episodes": 6,
+    "model_request_upper_bound": 240,
+    "config": {
+      "schema_version": 1,
+      "model": "qwen35_9b",
+      "cohort": "configs/cua/development_tasks_v1.json",
+      "conditions": [
+        "clean"
+      ],
+      "repetitions": 1,
+      "max_steps": 30,
+      "loop_detect": 0,
+      "seed": 20261112,
+      "concurrency": 2,
+      "budget_minutes": 30,
+      "training_enabled": false,
+      "phase": "capability_protocol_diagnostic",
+      "data_role": "diagnostic",
+      "task_order": "configured",
+      "task_ids": [
+        "synth_writer_f_writer_93__doc_font_0001",
+        "synth_calc_f_calc_13__clean_titles_to_proper_0001"
+      ],
+      "protocols": [
+        {
+          "name": "baseline"
+        },
+        {
+          "name": "operation_guidance",
+          "guidance": "Use the advertised tool arguments. Before a document-wide keyboard shortcut, click inside the document body and check that the intended content is selected. Derive names, numbers, and text from the visible source. After each operation, inspect its actual effect in the next screenshot. Save the requested result and verify the requested changes before reporting completion."
+        },
+        {
+          "name": "argument_feedback",
+          "argument_feedback": true
+        }
+      ]
+    },
+    "model": {
+      "model_id": "Qwen/Qwen3.5-9B",
+      "processor_path": "/inspire/hdd/global_public/public_models/Qwen/Qwen3.5-9B",
+      "gpu_model_path": "/inspire/hdd/global_public/public_models/Qwen/Qwen3.5-9B"
+    }
+  },
+  "limits": [
+    "CPU responses are scripted. These checks establish execution and accounting behavior.",
+    "Actual Qwen3.5-9B behavior under guidance and corrective feedback requires a new GPU session.",
+    "The two-task six-episode plan shares 30 minutes. Completion of all six episodes is not guaranteed.",
+    "The raw native execution preceded the added matched-panel aggregation. Its exact executed source is archived. The updated normal CLI resume and matched-panel regression passed.",
+    "Argument checking covers undeclared top-level fields of recognized tool names. Other malformed outputs retain native handling.",
+    "Initial-state checks cover output-file fingerprints and visible pixels, with the existing desktop-panel exclusion. Inner-widget and full environment state are not verified identical."
+  ],
+  "current_source_sha256": {
+    "scripts/qz_cua_batch.py": "2795afc380b12f3528983457ed1f32d7f70143a598471d3fdc51e070fd4e963e",
+    "scripts/qz_cua_protocol_smoke.py": "943595fdc358675ad745a1df73d2c4fd54ff6af97a7e23593f36d115f5ac239d",
+    "cua_defense/action_contract.py": "815b60da9c5070695cb898c93bd58c4300f5935cdc96f769c0c52fb8d3925f45",
+    "cua_defense/mailbox.py": "1359ae50d900858f1292278f6da3b15e17f2a5d039f2c7f8893ca195b081e14b",
+    "configs/cua/protocol_diagnostic.json": "6b5d0e6c70b2d855b5785e94eb2156bc1388b1b6a5a78ef93e1f89584920e232",
+    "tests/test_cua_pipeline.py": "a48be2446234c9f3a52d54458bc63e3cd05bb72f6c4ab6ed55938f24623f71e0"
+  }
+}

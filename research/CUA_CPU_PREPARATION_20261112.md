@@ -1,5 +1,7 @@
 # CUA 防御训练准备与开卡操作
 
+2026-11-13 更新。执行前参数反馈、操作提示对照与 CPU 原生入口联测已完成。下一次单卡实验使用 `configs/cua/protocol_diagnostic.json`，操作与范围见本文末尾。
+
 ## 研究目标
 
 把一次成功攻击产生的失败轨迹，转换为能训练出安全任务完成能力的数据。第一版比较三种数据来源。
@@ -194,3 +196,38 @@ bash scripts/qz_cua_next.sh --config configs/cua/capability_recheck.json --run
 Writer 行距任务的按时序重放得分 0，保存文件指纹匹配 GPU 源轨迹。该文件只有一个段落显式设置为 1.5 倍行距，确定性生成的目标文件有七个。Calc 筛选任务的按时序重放也得分 0；其补充文件检查显示原始 Grades 数据保留，但新 Failing 表中的姓名、成绩与目标数据不同。首轮四个任务发送给模型的初始截图均与各自 checkpoint 逐像素一致，提示中也包含对应任务说明。
 
 文件补抓最初遇到原生 sample 自动关闭电脑，以及外层 wrapper 赋值未挂到原生评分回调的问题。两次采集失败回执已保留。当前改为在 `env.unwrapped` 的原评分回调结束后、电脑关闭前保存文件。Calc 与 Writer 两项补抓均成功，各保存结果与目标文件。补抓采用零预测等待；Writer 补抓文件与 GPU 文件的完整指纹存在差异，因此段落分析使用另一份已匹配 GPU 指纹的按时序重放文件。所有原始 GPU 分数继续为 0/4，两个预算中断项继续为 UNKNOWN。
+
+## 2026-11-13 三项 CPU 准备完成
+
+### 执行前参数反馈
+
+参数反馈组在生成动作后、交给原生动作解析和执行之前，检查模型使用的已声明工具的顶层参数。发现 `shift_key` 等未声明参数时，把参数错误与允许字段加入同一观测下的纠正请求，最多重生成一次。错误候选保存在 `action_feedback/turn-*/response-*.json`，通过检查的候选另存为原生 episode 的 `response-*.json`。图片内容保持一致，反馈仅使用动作字段与接口定义。
+
+连续两次仍存在未声明参数时，记录 `ACTION_CONTRACT_EXHAUSTED` 并结束该条尝试。任务评分保留 UNKNOWN，额外请求和候选均保存。当前检查范围是已识别工具的未声明顶层参数，类型、枚举和其余解析问题继续沿用原生处理。接受的动作仍通过原生转换器与环境执行。已有前缀重放入口也通过针对性检查。
+
+### 单因素操作提示对照
+
+`protocol_diagnostic.json` 包含三组配置。baseline 使用原提示，operation_guidance 仅增加通用操作提示，argument_feedback 仅启用上述执行前检查与一次纠正机会。提示要求正确定位正文、确认选区、依据可见源数据填写、检查操作效果并保存验证结果。各组采用同一模型、任务、种子、采样参数、30 步上限及评分器。
+
+首轮收敛为 Writer 字体与 Calc 小写两个开发任务，每题三组，共六条 episode。先运行 Writer，再运行 Calc。这个范围用于能力与执行协议诊断。整批共享一次模型加载与 30 分钟总时限，纠正请求占用同一时限。实际完成数受运行耗时约束。报告逐组分母、完整配对面板及其汇总，同时保留中断与 UNKNOWN。每条回执保存已完成候选数及可获得的 token 数，未返回请求保留在总 mailbox 中。
+
+### CPU 验收与开卡入口
+
+QZ 原生桌面、Qwen XML 解析、真实 mailbox 和批处理入口已用脚本后端联测。三个协议各完成一条诊断 episode，共七次脚本回复。反馈组的第一次错误候选得到纠正，重试图片内容一致，仅接受的动作进入 GUI。初始反馈组提示与 baseline 一致，提示组只修改 system 中的操作指引。本机和 QZ 的 17 项针对性回归检查通过，覆盖纠正成功、纠正耗尽、前缀重放、配置校验和配对面板。
+
+CPU 验收使用 `model_run=false`，训练资格为 false。真实模型在新提示与反馈下的表现留待 GPU 实测。验收入口如下，输出目录需要使用新路径。
+
+```bash
+export PYTHONPATH="$PWD:$PWD/references/cua_lite"
+export PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/venv/bin/python -B scripts/qz_cua_protocol_smoke.py --output /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/protocol-smoke-new
+```
+
+下一次开卡先用原有 GPU 连接脚本恢复中转，再在 QZ CPU 的项目目录执行以下命令。默认先做 CPU 计划检查，增加 `--run` 后开始单卡限时实验。
+
+```bash
+bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic.json
+bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic.json --run
+```
+
+代码与证据摘要见 `validation/cua_protocol_preparation_v1.json`。原始日志、图片和逐次请求保存在 QZ 本项目 `.runtime/cua-host` 中。
