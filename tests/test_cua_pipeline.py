@@ -8,7 +8,8 @@ import tempfile
 import threading
 import time
 import unittest
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, Mock, patch
 import zipfile
 
 from cua_defense.events import EventMonitor
@@ -20,6 +21,41 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_checkpoint_preserves_files_and_focus_probe_failure_is_diagnostic(self):
+        from cua_defense.replay import checkpoint
+        interface = SimpleNamespace(
+            run_command=AsyncMock(side_effect=[SimpleNamespace(returncode=0), TimeoutError('focus probe')]),
+            read_bytes=AsyncMock(return_value=b'actual output'))
+        env = SimpleNamespace(_computer=SimpleNamespace(interface=interface))
+        row = {'metadata': {'evaluator': {'result': {'type': 'vm_file', 'path': '/output.docx'}}}}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            record = asyncio.run(checkpoint(env, row, Mock(size=(1920, 1088)), directory, 3))
+            self.assertEqual((directory / record['file_snapshots']['/output.docx']).read_bytes(), b'actual output')
+            self.assertEqual(record['files']['/output.docx'], file_fingerprint(b'actual output'))
+            self.assertEqual(record['focus']['returncode'], None)
+            self.assertIn('TimeoutError', record['focus']['error'])
+
+    def test_argument_audit_reports_dropped_modifiers_without_rewriting_actions(self):
+        from cua_defense.action_contract import audit_arguments
+        schema = {'type': 'function', 'function': {'name': 'computer_use',
+                  'parameters': {'properties': {'action': {}, 'coordinate': {}}}}}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            turn = directory / 'turn_0006'
+            turn.mkdir()
+            path = turn / '03_actions.json'
+            raw = json.dumps({'agent_message': {'tool_calls': [{'name': 'computer_use',
+                'arguments': {'action': 'left_click', 'coordinate': [197, 624], 'shift_key': 'True'}}]}})
+            path.write_text(raw)
+            report = audit_arguments(directory, [schema])
+            self.assertEqual(report['affected_turns'], 1)
+            self.assertEqual(report['issues'][0]['undeclared_arguments'], ['shift_key'])
+            self.assertEqual(path.read_text(), raw)
+            self.assertEqual(audit_arguments(directory, [schema['function']]), report)
+            schema['function']['parameters']['properties']['shift_key'] = {}
+            self.assertEqual(audit_arguments(directory, [schema])['affected_turns'], 0)
+
     def test_chat_eos_is_included_when_model_defaults_to_endoftext(self):
         from types import SimpleNamespace
         from cua_defense.inference import eos_token_ids

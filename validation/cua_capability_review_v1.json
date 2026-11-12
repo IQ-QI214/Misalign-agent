@@ -1,0 +1,768 @@
+{
+  "schema_version": 1,
+  "date_local": "2026-11-12",
+  "status": "CPU_REVIEW_COMPLETED_GPU_CAPABILITY_UNQUALIFIED",
+  "new_gpu_minutes": 0,
+  "training_updates": 0,
+  "original_model_result": {
+    "scored_tasks": 4,
+    "successes": 0,
+    "interrupted_unknown": 2,
+    "not_attempted": 18
+  },
+  "saved_action_audit": [
+    {
+      "job_id": "0bd3992eb31b0d639fec",
+      "task_id": "synth_writer_f_writer_72__doc_font_0001",
+      "execution_valid": false,
+      "source_receipt_sha256": "b66d6f7b301aac81998ae8f76733fb31575040d4352a111e66944dea54e9deab",
+      "audit": {
+        "scope": "Undeclared top-level arguments of recognized model-facing tools",
+        "logged_turns": 26,
+        "affected_turns": 0,
+        "issues": []
+      }
+    },
+    {
+      "job_id": "13ff4743b6b9ec5f0ed2",
+      "task_id": "synth_calc_f_calc_2__filter_to_new_sheet_0002",
+      "execution_valid": true,
+      "source_receipt_sha256": "e8cc7c26d9a0766fffc227e2aef02b331294fc83c0196b23813cf5e31d453364",
+      "audit": {
+        "scope": "Undeclared top-level arguments of recognized model-facing tools",
+        "logged_turns": 29,
+        "affected_turns": 0,
+        "issues": []
+      }
+    },
+    {
+      "job_id": "39e30baa79d9fcd7bfc2",
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "execution_valid": true,
+      "source_receipt_sha256": "dce40f5c5a731833c6f7039e0bc121521600042ac5945483fe96ad8ef03aad2c",
+      "audit": {
+        "scope": "Undeclared top-level arguments of recognized model-facing tools",
+        "logged_turns": 6,
+        "affected_turns": 0,
+        "issues": []
+      }
+    },
+    {
+      "job_id": "7be57f0318bc23ce1db4",
+      "task_id": "synth_writer_f_writer_46__doc_spacing_0001",
+      "execution_valid": true,
+      "source_receipt_sha256": "52c19c78a4620a78126728ef50d856b9fcd0aae9a700968132863fd7cee0072e",
+      "audit": {
+        "scope": "Undeclared top-level arguments of recognized model-facing tools",
+        "logged_turns": 6,
+        "affected_turns": 0,
+        "issues": []
+      }
+    },
+    {
+      "job_id": "91c04fddc1a447abba56",
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "execution_valid": true,
+      "source_receipt_sha256": "cb71fbf4bf1014449b0066e2bf2bb06df64f0c4e11b8689357a76ef0c85efc0a",
+      "audit": {
+        "scope": "Undeclared top-level arguments of recognized model-facing tools",
+        "logged_turns": 30,
+        "affected_turns": 17,
+        "issues": [
+          {
+            "turn": 6,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 9,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 10,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 11,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 13,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 14,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 15,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 17,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 18,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 19,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 21,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 22,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 23,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 25,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 26,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 27,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          },
+          {
+            "turn": 29,
+            "tool": "computer_use",
+            "undeclared_arguments": [
+              "shift_key"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "job_id": "9c2ff91466849ea3c817",
+      "task_id": "synth_calc_f_calc_44__groupby_mode_totals_0002",
+      "execution_valid": false,
+      "source_receipt_sha256": "572feda8887c7531db1698e9938c8a446a49ac04f4d5e9a37f330b4996fe9758",
+      "audit": {
+        "scope": "Undeclared top-level arguments of recognized model-facing tools",
+        "logged_turns": 27,
+        "affected_turns": 0,
+        "issues": []
+      }
+    }
+  ],
+  "writer_font_timing_matched_controls": {
+    "source_receipt_sha256": "dce40f5c5a731833c6f7039e0bc121521600042ac5945483fe96ad8ef03aad2c",
+    "control_receipt_sha256": "b1ef2df9ccf0bda2cab0b9195f68950821f514fba65a764e9bbd75517bb969bf",
+    "launch_source_hash_frozen": false,
+    "provenance_note": "This early diagnostic recorded the script hash at exit while diagnostic code was being updated. The hash is not asserted to identify executed source. The current launcher freezes hashes before imports and replay.",
+    "records": [
+      {
+        "condition": "original_replay",
+        "repeat": 0,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fonts": {
+          "Liberation Serif": 1
+        },
+        "document_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "original_final_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "summary": {
+          "n_turns": 6,
+          "episode_return": 0.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 132.48,
+          "timing": {
+            "act_seconds_total": 40.01,
+            "observe_seconds_total": 0.38,
+            "predict_seconds_total": 62.45,
+            "n_timed_turns": 6
+          }
+        },
+        "task_score": 0.0,
+        "execution_valid": true,
+        "max_prediction_delay_error_seconds": 0.017435333007597364,
+        "first_active_and_focused_window": "origami_reference_0001.docx - LibreOffice Writer\norigami_reference_0001.docx - LibreOffice Writer\nWM_CLASS(STRING) = \"libreoffice\", \"libreoffice-writer\"\n",
+        "final_file_matches_source": true
+      },
+      {
+        "condition": "document_focus_then_replay",
+        "repeat": 0,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fonts": {
+          "Arial": 32
+        },
+        "document_fingerprint": "808bab5ed9fc01a46b7b7f742f0ab3cbef444a8c05af5a6e8bbe4ad1cfd160b2",
+        "original_final_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "summary": {
+          "n_turns": 7,
+          "episode_return": 1.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 119.44,
+          "timing": {
+            "act_seconds_total": 26.75,
+            "observe_seconds_total": 0.33,
+            "predict_seconds_total": 62.59,
+            "n_timed_turns": 7
+          }
+        },
+        "task_score": 1.0,
+        "execution_valid": true,
+        "max_prediction_delay_error_seconds": 0.19496137199166697,
+        "first_active_and_focused_window": "origami_reference_0001.docx - LibreOffice Writer\norigami_reference_0001.docx - LibreOffice Writer\nWM_CLASS(STRING) = \"libreoffice\", \"libreoffice-writer\"\n",
+        "final_file_matches_source": false
+      },
+      {
+        "condition": "original_replay",
+        "repeat": 1,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fonts": {
+          "Liberation Serif": 1
+        },
+        "document_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "original_final_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "summary": {
+          "n_turns": 6,
+          "episode_return": 0.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 116.1,
+          "timing": {
+            "act_seconds_total": 23.14,
+            "observe_seconds_total": 0.28,
+            "predict_seconds_total": 62.39,
+            "n_timed_turns": 6
+          }
+        },
+        "task_score": 0.0,
+        "execution_valid": true,
+        "max_prediction_delay_error_seconds": 0.01380929400329478,
+        "first_active_and_focused_window": "origami_reference_0001.docx - LibreOffice Writer\norigami_reference_0001.docx - LibreOffice Writer\nWM_CLASS(STRING) = \"libreoffice\", \"libreoffice-writer\"\n",
+        "final_file_matches_source": true
+      },
+      {
+        "condition": "document_focus_then_replay",
+        "repeat": 1,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fonts": {
+          "Arial": 32
+        },
+        "document_fingerprint": "808bab5ed9fc01a46b7b7f742f0ab3cbef444a8c05af5a6e8bbe4ad1cfd160b2",
+        "original_final_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "summary": {
+          "n_turns": 7,
+          "episode_return": 1.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 119.76,
+          "timing": {
+            "act_seconds_total": 26.74,
+            "observe_seconds_total": 0.33,
+            "predict_seconds_total": 62.63,
+            "n_timed_turns": 7
+          }
+        },
+        "task_score": 1.0,
+        "execution_valid": true,
+        "max_prediction_delay_error_seconds": 0.23505789598857518,
+        "first_active_and_focused_window": "origami_reference_0001.docx - LibreOffice Writer\norigami_reference_0001.docx - LibreOffice Writer\nWM_CLASS(STRING) = \"libreoffice\", \"libreoffice-writer\"\n",
+        "final_file_matches_source": false
+      }
+    ],
+    "interpretation": "The added document click changes success in two paired scripted controls. Top-level window focus is Writer in both conditions. Inner document focus is inferred from selection and file effects. Scripted controls are ineligible for production model training."
+  },
+  "scope_limits": [
+    "These CPU controls replay fixed actions without model inference.",
+    "Only task files and visible pixels were matched at the initial state. Complete VM state and inner-widget focus were not matched.",
+    "Prediction wait schedules were matched. GUI execution timing can still differ.",
+    "Original model scores and UNKNOWN outcomes are retained.",
+    "The zero-prediction-wait Writer capture replay has a different file fingerprint from the GPU source. Paragraph analysis of the separate timing-matched replay uses the file whose fingerprint matches that source."
+  ],
+  "fixes": [
+    "Explicit model and tokenizer EOS handling was fixed in the preceding calibration attempt.",
+    "Native model-facing schema argument audit is now stored in every batch episode receipt.",
+    "New checkpoints retain small task output file snapshots and diagnostic X11 window-focus observations.",
+    "Saved-action replay supports source prediction waits and post-evaluation file inspection.",
+    "Replay launches now freeze script and replay module hashes before execution."
+  ],
+  "validation": {
+    "local_pipeline_tests": 15,
+    "qz_pipeline_tests": 15,
+    "gpu_recheck_plan_tasks": 4,
+    "gpu_recheck_executed": false,
+    "native_final_capture_checks": 2,
+    "cpu_review_containers_running_after_completion": 0
+  },
+  "original_calibration_report_sha256": "eab44942aa09cba445c3f6f466506154e57a87c364b24ef47df9b21ae75958e0",
+  "first_request_input_audit": [
+    {
+      "task_id": "synth_calc_f_calc_2__filter_to_new_sheet_0002",
+      "request_id": 16,
+      "source_size": [
+        1920,
+        1088
+      ],
+      "sent_images": [
+        {
+          "size": [
+            1920,
+            1088
+          ],
+          "matches_checkpoint_pixels": true
+        }
+      ],
+      "instruction_present_in_prompt": true
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "request_id": 0,
+      "source_size": [
+        1920,
+        1088
+      ],
+      "sent_images": [
+        {
+          "size": [
+            1920,
+            1088
+          ],
+          "matches_checkpoint_pixels": true
+        }
+      ],
+      "instruction_present_in_prompt": true
+    },
+    {
+      "task_id": "synth_writer_f_writer_46__doc_spacing_0001",
+      "request_id": 61,
+      "source_size": [
+        1920,
+        1088
+      ],
+      "sent_images": [
+        {
+          "size": [
+            1920,
+            1088
+          ],
+          "matches_checkpoint_pixels": true
+        }
+      ],
+      "instruction_present_in_prompt": true
+    },
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "request_id": 1,
+      "source_size": [
+        1920,
+        1088
+      ],
+      "sent_images": [
+        {
+          "size": [
+            1920,
+            1088
+          ],
+          "matches_checkpoint_pixels": true
+        }
+      ],
+      "instruction_present_in_prompt": true
+    }
+  ],
+  "writer_font_frozen_confirmation": {
+    "receipt_sha256": "81fccee6371917bc8c3549f14f2f0e4971eb3bf2def8e66e14c0fd4c35bb96bc",
+    "source_receipt_sha256": "dce40f5c5a731833c6f7039e0bc121521600042ac5945483fe96ad8ef03aad2c",
+    "script_sha256_at_start": "7a62869ae9969f3f390679f04ee40c8757cac06f3bc93f00b6fca8089575d5b4",
+    "replay_sha256_at_start": "413348e01be55f6b1b3dd0d378e30fd44c19392b4aa9518ad22a0f923002cb84",
+    "records": [
+      {
+        "condition": "original_replay",
+        "repeat": 0,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fonts": {
+          "Liberation Serif": 1
+        },
+        "document_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "original_final_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "summary": {
+          "n_turns": 6,
+          "episode_return": 0.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 130.06,
+          "timing": {
+            "act_seconds_total": 37.1,
+            "observe_seconds_total": 0.4,
+            "predict_seconds_total": 62.45,
+            "n_timed_turns": 6
+          }
+        },
+        "task_score": 0.0,
+        "execution_valid": true
+      },
+      {
+        "condition": "document_focus_then_replay",
+        "repeat": 0,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fonts": {
+          "Arial": 32
+        },
+        "document_fingerprint": "808bab5ed9fc01a46b7b7f742f0ab3cbef444a8c05af5a6e8bbe4ad1cfd160b2",
+        "original_final_fingerprint": "207849f75415a3687924027ff118d4074309b0f2fb45aaefbfa610b445c1429b",
+        "summary": {
+          "n_turns": 7,
+          "episode_return": 1.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 119.73,
+          "timing": {
+            "act_seconds_total": 26.89,
+            "observe_seconds_total": 0.32,
+            "predict_seconds_total": 62.61,
+            "n_timed_turns": 7
+          }
+        },
+        "task_score": 1.0,
+        "execution_valid": true
+      }
+    ],
+    "executed_source_archive_relative_to_qz_project": ".runtime/qz/review-frozen-executed-source.py"
+  },
+  "writer_spacing_timed_replay": {
+    "receipt_sha256": "a9c0d8e2838cb80e43c9800aef20c90bc82dfd9e63a29d9f8c5eb48d95270a91",
+    "source_receipt_sha256": "52c19c78a4620a78126728ef50d856b9fcd0aae9a700968132863fd7cee0072e",
+    "script_sha256_at_start": "7a62869ae9969f3f390679f04ee40c8757cac06f3bc93f00b6fca8089575d5b4",
+    "replay_sha256_at_start": "413348e01be55f6b1b3dd0d378e30fd44c19392b4aa9518ad22a0f923002cb84",
+    "records": [
+      {
+        "condition": "original_replay",
+        "repeat": 0,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fonts": {},
+        "document_fingerprint": "6330f1754f17c5e13f3d0ac6d877cba27b1ee968a10c4e05157b75b535eabecf",
+        "original_final_fingerprint": "6330f1754f17c5e13f3d0ac6d877cba27b1ee968a10c4e05157b75b535eabecf",
+        "summary": {
+          "n_turns": 6,
+          "episode_return": 0.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 82.6,
+          "timing": {
+            "act_seconds_total": 23.47,
+            "observe_seconds_total": 0.28,
+            "predict_seconds_total": 28.5,
+            "n_timed_turns": 6
+          }
+        },
+        "task_score": 0.0,
+        "execution_valid": true
+      }
+    ]
+  },
+  "calc_filter_timed_replay": {
+    "receipt_sha256": "850a3c41374986105e3036e65ff66fc65ec590cde6e14023a19835e0d493af79",
+    "source_receipt_sha256": "e8cc7c26d9a0766fffc227e2aef02b331294fc83c0196b23813cf5e31d453364",
+    "script_sha256_at_start": "7a62869ae9969f3f390679f04ee40c8757cac06f3bc93f00b6fca8089575d5b4",
+    "replay_sha256_at_start": "413348e01be55f6b1b3dd0d378e30fd44c19392b4aa9518ad22a0f923002cb84",
+    "records": [
+      {
+        "condition": "original_replay",
+        "repeat": 0,
+        "match_prediction_timing": true,
+        "model_run": false,
+        "gpu_used": false,
+        "training_eligible": false,
+        "initial_state_check": {
+          "file_match": true,
+          "changed_pixel_fraction": 0.0,
+          "threshold": 0.005
+        },
+        "document_fingerprint": "6682c49876c71c239c6720e28c905e2a5dd63c0a991c5428d67e5bd01fcdcacc",
+        "original_final_fingerprint": "6682c49876c71c239c6720e28c905e2a5dd63c0a991c5428d67e5bd01fcdcacc",
+        "summary": {
+          "n_turns": 29,
+          "episode_return": 0.0,
+          "terminated": true,
+          "truncated": false,
+          "duration_seconds": 361.68,
+          "timing": {
+            "act_seconds_total": 118.8,
+            "observe_seconds_total": 1.53,
+            "predict_seconds_total": 210.52,
+            "n_timed_turns": 29
+          }
+        },
+        "task_score": 0.0,
+        "execution_valid": true
+      }
+    ]
+  },
+  "post_evaluation_capture_checks": {
+    "review-calc-files-20261112": {
+      "receipt_sha256": "64a1bdde5c05cb9c68b3db7e8eeb7f147f58d1778444bf25eb268ac44ca27578",
+      "source_receipt_sha256": "e8cc7c26d9a0766fffc227e2aef02b331294fc83c0196b23813cf5e31d453364",
+      "script_sha256_at_start": "47bc71a373b595af69e8c33a7f25d8b1d2d80c4504c4fdf891a5f0f236ec133a",
+      "replay_sha256_at_start": "413348e01be55f6b1b3dd0d378e30fd44c19392b4aa9518ad22a0f923002cb84",
+      "records": [
+        {
+          "condition": "original_replay",
+          "repeat": 0,
+          "match_prediction_timing": false,
+          "model_run": false,
+          "gpu_used": false,
+          "training_eligible": false,
+          "initial_state_check": {
+            "file_match": true,
+            "changed_pixel_fraction": 0.0,
+            "threshold": 0.005
+          },
+          "document_fingerprint": "6682c49876c71c239c6720e28c905e2a5dd63c0a991c5428d67e5bd01fcdcacc",
+          "original_final_fingerprint": "6682c49876c71c239c6720e28c905e2a5dd63c0a991c5428d67e5bd01fcdcacc",
+          "summary": {
+            "n_turns": 29,
+            "episode_return": 0.0,
+            "terminated": true,
+            "truncated": false,
+            "duration_seconds": 151.99,
+            "timing": {
+              "act_seconds_total": 118.94,
+              "observe_seconds_total": 1.54,
+              "predict_seconds_total": 1.03,
+              "n_timed_turns": 29
+            }
+          },
+          "task_score": 0.0,
+          "execution_valid": true
+        }
+      ]
+    },
+    "review-spacing-files-20261112": {
+      "receipt_sha256": "1d5dad634f782751681f55aad6487df4cb24ba43e02c334a57a3042ece9adb84",
+      "source_receipt_sha256": "52c19c78a4620a78126728ef50d856b9fcd0aae9a700968132863fd7cee0072e",
+      "script_sha256_at_start": "47bc71a373b595af69e8c33a7f25d8b1d2d80c4504c4fdf891a5f0f236ec133a",
+      "replay_sha256_at_start": "413348e01be55f6b1b3dd0d378e30fd44c19392b4aa9518ad22a0f923002cb84",
+      "records": [
+        {
+          "condition": "original_replay",
+          "repeat": 0,
+          "match_prediction_timing": false,
+          "model_run": false,
+          "gpu_used": false,
+          "training_eligible": false,
+          "initial_state_check": {
+            "file_match": true,
+            "changed_pixel_fraction": 0.0,
+            "threshold": 0.005
+          },
+          "document_fonts": {},
+          "document_fingerprint": "b58572c217e5e00c391455faaca88246bff72e6117e0beb365c70a35fd2dba71",
+          "original_final_fingerprint": "6330f1754f17c5e13f3d0ac6d877cba27b1ee968a10c4e05157b75b535eabecf",
+          "summary": {
+            "n_turns": 6,
+            "episode_return": 0.0,
+            "terminated": true,
+            "truncated": false,
+            "duration_seconds": 54.13,
+            "timing": {
+              "act_seconds_total": 23.45,
+              "observe_seconds_total": 0.26,
+              "predict_seconds_total": 0.43,
+              "n_timed_turns": 6
+            }
+          },
+          "task_score": 0.0,
+          "execution_valid": true
+        }
+      ]
+    }
+  },
+  "calc_filter_file_comparison": {
+    "native_score": 0.0,
+    "source_grades_unchanged": true,
+    "failing_sheet_equals_expected": false,
+    "actual_data_rows": 4,
+    "expected_data_rows": 4,
+    "scope": "Post-evaluation files captured from a zero-prediction-wait scripted replay. A separate timing-matched replay also scored zero. GPU source screenshots independently show the wrong student data."
+  },
+  "writer_spacing_file_comparison": {
+    "post_evaluation_0.docx": {
+      "paragraphs": 19,
+      "explicit_line_spacing_counts": {
+        "360": 1,
+        "INHERITED": 5,
+        "UNSPECIFIED": 12,
+        "276": 1
+      }
+    },
+    "post_evaluation_1.docx": {
+      "paragraphs": 19,
+      "explicit_line_spacing_counts": {
+        "360": 7,
+        "INHERITED": 12
+      }
+    },
+    "time_matched_before_termination": {
+      "explicit_line_spacing_counts": {
+        "360": 1,
+        "INHERITED": 5,
+        "UNSPECIFIED": 12,
+        "276": 1
+      },
+      "matches_source_gpu_file_fingerprint": true
+    }
+  },
+  "failed_diagnostic_attempts": [
+    {
+      "attempt": "review-calc-filter-20261112",
+      "receipt_sha256": "6a99c2a30e255f3730f94a14edc4c165c89a8189ac2f07562390326eb74b8120",
+      "execution_valid": false,
+      "native_task_score_before_capture_error": 0.0,
+      "error_type": "AttributeError",
+      "error": "'NoneType' object has no attribute 'interface'"
+    },
+    {
+      "attempt": "review-writer-spacing-20261112",
+      "receipt_sha256": "8784397931b745ecd49cb65b87b2203234c8519292509c6b47a35b7740872a93",
+      "execution_valid": false,
+      "native_task_score_before_capture_error": 0.0,
+      "error_type": "AttributeError",
+      "error": "'NoneType' object has no attribute 'interface'"
+    }
+  ],
+  "diagnostic_capture_repair": {
+    "problem": "Native sample closes its computer before returning. Assignment to the outer wrapper also fails to replace the native evaluation callback.",
+    "fix": "Capture evaluation files inside the original final-evaluation callback on env.unwrapped, before native automatic close.",
+    "verified": "Both Calc and Writer final capture checks completed with two files each and no capture error."
+  },
+  "task_findings": [
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "original_score": 0,
+      "finding": "17 of 30 logged turns contain undeclared shift_key. Native conversion executes ordinary clicks. Repeated selection attempts reach the step cap."
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "original_score": 0,
+      "finding": "Three paired timing-matched scripted controls score 0 without the inserted body click and 1 with it. Original-replay final file fingerprints match the GPU source. One pair has reconstructed and hash-verified executed source."
+    },
+    {
+      "task_id": "synth_writer_f_writer_46__doc_spacing_0001",
+      "original_score": 0,
+      "finding": "Timing-matched replay scores zero and matches the GPU source file fingerprint. That saved document has one paragraph with explicit line=360, while the deterministic expected file has seven."
+    },
+    {
+      "task_id": "synth_calc_f_calc_2__filter_to_new_sheet_0002",
+      "original_score": 0,
+      "finding": "The model types names and scores inconsistent with the source Grades sheet. File-level replay confirms incorrect Failing contents and an unchanged source sheet."
+    }
+  ]
+}

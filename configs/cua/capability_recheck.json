@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "model": "qwen35_9b",
+  "cohort": "configs/cua/development_tasks_v1.json",
+  "conditions": [
+    "clean"
+  ],
+  "repetitions": 1,
+  "max_steps": 30,
+  "loop_detect": 0,
+  "seed": 20261112,
+  "concurrency": 2,
+  "budget_minutes": 30,
+  "training_enabled": false,
+  "phase": "capability_failure_recheck",
+  "data_role": "development",
+  "task_order": "round_robin_domain",
+  "task_ids": [
+    "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+    "synth_writer_f_writer_46__doc_spacing_0001",
+    "synth_writer_f_writer_93__doc_font_0001",
+    "synth_calc_f_calc_2__filter_to_new_sheet_0002"
+  ]
+}

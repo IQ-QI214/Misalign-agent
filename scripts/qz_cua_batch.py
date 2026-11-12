@@ -178,6 +178,7 @@ async def run(args, output, config, model):
                           'supervise_from_step': prefix, 'repair_parent': previous['job_id'] if previous else None,
                           'teacher_feedback': feedback, 'output': str(directory)}
                 env = None
+                agent = None
                 try:
                     content = (previous.get('attack_content') if previous else
                                config.get('attack_overrides', {}).get(condition))
@@ -231,6 +232,13 @@ async def run(args, output, config, model):
                         except Exception:
                             record['close_error'] = traceback.format_exc()
                             record['execution_valid'] = False
+                    if agent is not None:
+                        try:
+                            from cua_defense.action_contract import audit_arguments
+                            record['action_contract'] = audit_arguments(
+                                directory, agent.adapter.action_space.get_tool_schemas())
+                        except Exception:
+                            record['action_contract_error'] = traceback.format_exc()
                     if (directory / 'summary.json').exists():
                         record['summary'] = json.loads((directory / 'summary.json').read_text())
                         record['task_score'] = record['summary']['episode_return']

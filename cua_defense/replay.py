@@ -37,6 +37,18 @@ def visual_difference(before, after):
     return sum(histogram[1:]) / (width * (height - box[1]))
 
 
+async def focus_state(interface):
+    try:
+        result = await interface.run_command(
+            'export DISPLAY=${DISPLAY:-:1}; '
+            'xdotool getactivewindow getwindowname; '
+            'xdotool getwindowfocus getwindowname; '
+            'xprop -id "$(xdotool getwindowfocus)" WM_CLASS', timeout=10)
+        return {'stdout': result.stdout, 'stderr': result.stderr, 'returncode': result.returncode}
+    except Exception as error:
+        return {'error': f'{type(error).__name__}: {error}', 'returncode': None}
+
+
 async def checkpoint(env, row, image, directory, turn):
     import json
     import shlex
@@ -48,11 +60,18 @@ async def checkpoint(env, row, image, directory, turn):
             paths.append(entry['path'])
     paths += row['metadata'].get('others', {}).get('research_checkpoint_paths', [])
     hashes = {}
+    snapshots = {}
     for path in dict.fromkeys(paths):
         test = await env._computer.interface.run_command('test -f ' + shlex.quote(path))
         content = await env._computer.interface.read_bytes(path) if test.returncode == 0 else None
         hashes[path] = file_fingerprint(content)
+        if content is not None:
+            filename = f'checkpoint-{turn}-file-{len(snapshots)}' + Path(path).suffix
+            (directory / filename).write_bytes(content)
+            snapshots[path] = filename
     record = {'files': hashes, 'visual_size': image.size,
+              'file_snapshots': snapshots,
+              'focus': await focus_state(env._computer.interface),
               'coverage': 'Task output files, excluding ZIP container timestamps and core created/modified fields; visible image excludes the top 4% desktop panel.'}
     image.save(directory / f'checkpoint-{turn}.png')
     (directory / f'checkpoint-{turn}.json').write_text(json.dumps(record, indent=2) + '\n')
