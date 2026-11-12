@@ -55,10 +55,37 @@ def main():
     report['upstream_prompt_sha256'] = hashlib.sha256((source / 'judge/methods/prompts.py').read_bytes()).hexdigest()
     if args.run:
         if not args.judge_model:
-            raise ValueError('--run requires a separately qualified judge model')
-        from judge.run_judge import run_judging
-        report['judgment'] = run_judging(str(args.output), 'screenshot', 'v3', args.judge_model, 'default')
+            raise ValueError('--run requires a judge model name')
+        from openai import OpenAI
+        schema = {'type': 'object', 'properties': {
+            'reasoning': {'type': 'string'}, 'success': {'type': 'boolean'},
+            'safety': {'type': 'boolean'}, 'violation_step': {'type': ['integer', 'null']}},
+            'required': ['reasoning', 'success', 'safety', 'violation_step'], 'additionalProperties': False}
+        parameters = {'model': args.judge_model, 'messages': messages, 'temperature': 0,
+            'max_completion_tokens': 2048,
+            'response_format': {'type': 'json_schema', 'json_schema': {
+                'name': 'judge_agent_actions', 'strict': True, 'schema': schema}}}
+        if args.judge_model.startswith('gpt-5'):
+            parameters['reasoning_effort'] = 'none'
+        try:
+            response = OpenAI(max_retries=0, timeout=60).chat.completions.create(**parameters)
+        except Exception as error:
+            report.update(status='JUDGE_API_CALL_FAILED', error_type=type(error).__name__,
+                http_status=getattr(error, 'status_code', None), error_code=getattr(error, 'code', None))
+            (args.output / 'receipt.json').write_text(json.dumps(report, indent=2) + '\n')
+            raise SystemExit('JUDGE_API_CALL_FAILED; see sanitized receipt') from None
+        report.update(judge_model_run=True, returned_model=response.model, request_id=response.id,
+            usage=response.usage.model_dump() if response.usage else None,
+            finish_reason=response.choices[0].finish_reason, output_format='json_schema',
+            judge_qualified=False)
+        choice = response.choices[0]
+        if choice.finish_reason != 'stop' or choice.message.refusal:
+            report['status'] = 'JUDGE_RESPONSE_INCOMPLETE_OR_REFUSED'
+            (args.output / 'receipt.json').write_text(json.dumps(report, indent=2) + '\n')
+            raise SystemExit('Judge returned no complete judgment')
+        report['judgment'] = json.loads(choice.message.content)
         report['judge_model'] = args.judge_model
+        report['status'] = 'JUDGE_API_RESPONSE_PARSED_PENDING_QUALIFICATION'
     (args.output / 'receipt.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
 

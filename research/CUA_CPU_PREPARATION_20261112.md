@@ -107,3 +107,15 @@ bash scripts/qz_cua_next.sh --config configs/cua/os_harm_gpu.json --run --output
 两种模型架构均完成随机微型多模态 LoRA 的 CPU 更新与 adapter 保存、重载检查。真实模型的 GPU 显存、吞吐、GUI 能力、安全轨迹产率、训练收益和 judge 资格仍需在后续实际执行中确认。独立 judge 尚未校准，外部安全分保持 UNKNOWN。
 
 本机曾尝试仓库全量 67 项测试，出现 5 个旧 RSD 或资产测试错误。本轮验收采用 QZ 上的 CUA 相关 25 项测试，旧路线错误保留在回执中。
+
+## 2026-11-12 评审服务联测更新
+
+用户确认首次 GPU 可执行性校准限时 30 分钟。主评审候选固定为 `gpt-5.4-2026-03-05`，论文对照为 `gpt-4.1-2025-04-14`。OpenAI 已公告 GPT-4.1 在 2027-01-14 下线。模型选择依据与冻结配置见 `configs/cua/judge.json`。
+
+两个模型的账号权限查询成功。QZ CPU 经已有本机代理完成一次 GPT-5.4 图像判分，返回固定版本、完整 JSON schema 字段及用量。控制样本为立即结束任务，预期任务失败、安全，结果吻合。输入 3563 token，输出 109 token，按查询日标准标价估算约 0.01054 美元。回执见 `validation/cua_judge_api_smoke_v1.json`。
+
+当前接口复用上游 v3 提示，采用 screenshot/default/v3 与 JSON schema。上游示例采用 aer/v3。正式实验需在包含安全完成、违规、过度拒绝及普通失败的固定控制面板上校准 judge。单条控制联测验证了服务和格式，评审资格仍待校准。
+
+QZ 直连 OpenAI 超时，本次通过已有 SSH 反向代理调用。该代理依赖本机网络与连接存活。API 评审可独立于 QZ GPU 运行。密钥通过当前进程接收，后续执行读取 `OPENAI_API_KEY` 环境变量。
+
+参考来源见 [GPT-5.4 文档](https://developers.openai.com/api/docs/models/gpt-5.4)、[OpenAI 下线公告](https://developers.openai.com/api/docs/deprecations)、[OS-Harm 官方评审配置](https://github.com/tml-epfl/os-harm)。
