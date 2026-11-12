@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "date_local": "2026-11-13",
-  "status": "BLOCKED_GPU_RELAY_OFFLINE",
+  "status": "INITIAL_ATTEMPT_FAILED_RECOVERY_COMPLETED",
   "planned_episodes": 6,
   "model_requests_posted": 0,
   "model_responses": 0,
@@ -39,5 +39,12 @@
       "responses": 0,
       "stop": true
     }
+  },
+  "initial_status": "BLOCKED_GPU_RELAY_OFFLINE",
+  "follow_up": {
+    "result_record": "validation/cua_protocol_gpu_v1.json",
+    "completed": 6,
+    "model_responses": 94,
+    "gpu_worker_stopped": true
   }
 }

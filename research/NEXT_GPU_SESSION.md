@@ -1,6 +1,6 @@
 # 下一次开卡先做什么
 
-2026-11-13 更新。CUA 的 CPU 准备、执行入口和开卡命令见 [CUA 防御训练准备与开卡操作](CUA_CPU_PREPARATION_20261112.md)。下一次单卡时段使用 `configs/cua/protocol_diagnostic.json`，比较原配置、操作提示、参数错误反馈，共用 30 分钟总时限。首轮能力校准及失败复查已经完成，下文保留文本 RSD 路线的历史恢复配置。
+2026-11-13 更新。CUA 的三组单卡诊断已完成，两个任务共六条有效评分均为 0。原配置保存在 `configs/cua/protocol_diagnostic.json`。新增的动作参数兼容性检查配置为 `configs/cua/protocol_diagnostic_v2.json`，CPU 原生验证已通过，真实模型效果待新的 GPU 实测。结果与操作见 [CUA 防御训练准备与开卡操作](CUA_CPU_PREPARATION_20261112.md)。下文保留文本 RSD 路线的历史恢复配置。
 
 2026-11-10 优先级更新：用户提出转向 CUA 攻击经验到防御训练的数据与算法联合设计。当前先完成[新方向研究与数据可行性设计](CUA_ATTACK_TO_DEFENSE_20261110.md)，不自动执行下面的文本 RSD 基线或六组训练。本文保留为原文本路线的恢复手册；当时的 CUA 开卡配置尚未建立。当前准备状态见顶部更新，真实 GPU 容量仍待联测。
 

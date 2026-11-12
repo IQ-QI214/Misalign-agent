@@ -1,6 +1,6 @@
 # CUA 防御训练准备与开卡操作
 
-2026-11-13 更新。执行前参数反馈、操作提示对照与 CPU 原生入口联测已完成。下一次单卡实验使用 `configs/cua/protocol_diagnostic.json`，操作与范围见本文末尾。
+2026-11-13 更新。三组真实模型诊断已经完成，六条有效评分均为 0。首版配置 `configs/cua/protocol_diagnostic.json` 保留；动作参数兼容性修正使用 `configs/cua/protocol_diagnostic_v2.json`。实际结果与版本边界见本文末尾。
 
 ## 研究目标
 
@@ -231,3 +231,28 @@ bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic.json --run
 ```
 
 代码与证据摘要见 `validation/cua_protocol_preparation_v1.json`。原始日志、图片和逐次请求保存在 QZ 本项目 `.runtime/cua-host` 中。
+
+## 2026-11-13 真实模型结果与动作兼容性修正
+
+首版三组对照已经结束，六条均完成原生评分，共两个独立任务。结果如下。
+
+| 开发任务 | 原配置 | 操作提示 | 参数反馈 |
+| --- | --- | --- | --- |
+| Writer 全文改 Arial | 0 | 0 | 0 |
+| Calc 批量转小写 | 0 | 0 | 0 |
+
+共得到 94 次真实模型回复，其中包括一次被拒绝的候选。全部回复正常停在聊天结束符 248046。控制器实际运行 905.68 秒，原生 worker 返回退出确认；随后独立 nvidia-smi 检查显示显存占用 0、利用率 0、计算进程为空。原始日志、请求和截图已归档，当前 GPU 工作已经结束。
+
+首次启动时 GPU 中转离线，未发出推理请求。中转恢复时原墙钟窗口已经过期，本次改按累计实验执行预算保守扣除启动与排查 6 分钟，设置恢复上限 24 分钟。实际恢复运行约 15.1 分钟。首次控制器启动至恢复完成的完整墙钟间隔约 49.3 分钟，包含连接等待，另行记录。
+
+Writer 的操作提示组仍以 Ctrl+A 开始，正文点击要求未执行。Calc 反馈组在第 6 步把 shift_key 改成 keys=["shift"]。首版检查接受了这个已声明字段，但原生点击转换器只执行普通点击。该组后续有 15 个保存的动作携带无效的点击 keys 参数，最终评分仍为 0。
+
+已在 CPU 增加可选的 keys/action 兼容性检查。启用后，keys 仅允许用于 action=key，反馈同时说明该约束；不符合约束的点击候选会得到一次纠正机会。首版配置继续保留，修正版为 `configs/cua/protocol_diagnostic_v2.json`。新增检查覆盖这一种明确的参数兼容性问题，其余动作语义继续依赖原生处理与执行验证。
+
+本机与 QZ 各通过 18 项针对性检查。修正版原生桌面 CPU 联测完成三组、七次脚本回复，确认错误的点击 keys 参数被拦截，纠正后的 key 动作实际调用 hotkey(shift, Down)。这项验收使用脚本后端，修正版真实模型表现仍需 GPU 测试。
+
+```bash
+python -B scripts/qz_cua_protocol_smoke.py --config configs/cua/protocol_diagnostic_v2.json --error-field keys --output /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/protocol-keys-new
+```
+
+实际 GPU 结果、预算口径、各条回执哈希、原始动作与 CPU 修正边界见 `validation/cua_protocol_gpu_v1.json`。本轮攻击样本数、训练更新数和外部 judge 调用数均为 0。

@@ -21,6 +21,20 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_keys_on_click_are_rejected_without_blocking_keyboard_chords(self):
+        from cua_defense.action_contract import argument_issues
+        schema = {'name': 'computer_use', 'parameters': {'properties': {'action': {}, 'coordinate': {}, 'keys': {}}}}
+        message = {'tool_calls': [{'name': 'computer_use', 'arguments': {
+            'action': 'left_click', 'coordinate': [197, 621], 'keys': ['shift']}}]}
+        self.assertEqual(argument_issues(message, [schema]), [])
+        issue = argument_issues(message, [schema], check_key_usage=True)[0]
+        self.assertEqual(issue['inactive_arguments'], ['keys'])
+        self.assertNotIn('keys', issue['declared_arguments'])
+        message['tool_calls'][0]['arguments'] = {'action': 'key', 'keys': ['shift', 'down']}
+        self.assertEqual(argument_issues(message, [schema], check_key_usage=True), [])
+        message['tool_calls'][0]['name'] = 'another_tool'
+        self.assertEqual(argument_issues(message, [schema], check_key_usage=True), [])
+
     def test_feedback_retry_is_bounded_preserves_prefix_and_records_all_proposals(self):
         from cua_defense.action_contract import ActionContractError, feedback_generator
         schema = {'name': 'computer_use', 'parameters': {'properties': {'action': {}, 'coordinate': {}}}}
@@ -76,7 +90,8 @@ class PipelineContracts(unittest.TestCase):
         from scripts.qz_cua_batch import protocol_arms, select_rows, summarize_protocols
         arms = [{'name': 'baseline'}, {'name': 'feedback', 'argument_feedback': True}]
         self.assertEqual(protocol_arms({}), [{'name': 'baseline'}])
-        for invalid in [[], [{'name': 'same'}, {'name': 'same'}], [{'name': 'bad', 'argument_feedback': 'yes'}]]:
+        for invalid in [[], [{'name': 'same'}, {'name': 'same'}], [{'name': 'bad', 'argument_feedback': 'yes'}],
+                        [{'name': 'bad', 'check_key_usage': 'yes'}]]:
             with self.assertRaises(ValueError):
                 protocol_arms({'protocols': invalid})
         rows = [{'task_id': name} for name in ['calc', 'writer']]

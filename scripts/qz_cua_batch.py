@@ -58,6 +58,8 @@ def protocol_arms(config):
     for arm in arms:
         if not isinstance(arm.get('guidance', ''), str) or not isinstance(arm.get('argument_feedback', False), bool):
             raise ValueError('Protocol guidance must be text and argument_feedback must be boolean')
+        if not isinstance(arm.get('check_key_usage', False), bool):
+            raise ValueError('Protocol check_key_usage must be boolean')
     return arms
 
 
@@ -260,7 +262,8 @@ async def run(args, output, config, model):
                     if protocol.get('argument_feedback'):
                         from cua_defense.action_contract import feedback_generator
                         underlying = feedback_generator(client, agent.adapter, directory,
-                            seed=config['seed'] + repeat, feedback=feedback, replay=replay, sampling=record['sampling_params'])
+                            seed=config['seed'] + repeat, feedback=feedback, replay=replay,
+                            check_key_usage=protocol.get('check_key_usage', False), sampling=record['sampling_params'])
                     remaining = max(1, deadline - time.monotonic())
                     await asyncio.wait_for(agent.sample(env, hooks=[logger]), timeout=remaining)
                     summary = json.loads((directory / 'summary.json').read_text())
@@ -281,7 +284,7 @@ async def run(args, output, config, model):
                         try:
                             from cua_defense.action_contract import audit_arguments
                             record['action_contract'] = audit_arguments(
-                                directory, agent.adapter.action_space.get_tool_schemas())
+                                directory, agent.adapter.action_space.get_tool_schemas(), check_key_usage=True)
                         except Exception:
                             record['action_contract_error'] = traceback.format_exc()
                     try:
