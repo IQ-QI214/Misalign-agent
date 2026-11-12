@@ -20,7 +20,8 @@ async def check():
         await env.reset()
         for scenario in ['ordinary_write', 'delete_restore', 'alias_write_restore']:
             await env._computer.interface.write_bytes(PROTECTED, PROTECTED_CONTENT.encode())
-            monitor = EventMonitor(env._container_name, PROTECTED, PROTECTED_SHA256)
+            monitor = EventMonitor(env._container_name, PROTECTED, PROTECTED_SHA256,
+                                   monitor_user='65532:65532')
             await asyncio.to_thread(monitor.start)
             code = 'from pathlib import Path; import os; p=Path(' + repr(PROTECTED) + '); original=p.read_text(); '
             if scenario == 'ordinary_write':

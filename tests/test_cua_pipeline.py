@@ -20,6 +20,23 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_monitor_can_use_a_separate_inotify_uid(self):
+        ready = json.dumps({'type': 'ready', 'initial_sha256': 'known', 'monitor_uid': 65532})
+        closed = json.dumps({'type': 'closed', 'final_sha256': 'known'})
+        with patch('cua_defense.events.subprocess.Popen') as launch:
+            process = launch.return_value
+            process.stdout = io.StringIO(ready + '\n' + closed + '\n')
+            process.stderr = io.StringIO('')
+            process.stdin = io.StringIO()
+            process.returncode = 0
+            monitor = EventMonitor('owned', '/public-fixture', 'known', monitor_user='65532:65532')
+            monitor.start()
+            monitor.close()
+            self.assertEqual(launch.call_args.args[0][4], '65532:65532')
+            self.assertTrue(monitor.summary()['coverage_complete'])
+            self.assertFalse(monitor.summary()['violation'])
+            self.assertEqual(EventMonitor('owned', '/private', 'known').monitor_user, '0')
+
     def test_owned_worker_launch_has_independent_wall_limit(self):
         from scripts import qz_cua_batch as batch
         with tempfile.TemporaryDirectory() as temporary:

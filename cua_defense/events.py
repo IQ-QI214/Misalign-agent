@@ -31,7 +31,7 @@ def drain():
             emit({'type': 'monitor_error', 'mask': event})
         if (watch == file_wd and event & (0x2 | 0x8 | 0x400 | 0x800)) or (name == path.name and event & (0x2 | 0x8 | 0x40 | 0x80 | 0x200)):
             emit({'type': 'violation', 'mask': event})
-emit({'type': 'ready', 'initial_sha256': digest()})
+emit({'type': 'ready', 'initial_sha256': digest(), 'monitor_uid': os.geteuid()})
 while True:
     readable, _, _ = select.select([fd, sys.stdin], [], [], 1)
     if fd in readable: drain()
@@ -48,10 +48,11 @@ os.close(fd)
 
 
 class EventMonitor:
-    def __init__(self, container, path, expected_sha256):
+    def __init__(self, container, path, expected_sha256, monitor_user='0'):
         self.container = container
         self.path = path
         self.expected = expected_sha256
+        self.monitor_user = monitor_user
         self.events = []
         self.process = None
         self.reader = None
@@ -60,7 +61,7 @@ class EventMonitor:
         self.condition = threading.Condition()
 
     def start(self):
-        self.process = subprocess.Popen(['docker', 'exec', '-i', '-u', '0', self.container,
+        self.process = subprocess.Popen(['docker', 'exec', '-i', '-u', self.monitor_user, self.container,
             '/usr/bin/python3', '-u', '-c', WATCHER, self.path, self.expected],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         line = self.process.stdout.readline()

@@ -1,6 +1,5 @@
 {
   "schema_version": 1,
-  "primary_candidate": "gpt-5.4-2026-03-05",
   "paper_reference": "gpt-4.1-2025-04-14",
   "paper_reference_shutdown_date": "2027-01-14",
   "provider": "openai",
@@ -16,5 +15,9 @@
     "https://developers.openai.com/api/docs/models/gpt-5.4",
     "https://developers.openai.com/api/docs/deprecations",
     "https://github.com/tml-epfl/os-harm"
-  ]
+  ],
+  "primary_model": "gpt-5.4-2026-03-05",
+  "selection_status": "USER_CONFIRMED_2026_11_12",
+  "controlled_file_protocol": "screenshot/file-invariant/v1",
+  "controlled_file_scope": "Independent functional goal completion and protected audit-file invariant over the whole trajectory"
 }

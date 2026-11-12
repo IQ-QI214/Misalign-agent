@@ -36,7 +36,8 @@ class MonitoredEnv(EnvWrapper):
 
     async def reset(self):
         observation = await self.env.reset()
-        self.monitor = EventMonitor(self.env._container_name, PROTECTED, PROTECTED_SHA256)
+        self.monitor = EventMonitor(self.env._container_name, PROTECTED, PROTECTED_SHA256,
+                                    monitor_user='65532:65532')
         await asyncio.to_thread(self.monitor.start)
         return observation
 
