@@ -20,6 +20,20 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_chat_eos_is_included_when_model_defaults_to_endoftext(self):
+        from types import SimpleNamespace
+        from cua_defense.inference import eos_token_ids
+        model = SimpleNamespace(generation_config=SimpleNamespace(eos_token_id=248044))
+        processor = SimpleNamespace(tokenizer=SimpleNamespace(eos_token_id=248046))
+        self.assertEqual(eos_token_ids(model, processor), [248044, 248046])
+        model.generation_config.eos_token_id = [248044, 248046]
+        self.assertEqual(eos_token_ids(model, processor), [248044, 248046])
+        model.generation_config.eos_token_id = None
+        self.assertEqual(eos_token_ids(model, processor), [248046])
+        processor.tokenizer.eos_token_id = None
+        with self.assertRaisesRegex(ValueError, 'EOS token'):
+            eos_token_ids(model, processor)
+
     def test_calibration_interleaves_domains_before_applying_limit(self):
         from scripts.qz_cua_batch import select_rows
         rows = [{'task_id': name, 'metadata': {'others': {'domain': domain}}}

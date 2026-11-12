@@ -66,6 +66,8 @@ def launch_worker(model, mailbox, budget_seconds=1800):
 
 
 async def run(args, output, config, model):
+    start = time.monotonic()
+    deadline = start + args.minutes * 60
     from transformers import AutoProcessor
     import lite.gym as gym
     from lite.agents.factory import make
@@ -119,16 +121,18 @@ async def run(args, output, config, model):
     processor = AutoProcessor.from_pretrained(model['processor_path'], local_files_only=True)
     mailbox = args.external_mailbox or SHARED / ('batch-' + uuid.uuid4().hex[:12])
     mailbox.mkdir(parents=True, exist_ok=bool(args.external_mailbox))
+    write_json(output / 'mailbox.json', {'directory': str(mailbox), 'external': bool(args.external_mailbox)})
     shutil.copyfile(PROJECT / 'scripts/qz_cua_hf_worker.py', SHARED / 'qz_cua_hf_worker.py')
     shutil.copytree(PROJECT / 'cua_defense', SHARED / 'code/cua_defense', dirs_exist_ok=True)
     client = MailboxClient(mailbox)
-    start = time.monotonic()
-    deadline = start + args.minutes * 60
     results = []
     (output / 'episodes').mkdir(exist_ok=True)
     try:
         if not args.external_mailbox:
-            launch_worker(model, mailbox, budget_seconds=args.minutes * 60)
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError('CPU preparation exhausted the session time budget')
+            launch_worker(model, mailbox, budget_seconds=remaining)
         ready = mailbox / 'ready.json'
         while not ready.exists():
             if (mailbox / 'error.json').exists():
