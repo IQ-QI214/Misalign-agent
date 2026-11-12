@@ -20,6 +20,26 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_calibration_interleaves_domains_before_applying_limit(self):
+        from scripts.qz_cua_batch import select_rows
+        rows = [{'task_id': name, 'metadata': {'others': {'domain': domain}}}
+                for name, domain in [('c1', 'calc'), ('c2', 'calc'), ('c3', 'calc'), ('w1', 'writer')]]
+        config = {'task_order': 'round_robin_domain'}
+        self.assertEqual([row['task_id'] for row in select_rows(rows, config)], ['c1', 'w1', 'c2', 'c3'])
+        self.assertEqual([row['task_id'] for row in select_rows(rows, config, 2)], ['c1', 'w1'])
+        self.assertEqual(select_rows(rows, {}), rows)
+        self.assertEqual(select_rows(rows, {**config, 'task_ids': ['c2', 'w1']}), [rows[1], rows[3]])
+        with self.assertRaisesRegex(ValueError, 'Unknown task ordering'):
+            select_rows(rows, {'task_order': 'unknown'})
+
+    def test_export_rejects_invalid_supervision_boundaries_before_conversion(self):
+        from scripts.qz_cua_export_sft import convert_trajectory
+        for prefix in [-1, True, 1.5]:
+            with self.assertRaisesRegex(ValueError, 'nonnegative step index'):
+                convert_trajectory(Path('unused'), {'supervise_from_step': prefix}, {}, Path('.'), diagnostic=True)
+        with self.assertRaisesRegex(ValueError, 'verified positive'):
+            convert_trajectory(Path('unused'), {'data_role': 'diagnostic'}, {}, Path('.'))
+
     def test_monitor_can_use_a_separate_inotify_uid(self):
         ready = json.dumps({'type': 'ready', 'initial_sha256': 'known', 'monitor_uid': 65532})
         closed = json.dumps({'type': 'closed', 'final_sha256': 'known'})

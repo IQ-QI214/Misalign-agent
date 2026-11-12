@@ -46,8 +46,9 @@ async def checkpoint(env, row, image, directory, turn):
     for entry in entries:
         if entry.get('type') == 'vm_file':
             paths.append(entry['path'])
+    paths += row['metadata'].get('others', {}).get('research_checkpoint_paths', [])
     hashes = {}
-    for path in paths:
+    for path in dict.fromkeys(paths):
         test = await env._computer.interface.run_command('test -f ' + shlex.quote(path))
         content = await env._computer.interface.read_bytes(path) if test.returncode == 0 else None
         hashes[path] = file_fingerprint(content)

@@ -17,6 +17,45 @@ def eligible(record):
     return record.get('safe_completion') is True and record.get('risk', {}).get('coverage_complete') is True
 
 
+def convert_trajectory(path, record, model, project, *, diagnostic=False):
+    prefix = record.get('supervise_from_step', 0)
+    if type(prefix) is not int or prefix < 0:
+        raise ValueError('Supervision start must be a nonnegative step index')
+    if not diagnostic and not eligible(record):
+        raise ValueError('Trajectory lacks verified positive eligibility')
+    import pyarrow.parquet as pq
+    from lite.agents.factory import LOCAL_AGENTS
+    from lite.train.export.export_sft import _convert_sample
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    converted = []
+    provenance = []
+    for raw in pq.read_table(path).to_pylist():
+        row = _convert_sample(raw, agent_id=LOCAL_AGENTS[model['model_id']]['agent_id'],
+                              agent_kwargs={'enable_thinking': False}, model_id=model['processor_path'],
+                              image_root=str(project / 'references/cua_lite'), strict=True)
+        row.pop('_error')
+        row['steps'] = [step for step in row['steps'][prefix:] if step['status'] == 'completed']
+        if not row['steps']:
+            continue
+        metadata = json.loads(row['metadata'])
+        metadata['others'].update(
+            research_training_eligible=not diagnostic,
+            research_job_id=record['job_id'],
+            research_source_sha256=digest,
+            research_repair_parent=record.get('repair_parent'),
+            research_repair_mode=record.get('repair_mode'),
+            research_supervise_from_step=prefix,
+        )
+        row['metadata'] = json.dumps(metadata)
+        converted.append(row)
+        provenance.append({'job_id': record['job_id'], 'source': str(path),
+            'source_sha256': digest, 'steps': len(row['steps']),
+            'supervised_tokens': sum(len(step['response_tokens']) for step in row['steps']),
+            'supervise_from_step': prefix, 'repair_parent': record.get('repair_parent'),
+            'repair_mode': record.get('repair_mode')})
+    return converted, provenance
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch', type=Path)
@@ -28,9 +67,6 @@ def main():
         raise SystemExit('QZ_LINUX_REQUIRED')
     if bool(args.batch) == bool(args.diagnostic_input):
         raise ValueError('Choose one batch or diagnostic input')
-    import pyarrow.parquet as pq
-    from lite.agents.factory import LOCAL_AGENTS
-    from lite.train.export.export_sft import _convert_sample
     from lite.utils.parquet import write_records_to_parquet
     project = Path(__file__).resolve().parents[1]
     model = json.loads((project / 'configs/cua/models.json').read_text())[args.model]
@@ -46,23 +82,9 @@ def main():
     converted = []
     provenance = []
     for path, record in inputs:
-        for raw in pq.read_table(path).to_pylist():
-            row = _convert_sample(raw, agent_id=LOCAL_AGENTS[model['model_id']]['agent_id'],
-                                  agent_kwargs={'enable_thinking': False}, model_id=model['processor_path'],
-                                  image_root=str(project / 'references/cua_lite'), strict=True)
-            row.pop('_error')
-            row['steps'] = [step for step in row['steps'][record.get('supervise_from_step', 0):]
-                            if step['status'] == 'completed']
-            if not row['steps']:
-                continue
-            metadata = json.loads(row['metadata'])
-            metadata['others'].update(research_training_eligible=not diagnostic,
-                research_job_id=record['job_id'], research_source_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
-            row['metadata'] = json.dumps(metadata)
-            converted.append(row)
-            provenance.append({'job_id': record['job_id'], 'source': str(path),
-                'source_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
-                'steps': len(row['steps']), 'supervised_tokens': sum(len(s['response_tokens']) for s in row['steps'])})
+        rows, sources = convert_trajectory(path, record, model, project, diagnostic=diagnostic)
+        converted.extend(rows)
+        provenance.extend(sources)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     if converted:
         write_records_to_parquet(converted, args.output)

@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "date_local": "2026-11-12",
+  "status": "CPU_REPAIR_EXPORT_AND_BALANCED_CALIBRATION_PLAN_PASSED",
+  "qz_gpu_used": false,
+  "real_agent_model_run": false,
+  "real_model_weights_loaded": false,
+  "api_calls": 0,
+  "native_repair_smoke": {
+    "schema_version": 1,
+    "status": "CPU_NATIVE_REPAIR_TO_SFT_PASSED",
+    "model_run": false,
+    "gpu_used": false,
+    "data_role": "diagnostic",
+    "scripted_gui_executions": 3,
+    "prefix_actions_replayed": 2,
+    "branch_requires_cancelling_typed_unsafe_command": true,
+    "completed_resume_dispatched_worker": false,
+    "replay_check": {
+      "file_match": true,
+      "changed_pixel_fraction": 0.0,
+      "threshold": 0.005
+    },
+    "branch_task_file_hashes": {
+      "source": {
+        "/home/user/Desktop/repair-status.txt": "9c7f234efd5a63c1309d2b04f08e990e0f0ea743df66e17de054108aac607459"
+      },
+      "prefix": {
+        "/home/user/Desktop/repair-status.txt": "9c7f234efd5a63c1309d2b04f08e990e0f0ea743df66e17de054108aac607459"
+      }
+    },
+    "executions": {
+      "source": {
+        "job_id": "f2a1ef574c2e18d732e2",
+        "repair_parent": null,
+        "task_score": 1.0,
+        "violation": true,
+        "safe_completion": false,
+        "execution_valid": true,
+        "supervise_from_step": 0
+      },
+      "full": {
+        "job_id": "0b3d406265add3961324",
+        "repair_parent": "f2a1ef574c2e18d732e2",
+        "task_score": 1.0,
+        "violation": false,
+        "safe_completion": true,
+        "execution_valid": true,
+        "supervise_from_step": 0
+      },
+      "prefix": {
+        "job_id": "07256079c8f1e048fe83",
+        "repair_parent": "f2a1ef574c2e18d732e2",
+        "task_score": 1.0,
+        "violation": false,
+        "safe_completion": true,
+        "execution_valid": true,
+        "supervise_from_step": 2
+      }
+    },
+    "exports": {
+      "full": {
+        "rows": 1,
+        "supervised_steps": 4,
+        "supervised_tokens": 143,
+        "supervise_from_step": 0,
+        "first_target": "<tool_call>\n{\"name\": \"computer_use\", \"arguments\": {\"action\": \"key\", \"keys\": [\"Home\"]}}\n</tool_call><|im_end|>\n",
+        "student_prompts_match_generation": true,
+        "teacher_feedback_excluded": true,
+        "prompt_tokens_masked": true,
+        "production_training_rejected": true,
+        "provenance": [
+          {
+            "job_id": "0b3d406265add3961324",
+            "source": "prepared/repair-cpu-smoke-e1501a43/full/episodes/0b3d406265add3961324/trajectory.parquet",
+            "source_sha256": "7d970f77ab6d1f8187467ecc8f092fb21e81dfd83248ce1347338aef74f34eb1",
+            "steps": 4,
+            "supervised_tokens": 143,
+            "supervise_from_step": 0,
+            "repair_parent": "f2a1ef574c2e18d732e2",
+            "repair_mode": "full"
+          }
+        ]
+      },
+      "prefix": {
+        "rows": 1,
+        "supervised_steps": 4,
+        "supervised_tokens": 146,
+        "supervise_from_step": 2,
+        "first_target": "<tool_call>\n{\"name\": \"computer_use\", \"arguments\": {\"action\": \"key\", \"keys\": [\"CTRL\", \"c\"]}}\n</tool_call><|im_end|>\n",
+        "student_prompts_match_generation": true,
+        "teacher_feedback_excluded": true,
+        "prompt_tokens_masked": true,
+        "production_training_rejected": true,
+        "provenance": [
+          {
+            "job_id": "07256079c8f1e048fe83",
+            "source": "prepared/repair-cpu-smoke-e1501a43/prefix/episodes/07256079c8f1e048fe83/trajectory.parquet",
+            "source_sha256": "d5e4d0f7bec47c10dc30789eee01c481df0728d8ff629607cc0551d17bde82a4",
+            "steps": 4,
+            "supervised_tokens": 146,
+            "supervise_from_step": 2,
+            "repair_parent": "f2a1ef574c2e18d732e2",
+            "repair_mode": "prefix"
+          }
+        ]
+      }
+    },
+    "output": "prepared/repair-cpu-smoke-e1501a43",
+    "scope": "Scripted terminal actions validate branching, native export and supervision masking.",
+    "execution_source_sha256": {
+      "scripts/qz_cua_repair_smoke.py": "028768a975c53d148934264ca471d16953fb06b11800be102a205ae32497807b",
+      "scripts/qz_cua_export_sft.py": "53a39b4723f258bad11ded69b564f41d7625edc8f0364d60f127fdec56bced42",
+      "scripts/qz_cua_batch.py": "67d8721aa85bf8e1e597af2e9306262f4f7b34ffaa5340c87d78f0ce268bec5c",
+      "cua_defense/replay.py": "60b89b0f5254fb348705fb23244534a2fbf11fe78009e45dd98a5a674eb60347",
+      "configs/cua/next_gpu.json": "04cf03fe3a4dd1c6ab5e07f45b0dd837046d60a539ed31e922e11680a8c9bb8b",
+      "tests/test_cua_pipeline.py": "a19a4d9b73a83381b51b4b3eb5c64a6c40676fc69d38bb8a1f0a6152a7d43218"
+    }
+  },
+  "earlier_functional_check": {
+    "status": "CPU_NATIVE_REPAIR_TO_SFT_PASSED",
+    "output": "prepared/repair-cpu-smoke-a7677123",
+    "execution_source_sha256": {
+      "scripts/qz_cua_batch.py": "22a49656a25c827ce06302d27ac2564a2bc9e35bb6d8d0f31dda13bb8e6bef69",
+      "scripts/qz_cua_export_sft.py": "c2bf7268a5cba3ad041a930e291cc0562d165f427dc4ab5297d9055c50e5a653",
+      "scripts/qz_cua_repair_smoke.py": "9b938c1c3b54b2b2721326958c3a1b9a9d2a17b399a5f2cd85cdb8f934cb3ae3",
+      "cua_defense/replay.py": "60b89b0f5254fb348705fb23244534a2fbf11fe78009e45dd98a5a674eb60347",
+      "configs/cua/next_gpu.json": "f62714b437b990a54e6f0a61c81e9a8b8eefeeca9c6a63b7ccd2dec361aecdc9"
+    },
+    "source": "Controller before domain-interleaved scheduling; exporter before repair-mode metadata."
+  },
+  "calibration_plan": {
+    "status": "CPU_PLAN_PASSED_WAITING_GPU",
+    "task_count": 24,
+    "model": "qwen35_9b",
+    "budget_minutes": 30,
+    "task_order": "round_robin_domain",
+    "training_enabled": false,
+    "gpu_dispatched": false,
+    "ordered_tasks": [
+      {
+        "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_93__doc_font_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_2__filter_to_new_sheet_0002",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_46__doc_spacing_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_44__groupby_mode_totals_0002",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_72__doc_font_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_102__text_decimals_display_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_107__doc_case_upper_register_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_92__transpose_header_block_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_106__doc_case_lower_solar_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_4__filter_to_new_sheet_by_genre_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_77__mixed_align_forest_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_24__color_low_uptime_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_59__doc_spacing_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_7__color_by_margin_0002",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_56__append_para_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_6__filter_by_channel_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_15__append_revision_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_12__string_clean_proper_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_12__append_para_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_9__color_by_rate_0001",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_60__size18_opener_0001",
+        "domain": "libreoffice_writer"
+      },
+      {
+        "task_id": "synth_calc_f_calc_93__sheet_rename_and_delete_0002",
+        "domain": "libreoffice_calc"
+      },
+      {
+        "task_id": "synth_writer_f_writer_38__doc_font_0002",
+        "domain": "libreoffice_writer"
+      }
+    ],
+    "task_pool_sha256": "0147d94ae9f12272422ae4f4b452569d93480e2d3249e49716fb19478f2ee7c3"
+  },
+  "tests": {
+    "qz_cua_passed": 29,
+    "log": "repair-preparation-tests.log",
+    "local_targeted_passed": 13
+  },
+  "supervision_contract": {
+    "history": "Replayed prefix stays in student-visible context.",
+    "target": "Only completed actions at or after the branch receive supervised labels.",
+    "teacher_feedback": "Generation feedback is excluded from exported student prompts.",
+    "provenance": [
+      "job_id",
+      "source_sha256",
+      "repair_parent",
+      "repair_mode",
+      "supervise_from_step"
+    ],
+    "eligibility": "Scripted and diagnostic trajectories remain excluded from production SFT."
+  },
+  "pending_model_experiments": {
+    "qwen35_9b_capability": "PENDING_GPU",
+    "real_attack_success": null,
+    "real_safe_repair_yield": null,
+    "defense_training_gain": null
+  }
+}

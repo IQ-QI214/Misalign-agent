@@ -13,5 +13,6 @@
   "budget_minutes": 30,
   "training_enabled": false,
   "phase": "capability_calibration",
-  "data_role": "development"
+  "data_role": "development",
+  "task_order": "round_robin_domain"
 }

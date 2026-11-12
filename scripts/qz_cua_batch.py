@@ -5,6 +5,7 @@ import asyncio
 from datetime import datetime, timezone
 import fcntl
 import hashlib
+import itertools
 import json
 import math
 from pathlib import Path
@@ -28,6 +29,22 @@ def write_json(path, value):
     temporary = path.with_suffix('.tmp')
     temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n')
     temporary.replace(path)
+
+
+def select_rows(rows, config, limit=None):
+    if config.get('task_ids'):
+        rows = [row for row in rows if row['task_id'] in config['task_ids']]
+    order = config.get('task_order')
+    if order == 'round_robin_domain':
+        groups = {}
+        for row in rows:
+            domain = row['metadata']['others']['domain']
+            groups.setdefault(domain, []).append(row)
+        rows = [row for group in itertools.zip_longest(*groups.values())
+                for row in group if row is not None]
+    elif order is not None:
+        raise ValueError('Unknown task ordering: ' + str(order))
+    return rows[:limit] if limit else rows
 
 
 def launch_worker(model, mailbox, budget_seconds=1800):
@@ -64,10 +81,7 @@ async def run(args, output, config, model):
         rows = load_os_harm_rows(PROJECT / config['cohort'])
     else:
         rows = load_rows(PROJECT / 'references/cua_lite', PROJECT / config['cohort'])
-    if config.get('task_ids'):
-        rows = [row for row in rows if row['task_id'] in config['task_ids']]
-    if args.limit:
-        rows = rows[:args.limit]
+    rows = select_rows(rows, config, args.limit)
     jobs = [(row, condition, repeat, None) for repeat in range(config['repetitions'])
             for row in rows for condition in config['conditions']]
     if args.repair_from:
@@ -292,12 +306,10 @@ def main():
             rows = load_os_harm_rows(PROJECT / config['cohort'])
         else:
             rows = load_rows(PROJECT / 'references/cua_lite', PROJECT / config['cohort'])
-        if config.get('task_ids'):
-            rows = [row for row in rows if row['task_id'] in config['task_ids']]
-        if args.limit:
-            rows = rows[:args.limit]
+        rows = select_rows(rows, config, args.limit)
         print(json.dumps({'status': 'CPU_PLAN_PASSED_WAITING_GPU', 'model_run': False,
-                          'tasks': len(rows), 'config': config, 'model': model}, indent=2))
+                          'tasks': len(rows), 'planned_task_ids': [row['task_id'] for row in rows],
+                          'config': config, 'model': model}, indent=2))
         return 0
     output = args.output or STATE / ('batch-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S'))
     output.mkdir(parents=True, exist_ok=True)
