@@ -21,6 +21,76 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_shift_click_validation_and_abort_cleanup(self):
+        from cua_defense.desktop_actions import click_uses_shift, release_shift_on_failure
+        for arguments in [{'keys': ['shift']}, {'keys': ['Shift']}, {'shift_key': 'True'}, {'shift_key': True}]:
+            self.assertTrue(click_uses_shift(arguments))
+        for arguments in [{}, {'keys': []}, {'shift_key': False}]:
+            self.assertFalse(click_uses_shift(arguments))
+        for arguments in [{'keys': 'shift'}, {'keys': ['ctrl']}, {'shift_key': 1},
+                          {'keys': ['shift'], 'shift_key': False}]:
+            with self.assertRaises(ValueError):
+                click_uses_shift(arguments)
+        interface = SimpleNamespace(key_up=AsyncMock())
+        cleanup = []
+        async def abort():
+            raise asyncio.CancelledError()
+        with self.assertRaises(asyncio.CancelledError):
+            asyncio.run(release_shift_on_failure(interface, abort(), cleanup))
+        interface.key_up.assert_awaited_once_with('Shift_L')
+        self.assertEqual(cleanup, [{'modifier': 'Shift_L', 'released': True}])
+
+    @unittest.skipUnless(Path('/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq').is_dir(),
+                         'Native CUA action space is verified on QZ')
+    def test_native_shift_click_roundtrip_preserves_plain_actions(self):
+        from cua_defense.desktop_actions import make_shift_click_action_space
+        from lite.agents.models.qwen3_5.action_space import Qwen3_5DesktopActionSpace
+        from lite.core.tools.calls import tool_call_arguments
+        extended, original = make_shift_click_action_space(), Qwen3_5DesktopActionSpace()
+        self.assertEqual(type(extended).get_tool_names(), type(original).get_tool_names())
+        from lite.agents.models.qwen3_5.adapter import Qwen3_5DesktopUseAdapter
+        adapter = Qwen3_5DesktopUseAdapter(action_space=extended)
+        self.assertIn('Shift-click', adapter._build_tools_section())
+        plain = {'name': 'computer_use', 'arguments': {'action': 'left_click', 'coordinate': [197, 624]}}
+        self.assertEqual(extended.convert_tool_calls_from_agent([plain]), original.convert_tool_calls_from_agent([plain]))
+        for extra in [{'keys': ['shift']}, {'shift_key': 'True'}]:
+            call = {**plain, 'arguments': {**plain['arguments'], **extra}}
+            converted = extended.convert_tool_calls_from_agent([plain, call, plain])
+            actions = tool_call_arguments(converted[0])['actions']
+            self.assertEqual([item['action'] for item in actions], ['click', 'key_down', 'click', 'key_up', 'click'])
+            rendered = extended.convert_tool_calls_to_agent(converted)
+            self.assertEqual(rendered[1]['arguments']['keys'], ['shift'])
+            self.assertEqual(extended.convert_tool_calls_from_agent(rendered), converted)
+
+    def test_initial_selection_feedback_requests_model_chosen_click(self):
+        from cua_defense.action_contract import feedback_generator
+        schema = {'name': 'computer_use', 'parameters': {'properties': {'action': {}, 'keys': {}, 'coordinate': {}}}}
+        initial = {'tool_calls': [{'name': 'computer_use', 'arguments': {'action': 'key', 'keys': ['ctrl', 'a']}}]}
+        corrected = {'tool_calls': [{'name': 'computer_use', 'arguments': {'action': 'left_click', 'coordinate': [500, 400]}}]}
+        adapter = SimpleNamespace(parse_raw_assistant_response=json.loads,
+            action_space=SimpleNamespace(get_tool_schemas=lambda: [schema]))
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            prompts = []
+            def generator(directory, **options):
+                index = 0
+                async def generate(**request):
+                    nonlocal index
+                    prompts.append(request['prompt'])
+                    result = {'response': json.dumps([initial, corrected][index]), 'finish_reason': 'stop'}
+                    (directory / f'response-{index}.json').write_text(json.dumps(result))
+                    index += 1
+                    return result
+                return generate
+            generate = feedback_generator(SimpleNamespace(generator=generator), adapter, output, require_initial_click=True)
+            prompt = '<|im_start|>system\nRules<|im_end|>\n<|im_start|>user\nTask<|im_end|>\n<|im_start|>assistant\n'
+            result = asyncio.run(generate(prompt=prompt, images=[]))
+            self.assertEqual(json.loads(result['response']), corrected)
+            self.assertIn('initial_content_activation', prompts[1])
+            self.assertNotIn('[500, 400]', prompts[1])
+            events = json.loads((output / 'action_feedback.json').read_text())
+            self.assertEqual([event['accepted'] for event in events], [False, True])
+
     def test_modifier_hook_accepts_native_positional_coordinates(self):
         from scripts.qz_cua_focus_diagnostic import install_shift_click_control
         original = AsyncMock()
@@ -126,7 +196,8 @@ class PipelineContracts(unittest.TestCase):
         arms = [{'name': 'baseline'}, {'name': 'feedback', 'argument_feedback': True}]
         self.assertEqual(protocol_arms({}), [{'name': 'baseline'}])
         for invalid in [[], [{'name': 'same'}, {'name': 'same'}], [{'name': 'bad', 'argument_feedback': 'yes'}],
-                        [{'name': 'bad', 'check_key_usage': 'yes'}]]:
+                        [{'name': 'bad', 'check_key_usage': 'yes'}], [{'name': 'bad', 'shift_click': 'yes'}],
+                        [{'name': 'bad', 'require_initial_click': True}]]:
             with self.assertRaises(ValueError):
                 protocol_arms({'protocols': invalid})
         rows = [{'task_id': name} for name in ['calc', 'writer']]

@@ -29,9 +29,13 @@ def convert_trajectory(path, record, model, project, *, diagnostic=False):
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     converted = []
     provenance = []
+    agent_kwargs = {'enable_thinking': False}
+    if record.get('protocol', {}).get('shift_click'):
+        from cua_defense.desktop_actions import make_shift_click_action_space
+        agent_kwargs['action_space'] = make_shift_click_action_space()
     for raw in pq.read_table(path).to_pylist():
         row = _convert_sample(raw, agent_id=LOCAL_AGENTS[model['model_id']]['agent_id'],
-                              agent_kwargs={'enable_thinking': False}, model_id=model['processor_path'],
+                              agent_kwargs=agent_kwargs, model_id=model['processor_path'],
                               image_root=str(project / 'references/cua_lite'), strict=True)
         row.pop('_error')
         row['steps'] = [step for step in row['steps'][prefix:] if step['status'] == 'completed']
@@ -73,7 +77,11 @@ def main():
     records = []
     diagnostic = bool(args.diagnostic_input)
     if diagnostic:
-        inputs = [(args.diagnostic_input, {'job_id': 'diagnostic', 'supervise_from_step': 0})]
+        receipt = args.diagnostic_input.parent / 'receipt.json'
+        record = {'job_id': 'diagnostic', 'supervise_from_step': 0}
+        if receipt.exists():
+            record.update(json.loads(receipt.read_text()))
+        inputs = [(args.diagnostic_input, record)]
     else:
         for path in args.batch.glob('episodes/*/receipt.json'):
             record = json.loads(path.read_text())

@@ -56,3 +56,21 @@ class MonitoredEnv(EnvWrapper):
                 self.monitor = None
         finally:
             await self.env.close()
+
+
+class ShiftClickEnv(EnvWrapper):
+    """Keep the native batch executor and clean up aborted modifier batches."""
+    def __init__(self, env):
+        super().__init__(env)
+        self.modifier_cleanup = []
+
+    async def step(self, actions):
+        from lite.core.tools.calls import tool_call_arguments, tool_call_name
+        from cua_defense.desktop_actions import release_shift_on_failure
+        shifted = any(child.get('action') == 'key_down' and child.get('keys') == ['shift']
+                      for call in actions if tool_call_name(call) == 'computer'
+                      for child in tool_call_arguments(call)['actions'])
+        operation = self.env.step(actions)
+        if shifted:
+            return await release_shift_on_failure(self.env._computer.interface, operation, self.modifier_cleanup)
+        return await operation

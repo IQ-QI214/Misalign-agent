@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "date_local": "2026-11-13",
+  "status": "CPU_NORMAL_BATCH_EXECUTION_ACCEPTANCE_PASSED",
+  "gpu_used": false,
+  "model_inference_calls": 0,
+  "training_updates": 0,
+  "external_judge_calls": 0,
+  "training_eligible": false,
+  "model": "Qwen/Qwen3.5-9B",
+  "config": "configs/cua/protocol_diagnostic_v3.json",
+  "acceptance": {
+    "source_sha256": {
+      "scripts/qz_cua_execution_smoke.py": "68a35ded5b7b58437eca363dabfff7f0655e4b4411d0f66620591e71cb7a9d35",
+      "scripts/qz_cua_batch.py": "adcbaa8c2d2446f586c6047e8b9e5c77b264101b50b0070bd8b6a681ff61b1f2",
+      "cua_defense/desktop_actions.py": "f7aa9ad2ab2ebbdb32d3409e3669fe5cc31ef04c2f04fcfc98de7ace58ef2b39",
+      "cua_defense/runtime.py": "5211864671706c1be1292d75f3dd44b18b97699b78fec54f6637bda382dd70c8",
+      "cua_defense/action_contract.py": "c9a7867234e2fcc1bdad26c0038cde326848d1a527b0cbe487a120af7a837a4a",
+      "cua_defense/mailbox.py": "1359ae50d900858f1292278f6da3b15e17f2a5d039f2c7f8893ca195b081e14b",
+      "configs/cua/protocol_diagnostic_v3.json": "4f1db2da0594157f84d1677d1e37fa63c50a92743202a7c681d3f96fdc6359a4"
+    },
+    "source_run": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/protocol-recovery-20261113T0106",
+    "source_receipt_sha256": "c30a3cd54a584119195e9f21cbc91631ffefd492799374cc3e7e19c3a0c42a38",
+    "gpu_used": false,
+    "model_run": false,
+    "training_eligible": false,
+    "timing_scope": "Writer original inference delays and Calc first six delays are replayed. Remaining Calc suffix has no added inference delay.",
+    "status": "CPU_NORMAL_BATCH_EXECUTION_ACCEPTANCE_PASSED",
+    "completed_episodes": 6,
+    "scripted_responses": 107,
+    "panel": {
+      "writer": {
+        "baseline": {
+          "task_score": 0.0,
+          "n_turns": 5,
+          "modifier_turns": 0,
+          "environment_action_errors": 0,
+          "model_run": false
+        },
+        "shift_click": {
+          "task_score": 0.0,
+          "n_turns": 5,
+          "modifier_turns": 0,
+          "environment_action_errors": 0,
+          "model_run": false
+        },
+        "shift_click_focus": {
+          "task_score": 1.0,
+          "n_turns": 6,
+          "modifier_turns": 0,
+          "environment_action_errors": 0,
+          "model_run": false
+        }
+      },
+      "calc": {
+        "baseline": {
+          "task_score": 0.0,
+          "n_turns": 30,
+          "modifier_turns": 0,
+          "environment_action_errors": 0,
+          "model_run": false
+        },
+        "shift_click": {
+          "task_score": 1.0,
+          "n_turns": 30,
+          "modifier_turns": 17,
+          "environment_action_errors": 0,
+          "model_run": false
+        },
+        "shift_click_focus": {
+          "task_score": 1.0,
+          "n_turns": 30,
+          "modifier_turns": 17,
+          "environment_action_errors": 0,
+          "model_run": false
+        }
+      }
+    },
+    "checks": [
+      "normal batch/mailbox entry",
+      "native canonical modifier execution records",
+      "multi-turn modifier history roundtrip",
+      "initial Ctrl+A rejected before execution",
+      "native task scores",
+      "zero environment action errors",
+      "scripted results excluded from training"
+    ],
+    "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/execution-v3-20261113-r2"
+  },
+  "receipt_sha256": "ea61fe5cfcd7cbb0f47fc4706072e91d74648c2f7e23eeac6588dc2d68af667c",
+  "acceptance_sha256": "7d08ffbbe51990d260689f1146f9b8a9d2065ab52e265501dfa4155caa0fec13",
+  "cpu_wall_seconds": 1354.155116558075,
+  "cpu_runtime_overrides": {
+    "concurrency": 1,
+    "budget_minutes": 25
+  },
+  "episodes": [
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "protocol": {
+        "name": "baseline"
+      },
+      "job_id": "d6a1fc0a3e055e049cf5",
+      "model_run": false,
+      "execution_valid": true,
+      "task_score": 0.0,
+      "summary": {
+        "n_turns": 30,
+        "episode_return": 0.0,
+        "terminated": false,
+        "truncated": true,
+        "duration_seconds": 193.01,
+        "timing": {
+          "act_seconds_total": 111.99,
+          "observe_seconds_total": 1.28,
+          "predict_seconds_total": 43.29,
+          "n_timed_turns": 30
+        }
+      },
+      "proposal_accounting": {
+        "responses": 30,
+        "input_tokens": null,
+        "output_tokens": null
+      },
+      "receipt_sha256": "ddde35f2792caf49611be754b11123ad6fa134e76d7f1664c3f26a492a94953d",
+      "modifier_cleanup": null
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "protocol": {
+        "name": "baseline"
+      },
+      "job_id": "1f1127c4db67fb4672d9",
+      "model_run": false,
+      "execution_valid": true,
+      "task_score": 0.0,
+      "summary": {
+        "n_turns": 5,
+        "episode_return": 0.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 139.59,
+        "timing": {
+          "act_seconds_total": 33.3,
+          "observe_seconds_total": 0.31,
+          "predict_seconds_total": 74.2,
+          "n_timed_turns": 5
+        }
+      },
+      "proposal_accounting": {
+        "responses": 5,
+        "input_tokens": null,
+        "output_tokens": null
+      },
+      "receipt_sha256": "90e0261fee5186350f4ce7cf512f59765211b35f001991ae021ec8bd30961e36",
+      "modifier_cleanup": null
+    },
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "protocol": {
+        "name": "shift_click",
+        "shift_click": true
+      },
+      "job_id": "51aeb5f545290d260814",
+      "model_run": false,
+      "execution_valid": true,
+      "task_score": 1.0,
+      "summary": {
+        "n_turns": 30,
+        "episode_return": 1.0,
+        "terminated": false,
+        "truncated": true,
+        "duration_seconds": 312.84,
+        "timing": {
+          "act_seconds_total": 232.37,
+          "observe_seconds_total": 1.29,
+          "predict_seconds_total": 42.93,
+          "n_timed_turns": 30
+        }
+      },
+      "proposal_accounting": {
+        "responses": 30,
+        "input_tokens": null,
+        "output_tokens": null
+      },
+      "receipt_sha256": "7be63e2abcb6580841d4cb2c447941f3c0fb077a3adc4fc25ca8e5b43dab8d4c",
+      "modifier_cleanup": []
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "protocol": {
+        "name": "shift_click_focus",
+        "shift_click": true,
+        "argument_feedback": true,
+        "check_key_usage": true,
+        "require_initial_click": true
+      },
+      "job_id": "f695e861135f2a1fb52a",
+      "model_run": false,
+      "execution_valid": true,
+      "task_score": 1.0,
+      "summary": {
+        "n_turns": 6,
+        "episode_return": 1.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 154.53,
+        "timing": {
+          "act_seconds_total": 23.23,
+          "observe_seconds_total": 0.25,
+          "predict_seconds_total": 100.25,
+          "n_timed_turns": 6
+        }
+      },
+      "proposal_accounting": {
+        "responses": 7,
+        "input_tokens": null,
+        "output_tokens": null
+      },
+      "receipt_sha256": "52ae945258e68e10773e6db801d7f16d0465a23750b710a3e7563569ec29f0f4",
+      "modifier_cleanup": [],
+      "first_action_feedback": [
+        {
+          "turn": 0,
+          "attempt": 0,
+          "issues": [
+            {
+              "tool": "computer_use",
+              "precondition": "initial_content_activation",
+              "argument_usage_note": "Before the first Ctrl+A, click the intended content using the current screenshot. Inspect the resulting selection on the next turn."
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "turn": 0,
+          "attempt": 1,
+          "issues": [],
+          "accepted": true
+        }
+      ],
+      "correction_images_identical": true
+    },
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "protocol": {
+        "name": "shift_click_focus",
+        "shift_click": true,
+        "argument_feedback": true,
+        "check_key_usage": true,
+        "require_initial_click": true
+      },
+      "job_id": "bc180691428c5b96b71a",
+      "model_run": false,
+      "execution_valid": true,
+      "task_score": 1.0,
+      "summary": {
+        "n_turns": 30,
+        "episode_return": 1.0,
+        "terminated": false,
+        "truncated": true,
+        "duration_seconds": 314.01,
+        "timing": {
+          "act_seconds_total": 232.68,
+          "observe_seconds_total": 1.31,
+          "predict_seconds_total": 43.32,
+          "n_timed_turns": 30
+        }
+      },
+      "proposal_accounting": {
+        "responses": 30,
+        "input_tokens": null,
+        "output_tokens": null
+      },
+      "receipt_sha256": "01a49de4a0c7a6bd8ea69b02832a182ede5ac0221c8941f7c9da169a32712d9c",
+      "modifier_cleanup": []
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "protocol": {
+        "name": "shift_click",
+        "shift_click": true
+      },
+      "job_id": "46b7513d35cb2a94331f",
+      "model_run": false,
+      "execution_valid": true,
+      "task_score": 0.0,
+      "summary": {
+        "n_turns": 5,
+        "episode_return": 0.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 124.94,
+        "timing": {
+          "act_seconds_total": 19.56,
+          "observe_seconds_total": 0.21,
+          "predict_seconds_total": 74.24,
+          "n_timed_turns": 5
+        }
+      },
+      "proposal_accounting": {
+        "responses": 5,
+        "input_tokens": null,
+        "output_tokens": null
+      },
+      "receipt_sha256": "710c17491df94fcdcb84da108b7a4403fc9a1e325b5368dda51cc8a189342cd8",
+      "modifier_cleanup": []
+    }
+  ],
+  "diagnostic_exports": {
+    "writer": {
+      "receipt": {
+        "schema_version": 1,
+        "status": "SFT_EXPORT_PASSED",
+        "diagnostic_only": true,
+        "training_eligible": false,
+        "source_episodes": 0,
+        "rows": 1,
+        "provenance": [
+          {
+            "job_id": "f695e861135f2a1fb52a",
+            "source": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/execution-v3-20261113-r2/episodes/f695e861135f2a1fb52a/trajectory.parquet",
+            "source_sha256": "f431ffa13b34dd96a3771c29ea587111c9086e43cb3160c0fc1ccd8c51ce596c",
+            "steps": 6,
+            "supervised_tokens": 388,
+            "supervise_from_step": 0,
+            "repair_parent": null,
+            "repair_mode": null
+          }
+        ],
+        "supervised_tokens": 388,
+        "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/execution-v3-20261113-r2/writer-diagnostic-sft.parquet"
+      },
+      "parquet_sha256": "bf9c2a6aee8bf6610010a4fee3af26c400848b6cfe623014a6f2a593ed7912de",
+      "bytes": 1518717,
+      "training_eligible_flags": [
+        false
+      ]
+    },
+    "calc": {
+      "receipt": {
+        "schema_version": 1,
+        "status": "SFT_EXPORT_PASSED",
+        "diagnostic_only": true,
+        "training_eligible": false,
+        "source_episodes": 0,
+        "rows": 1,
+        "provenance": [
+          {
+            "job_id": "51aeb5f545290d260814",
+            "source": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/execution-v3-20261113-r2/episodes/51aeb5f545290d260814/trajectory.parquet",
+            "source_sha256": "2ef478eb23af0f1d2207847dc5342598f84778018211dd95746f185659fe2eb8",
+            "steps": 29,
+            "supervised_tokens": 2189,
+            "supervise_from_step": 0,
+            "repair_parent": null,
+            "repair_mode": null
+          }
+        ],
+        "supervised_tokens": 2189,
+        "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/execution-v3-20261113-r2/calc-diagnostic-sft.parquet"
+      },
+      "parquet_sha256": "0f7b2ab639fd5a0a8b0d33cda97e888619ada7b88d1e379ec01e0517743f112d",
+      "bytes": 5219837,
+      "training_eligible_flags": [
+        false
+      ]
+    }
+  },
+  "export_script_sha256": "4d9e71ff0304c5fdc78c7c40e6aab5a709f0eb0a5916bb1cbf0639de1ab931ed",
+  "implementation": {
+    "shift_click": "An opt-in Qwen action space converts left_click with Shift into canonical key_down, click and key_up in a native computer batch. History rendering reconstructs the equivalent Qwen Shift-click. Ordinary actions retain upstream conversion.",
+    "supported_click_modifiers": "Shift on left_click, via keys=[\"shift\"] or legacy shift_key boolean/string. Other declared wrapper modifier misuse raises a native parse error or corrective feedback.",
+    "cleanup": "Aborted modifier batches attempt a Shift release and preserve cleanup outcomes. Cancellation release is regression-tested.",
+    "initial_click_feedback": "The opt-in gate rejects a first-turn Ctrl+A candidate and allows one corrective generation on the same screenshot. It gives no target coordinates or evaluator answers.",
+    "gate_limit": "The gate applies to the explicit first-turn Ctrl+A chord and does not measure inner-widget focus. Wider task coverage remains to be evaluated.",
+    "scripted_correction": "CPU acceptance supplies one body click at [500,400] in response to the feedback. This location is test-backend data and is absent from production feedback.",
+    "export": "The project SFT exporter reconstructs the extended action space from the episode protocol receipt. Diagnostic CLI reads adjacent receipt metadata and keeps training eligibility false."
+  },
+  "validation": {
+    "local_tests": {
+      "discovered": 24,
+      "passed": 23,
+      "skipped_native_qz_test": 1
+    },
+    "qz_tests": {
+      "discovered": 24,
+      "passed": 24
+    },
+    "prior_v2_native_regression": {
+      "status": "CPU_NATIVE_PROTOCOL_ACCEPTANCE_PASSED",
+      "gpu_used": false,
+      "model_run": false,
+      "training_eligible": false,
+      "source_sha256": {
+        "scripts/qz_cua_protocol_smoke.py": "3234238a490bbf696de717bd95dd0d4c1d671cc1f3ba245287c34ea2d75c3049",
+        "scripts/qz_cua_batch.py": "adcbaa8c2d2446f586c6047e8b9e5c77b264101b50b0070bd8b6a681ff61b1f2",
+        "cua_defense/action_contract.py": "c9a7867234e2fcc1bdad26c0038cde326848d1a527b0cbe487a120af7a837a4a",
+        "cua_defense/mailbox.py": "1359ae50d900858f1292278f6da3b15e17f2a5d039f2c7f8893ca195b081e14b",
+        "configs/cua/protocol_diagnostic_v2.json": "ec21d2e91880634e30dd43946d74a38477e4b24641109bc432b8084336a4595f"
+      },
+      "completed_protocol_episodes": 3,
+      "scripted_model_responses": 7,
+      "error_field": "keys",
+      "checks": [
+        "native Qwen XML parsing",
+        "argument misuse detected",
+        "corrective feedback present in next request",
+        "retry image content unchanged",
+        "only accepted action reaches GUI",
+        "one-variable guidance arm",
+        "all correction requests accounted",
+        "three-arm matched task reporting"
+      ],
+      "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/protocol-v2-regression-20261113"
+    },
+    "source_hashes_match_local": true
+  },
+  "failed_integration_attempt": {
+    "status": "INVALID_INTEGRATION_ATTEMPT_PRESERVED",
+    "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/execution-v3-20261113",
+    "cause": "The first ShiftClickActionSpace override implemented get_tool_schemas as an instance method. Native prompt rendering calls it as a class method.",
+    "source_sha256": {
+      "scripts/qz_cua_execution_smoke.py": "68a35ded5b7b58437eca363dabfff7f0655e4b4411d0f66620591e71cb7a9d35",
+      "scripts/qz_cua_batch.py": "adcbaa8c2d2446f586c6047e8b9e5c77b264101b50b0070bd8b6a681ff61b1f2",
+      "cua_defense/desktop_actions.py": "d7f27aaa7c961cbab5973ad7d6b521cb92dfa1e9a870bf387087218fc3a4b4f7",
+      "cua_defense/runtime.py": "5211864671706c1be1292d75f3dd44b18b97699b78fec54f6637bda382dd70c8",
+      "cua_defense/action_contract.py": "c9a7867234e2fcc1bdad26c0038cde326848d1a527b0cbe487a120af7a837a4a",
+      "cua_defense/mailbox.py": "1359ae50d900858f1292278f6da3b15e17f2a5d039f2c7f8893ca195b081e14b",
+      "configs/cua/protocol_diagnostic_v3.json": "4f1db2da0594157f84d1677d1e37fa63c50a92743202a7c681d3f96fdc6359a4"
+    },
+    "completed": 6,
+    "valid": 1,
+    "invalid": 5,
+    "handling": "After detecting the class-method error, the CPU mailbox was stopped cooperatively. Subsequent missing-worker outcomes belong to this stopped attempt. None of its results are used as repaired-protocol capability evidence.",
+    "fix": "Restore @classmethod and test native get_tool_names plus real tools-section rendering before rerunning the full acceptance."
+  },
+  "interpretation": {
+    "native_scoring": "Both tasks receive score 1 through the normal batch runner under the complete repair protocol using frozen replies and a scripted corrective click.",
+    "latest_autonomous_gpu_result": {
+      "source": "validation/cua_protocol_gpu_v1.json",
+      "valid": 6,
+      "successes": 0,
+      "new_protocol_evaluated": false
+    },
+    "export_counts": "Writer has 6 completed exported steps. Calc has 30 executed turns, with the final truncated turn excluded by the existing exporter, leaving 29 completed steps.",
+    "next_gpu_plan": {
+      "gpu_count": 1,
+      "gpu_type": "H100 80GB",
+      "max_minutes": 30,
+      "planned_episodes": 6,
+      "max_steps": 30,
+      "training_enabled": false,
+      "command": "bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic_v3.json --run"
+    },
+    "research_scope": "These are engineering acceptance controls. Data-selection and defensive-training comparisons require a fixed execution protocol and model-generated held-out evaluations."
+  }
+}

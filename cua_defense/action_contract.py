@@ -2,7 +2,7 @@
 import json
 
 
-def argument_issues(message, schemas, check_key_usage=False):
+def argument_issues(message, schemas, check_key_usage=False, shift_click=False):
     properties = {}
     for schema in schemas:
         function = schema.get('function', schema)
@@ -16,7 +16,8 @@ def argument_issues(message, schemas, check_key_usage=False):
             unknown = sorted(set(arguments) - properties[name])
             allowed = set(properties[name])
             inactive = []
-            key_only = check_key_usage and name == 'computer_use' and arguments.get('action') != 'key'
+            modified_click = shift_click and name == 'computer_use' and arguments.get('action') == 'left_click'
+            key_only = check_key_usage and name == 'computer_use' and arguments.get('action') != 'key' and not modified_click
             if key_only:
                 allowed.discard('keys')
                 if arguments.get('keys') is not None:
@@ -28,18 +29,28 @@ def argument_issues(message, schemas, check_key_usage=False):
                     issue.update(action=arguments.get('action'), inactive_arguments=inactive,
                         argument_usage_note='The keys field applies only to action=key. Use a supported key action for keyboard chords. Click actions use coordinates without keyboard modifiers.')
                 issues.append(issue)
+            if shift_click and name == 'computer_use':
+                if modified_click:
+                    from cua_defense.desktop_actions import click_uses_shift
+                    try:
+                        click_uses_shift(arguments)
+                    except ValueError as error:
+                        issues.append({'tool': name, 'argument_usage_note': str(error)})
+                elif arguments.get('shift_key') is not None:
+                    issues.append({'tool': name, 'inactive_arguments': ['shift_key'],
+                                   'argument_usage_note': 'shift_key applies only to action=left_click.'})
     return issues
 
 
-def audit_arguments(directory, schemas, check_key_usage=False):
+def audit_arguments(directory, schemas, check_key_usage=False, shift_click=False):
     issues = []
     turns = sorted(directory.glob('turn_*/03_actions.json'))
     for path in turns:
         message = json.loads(path.read_text()).get('agent_message', {})
-        for issue in argument_issues(message, schemas, check_key_usage):
+        for issue in argument_issues(message, schemas, check_key_usage, shift_click):
             issues.append({'turn': int(path.parent.name.split('_')[-1]), **issue})
     return {'scope': 'Undeclared top-level fields and optional keys/action compatibility checks',
-            'check_key_usage': check_key_usage,
+            'check_key_usage': check_key_usage, 'shift_click': shift_click,
             'logged_turns': len(turns), 'affected_turns': len({item['turn'] for item in issues}),
             'issues': issues}
 
@@ -48,7 +59,8 @@ class ActionContractError(RuntimeError):
     """Both the proposal and its single correction violate argument checks."""
 
 
-def feedback_generator(client, adapter, output, *, check_key_usage=False, **options):
+def feedback_generator(client, adapter, output, *, check_key_usage=False,
+                       shift_click=False, require_initial_click=False, **options):
     """Give one corrective generation opportunity before any GUI execution."""
     from cua_defense.mailbox import teacher_prompt
     replay = options.pop('replay', [])
@@ -69,7 +81,16 @@ def feedback_generator(client, adapter, output, *, check_key_usage=False, **opti
         for attempt in range(2):
             result = await underlying(prompt=current_prompt, images=images, **kwargs)
             message = adapter.parse_raw_assistant_response(result['response'])
-            issues = argument_issues(message, adapter.action_space.get_tool_schemas(), check_key_usage)
+            issues = argument_issues(message, adapter.action_space.get_tool_schemas(), check_key_usage, shift_click)
+            if require_initial_click and current == 0:
+                for call in message.get('tool_calls', []):
+                    arguments = call.get('arguments', {})
+                    keys = arguments.get('keys') or []
+                    if (call.get('name') == 'computer_use' and arguments.get('action') == 'key'
+                            and isinstance(keys, list) and {str(key).lower() for key in keys} in
+                            [{'ctrl', 'a'}, {'control', 'a'}]):
+                        issues.append({'tool': 'computer_use', 'precondition': 'initial_content_activation',
+                            'argument_usage_note': 'Before the first Ctrl+A, click the intended content using the current screenshot. Inspect the resulting selection on the next turn.'})
             event = {'turn': current, 'attempt': attempt, 'issues': issues, 'accepted': not issues}
             events.append(event)
             (output / 'action_feedback.json').write_text(json.dumps(events, indent=2) + '\n')

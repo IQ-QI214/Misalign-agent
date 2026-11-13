@@ -294,3 +294,32 @@ python -B scripts/qz_cua_protocol_smoke.py --config configs/cua/protocol_diagnos
 新增修饰键对照的首个尝试存在包装函数签名错误，原生执行传入位置参数 x、y 时触发 26 次环境动作错误。该次保留为 `INVALID_CONTROL_IMPLEMENTATION`，排除在五条有效对照之外。修正后新增位置参数调用和异常释放 Shift 的回归检查，本机与 QZ 各 21 项检查通过。
 
 当前已验证两个具体任务的可执行成功路径。模型在修复后协议下自主完成任务的结果仍需下一轮限时 GPU 评估。完整计数、干预范围和执行代码哈希见 `validation/cua_failure_rootcause_v1.json`，原始文件与无效尝试保存在 QZ 的 `.runtime/cua-host/prepared`。
+
+## 2026-11-13 正常批处理入口与 SFT 格式验收
+
+修复已接入 `qz_cua_batch.py`，配置为 `configs/cua/protocol_diagnostic_v3.json`。Shift 点击通过扩展的 Qwen 动作空间转换成原生 `key_down → click → key_up`，三项调用均进入执行记录。历史重建将这组三项动作还原为 Qwen Shift 点击。普通动作继续使用上游转换逻辑，异常中断时尝试释放 Shift 并记录清理结果。
+
+正文激活反馈仅在首轮明确的 Ctrl+A 候选上触发，允许在同一截图下纠正一次。反馈要求模型自行点击目标内容，没有提供坐标或评估答案，也没有直接测量内部控件焦点。CPU 脚本后端在收到纠正反馈后提供 `[500,400]` 的正文点击，用于验证执行链路。
+
+六条正常入口验收均完成，使用冻结回复与脚本纠正，结果如下。
+
+| 任务 | 原配置 | Shift 点击修复 | Shift 点击修复与首次全选反馈 |
+| --- | --- | --- | --- |
+| Writer 全文改 Arial | 0 | 0 | 1 |
+| Calc 批量转小写 | 0 | 1 | 1 |
+
+共使用 107 次脚本回复、约 22.6 分钟 CPU 墙钟时间。两个 Calc 修复组各记录 17 次完整修饰键点击，六条均无环境动作错误。Writer 首次拒绝与纠正请求的图片内容一致。此次使用顺序执行、25 分钟 CPU 上限，未来 GPU 配置保留并发 2 与整批 30 分钟上限。
+
+首轮接入时，扩展类把上游的 `get_tool_schemas` 类方法写成了实例方法，导致正常提示渲染报错。该次保留 6 条回执，其中 1 条原配置有效、5 条无效。发现错误后主动停止 CPU mailbox。修正为类方法后，增加原生工具名读取与完整工具提示渲染回归，再完成上述六条重跑。本机 23 项通过、1 项原生检查留在 QZ 执行，QZ 24 项全部通过。旧 v2 三组原生联测也重新通过。
+
+项目 SFT 导出器会依据 episode 回执中的 `protocol.shift_click` 重建扩展动作空间。Writer 成功轨迹导出 6 步、388 个监督 token，Calc 成功轨迹导出 29 步、2189 个监督 token。Calc 实际执行 30 轮，原导出规则排除最后一个截断步骤。两个 Parquet 的诊断训练资格均为 false，没有执行训练更新。
+
+完整结果、代码哈希和导出文件指纹见 `validation/cua_execution_pipeline_v3.json`。这是正常入口的工程验收，后续研究的数据策略比较需要固定执行协议，再使用模型生成的轨迹和留出评估。
+
+用户已恢复 GPU 中转，正在通过以下正常入口执行单卡自主验证，整批上限 30 分钟。
+
+```bash
+bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic_v3.json --run
+```
+
+本次输出目录为 QZ CPU `.runtime/cua-host/protocol-v3-gpu-20261113`。自主结果将在运行完成后另行记录。

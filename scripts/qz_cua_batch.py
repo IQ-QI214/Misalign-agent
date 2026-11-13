@@ -58,8 +58,11 @@ def protocol_arms(config):
     for arm in arms:
         if not isinstance(arm.get('guidance', ''), str) or not isinstance(arm.get('argument_feedback', False), bool):
             raise ValueError('Protocol guidance must be text and argument_feedback must be boolean')
-        if not isinstance(arm.get('check_key_usage', False), bool):
-            raise ValueError('Protocol check_key_usage must be boolean')
+        for option in ['check_key_usage', 'shift_click', 'require_initial_click']:
+            if not isinstance(arm.get(option, False), bool):
+                raise ValueError('Protocol ' + option + ' must be boolean')
+        if arm.get('require_initial_click') and not arm.get('argument_feedback'):
+            raise ValueError('require_initial_click requires argument_feedback')
     return arms
 
 
@@ -242,6 +245,9 @@ async def run(args, output, config, model):
                         env = wrap(env, case, STATE / 'references/os-harm')
                     if condition != 'clean':
                         env = MonitoredEnv(env)
+                    if protocol.get('shift_click'):
+                        from cua_defense.runtime import ShiftClickEnv
+                        env = ShiftClickEnv(env)
                     logger = TrajectoryLogger(directory, save_data=True, save_video=False,
                         debug_artifacts=True, env_id='lite.osworld', task_id=row['task_id'])
                     underlying = client.generator(directory, seed=config['seed'] + repeat, feedback=feedback,
@@ -259,11 +265,16 @@ async def run(args, output, config, model):
                                                                   heading='GUI operation guidance')
                         return await underlying(**generation)
                     agent = make(model['model_id'], env=env, processor=processor, generate_fn=generate)
+                    if protocol.get('shift_click'):
+                        from cua_defense.desktop_actions import install_shift_click_adapter
+                        install_shift_click_adapter(agent.adapter)
                     if protocol.get('argument_feedback'):
                         from cua_defense.action_contract import feedback_generator
                         underlying = feedback_generator(client, agent.adapter, directory,
                             seed=config['seed'] + repeat, feedback=feedback, replay=replay,
-                            check_key_usage=protocol.get('check_key_usage', False), sampling=record['sampling_params'])
+                            check_key_usage=protocol.get('check_key_usage', False),
+                            shift_click=protocol.get('shift_click', False),
+                            require_initial_click=protocol.get('require_initial_click', False), sampling=record['sampling_params'])
                     remaining = max(1, deadline - time.monotonic())
                     await asyncio.wait_for(agent.sample(env, hooks=[logger]), timeout=remaining)
                     summary = json.loads((directory / 'summary.json').read_text())
@@ -274,6 +285,8 @@ async def run(args, output, config, model):
                     if isinstance(error, ActionContractError):
                         record['failure_kind'] = 'ACTION_CONTRACT_EXHAUSTED'
                 finally:
+                    if env is not None and protocol.get('shift_click'):
+                        record['modifier_cleanup'] = env.modifier_cleanup
                     if env is not None:
                         try:
                             await env.close()
@@ -284,7 +297,8 @@ async def run(args, output, config, model):
                         try:
                             from cua_defense.action_contract import audit_arguments
                             record['action_contract'] = audit_arguments(
-                                directory, agent.adapter.action_space.get_tool_schemas(), check_key_usage=True)
+                                directory, agent.adapter.action_space.get_tool_schemas(), check_key_usage=True,
+                                shift_click=protocol.get('shift_click', False))
                         except Exception:
                             record['action_contract_error'] = traceback.format_exc()
                     try:
