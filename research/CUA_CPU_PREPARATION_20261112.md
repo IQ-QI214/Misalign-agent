@@ -316,13 +316,13 @@ python -B scripts/qz_cua_protocol_smoke.py --config configs/cua/protocol_diagnos
 
 完整结果、代码哈希和导出文件指纹见 `validation/cua_execution_pipeline_v3.json`。这是正常入口的工程验收，后续研究的数据策略比较需要固定执行协议，再使用模型生成的轨迹和留出评估。
 
-用户已恢复 GPU 中转，正在通过以下正常入口执行单卡自主验证，整批上限 30 分钟。
+用户恢复 GPU 中转后，通过以下正常入口执行单卡自主验证，整批上限 30 分钟。
 
 ```bash
 bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic_v3.json --run
 ```
 
-本次输出目录为 QZ CPU `.runtime/cua-host/protocol-v3-gpu-20261113`。自主结果将在运行完成后另行记录。
+本次输出目录为 QZ CPU `.runtime/cua-host/protocol-v3-gpu-20261113`，自主结果见下一节。
 
 ### 同日真实模型 v3 结果
 
@@ -330,4 +330,10 @@ bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic_v3.json --r
 
 共 50 次模型回复，全部正常停在 EOS 248046，环境动作错误为 0。批次结束后 worker 退出与独立显存检查均已完成。真实模型生成的 Calc 成功轨迹已导出 10 步、699 个监督 token，诊断训练资格为 false。完整结果见 `validation/cua_protocol_gpu_v3.json`。
 
-正在使用原 30 分钟窗口的剩余时间做一次 Writer 对照，仅把相同纠正内容从系统开头移至生成前最近的用户消息。配置为 `configs/cua/protocol_recent_feedback.json`。启动记录保存原始截止时间和剩余秒数，没有重置预算。提示重写通过 25 项 QZ 回归检查，并在实际保存的原生提示上验证图像占位符保持一致。
+随后使用原 30 分钟窗口的剩余时间做一次 Writer 对照，仅把相同纠正内容从系统开头移至生成前最近的用户消息。配置为 `configs/cua/protocol_recent_feedback.json`。启动记录保存原始截止时间和剩余秒数。提示重写通过 25 项 QZ 回归检查，并在实际保存的原生提示上验证图像占位符保持一致。
+
+该对照同样连续两次提出 Ctrl+A，触发纠正耗尽，任务评分为 UNKNOWN。两次 Writer 反馈实验的初始文件指纹一致，排除顶部时钟区域后的图像变化比例为 0。纠正请求与原请求图片一致，近期反馈确实位于图像之后。当前单例中，单独移动反馈位置仍未使模型执行正文点击，具体记录见 `validation/cua_recent_feedback_gpu_v1.json`。
+
+最终独立检查时间为 2026-11-13 09:50:34 UTC，GPU 显存占用 0 MiB、利用率 0%、计算进程为空。两批共用一个预算窗口，从初始配置写入到该次检查约 18.6 分钟。已通知用户可关卡。本机 24 项通过、1 项原生检查在 QZ 执行，QZ 25 项全部通过。
+
+当前在 Calc 开发任务上打通了模型自主生成、原生执行评分与 SFT 格式导出。Writer 仍需进一步检查初始输入焦点与模型的操作前置条件处理，并需要扩大干净任务校准后再构造正式攻防训练数据。

@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "date_local": "2026-11-13",
+  "status": "RECENT_FEEDBACK_CORRECTION_EXHAUSTED",
+  "model_run": true,
+  "model": "Qwen/Qwen3.5-9B",
+  "gpu_count": 1,
+  "config": "configs/cua/protocol_recent_feedback.json",
+  "source_matches_commit": "6a2e116",
+  "budget_and_source": {
+    "original_session_start_utc": "2026-11-13T09:31:58.961472+00:00",
+    "original_deadline_utc": "2026-11-13T10:01:58.961472+00:00",
+    "launched_utc": "2026-11-13T09:44:54.956979+00:00",
+    "remaining_seconds": 994.0057537555695,
+    "reserved_shutdown_seconds": 30,
+    "minutes_argument": 16.566762562592825,
+    "budget_reset": false,
+    "actual_native_prompt_rewrite_passed": true,
+    "source_sha256": {
+      "scripts/qz_cua_batch.py": "430a54eb868c40807ffb095a1f7a32e3dd9aa1b515e1cffa0a1d720ab82c103c",
+      "cua_defense/mailbox.py": "2b11aa9f4b21d2425e2d3321c1915c792a6ab029b822cee8ff9a44733650d863",
+      "cua_defense/action_contract.py": "1d8ceea2b41b8c742e011a82d2eff1af80090344c2147994eed793f1baa3964a",
+      "cua_defense/desktop_actions.py": "f7aa9ad2ab2ebbdb32d3409e3669fe5cc31ef04c2f04fcfc98de7ace58ef2b39",
+      "configs/cua/protocol_recent_feedback.json": "ac320fb8f3df3d4b6bb0a88baeb7dc96fc7d60f7f20bc0c446e437e6dade8415"
+    }
+  },
+  "source_receipt_sha256": "499144c33a6e147b9570f170e0fe01121bffeec5b22f4de1bfb93133a5e55e9e",
+  "result": {
+    "planned": 1,
+    "completed": 1,
+    "valid": 0,
+    "invalid": 1,
+    "remaining": 0,
+    "seconds": 228.29,
+    "eval_session_closed": true,
+    "gpu_worker_stopped": true
+  },
+  "record": {
+    "task_id": "synth_writer_f_writer_93__doc_font_0001",
+    "job_id": "1ec22570037adb25296c",
+    "protocol": {
+      "name": "shift_click_focus_recent_feedback",
+      "shift_click": true,
+      "argument_feedback": true,
+      "check_key_usage": true,
+      "require_initial_click": true,
+      "feedback_position": "recent_user"
+    },
+    "model_run": true,
+    "execution_valid": false,
+    "task_score": null,
+    "failure_kind": "ACTION_CONTRACT_EXHAUSTED",
+    "proposal_accounting": {
+      "responses": 2,
+      "input_tokens": 6733,
+      "output_tokens": 136
+    },
+    "action_feedback": [
+      {
+        "turn": 0,
+        "attempt": 0,
+        "issues": [
+          {
+            "tool": "computer_use",
+            "precondition": "initial_content_activation",
+            "argument_usage_note": "Before the first Ctrl+A, click the intended content using the current screenshot. Inspect the resulting selection on the next turn."
+          }
+        ],
+        "accepted": false
+      },
+      {
+        "turn": 0,
+        "attempt": 1,
+        "issues": [
+          {
+            "tool": "computer_use",
+            "precondition": "initial_content_activation",
+            "argument_usage_note": "Before the first Ctrl+A, click the intended content using the current screenshot. Inspect the resulting selection on the next turn."
+          }
+        ],
+        "accepted": false
+      }
+    ]
+  },
+  "state_match_against_prior_writer_feedback": {
+    "file_match": true,
+    "changed_pixel_fraction": 0.0,
+    "threshold": 0.005
+  },
+  "correction_images_identical": true,
+  "recent_feedback_after_images": true,
+  "proposals": [
+    {
+      "response": "Action: Press and hold the Control key, then press the 'a' key to select all text in the document.\n\n<tool_call>\n<function=computer_use>\n<parameter=action>\nkey\n</parameter>\n<parameter=keys>\n[\"ctrl\", \"a\"]\n</parameter>\n</function>\n</tool_call>",
+      "finish_reason": "stop",
+      "last_token_id": 248046
+    },
+    {
+      "response": "Action: Press and hold the Control key, then press the 'a' key, and release both keys.\n\n<tool_call>\n<function=computer_use>\n<parameter=action>\nkey\n</parameter>\n<parameter=keys>\n[\"ctrl\", \"a\"]\n</parameter>\n</function>\n</tool_call>",
+      "finish_reason": "stop",
+      "last_token_id": 248046
+    }
+  ],
+  "interpretation": "On this matched development instance, moving the same feedback to the recent user message still produces Ctrl+A twice. No accepted GUI action is executed. Task score remains UNKNOWN.",
+  "training_updates": 0,
+  "attack_episodes": 0,
+  "external_judge_calls": 0,
+  "current_model_positive_export": {
+    "parquet_sha256": "0a19ae26dfdd056b0ff9989dcd27de558795f9dfd7b2aec763da558c1f4688e3",
+    "bytes": 2371294,
+    "training_eligible_flags": [
+      false
+    ]
+  },
+  "session_shutdown": {
+    "probe_utc": "2026-11-13T09:50:34+00:00",
+    "gpu_memory_used_mib": 0,
+    "gpu_utilization_percent": 0,
+    "compute_processes": [],
+    "elapsed_from_original_config_write_seconds": 1115.038528,
+    "original_limit_seconds": 1800,
+    "budget_reset": false,
+    "user_notified_gpu_can_close": true
+  },
+  "tests": {
+    "local_discovered": 25,
+    "local_passed": 24,
+    "local_native_skipped": 1,
+    "qz_passed": 25
+  },
+  "next_cpu_work": "Inspect Writer initial input focus and verify additional clean tasks before extending this action-precondition heuristic. Preserve Calc positives as development evidence."
+}

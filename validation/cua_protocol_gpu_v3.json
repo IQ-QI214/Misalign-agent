@@ -358,7 +358,12 @@
       }
     ],
     "supervised_tokens": 699,
-    "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/protocol-v3-gpu-20261113/calc-model-diagnostic-sft.parquet"
+    "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/protocol-v3-gpu-20261113/calc-model-diagnostic-sft.parquet",
+    "parquet_sha256": "0a19ae26dfdd056b0ff9989dcd27de558795f9dfd7b2aec763da558c1f4688e3",
+    "bytes": 2371294,
+    "training_eligible_flags": [
+      false
+    ]
   },
   "interpretation": {
     "calc": "The original protocol scores 0. Both Shift-click protocols score 1 in ten model-generated turns. Each positive trajectory contains one native key_down/click/key_up event and zero environment action errors.",
@@ -371,7 +376,7 @@
     "target": "Writer initial activation feedback",
     "change": "Place the same feedback in a recent user message before the assistant prefix",
     "config": "configs/cua/protocol_recent_feedback.json",
-    "status": "RUNNING_IN_REMAINING_ORIGINAL_BUDGET",
+    "status": "COMPLETED_CORRECTION_EXHAUSTED_UNKNOWN",
     "budget_reset": false,
     "result_report": "validation/cua_recent_feedback_gpu_v1.json"
   }

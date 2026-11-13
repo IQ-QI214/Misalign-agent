@@ -1,12 +1,10 @@
 # 下一次开卡先做什么
 
-2026-11-13 自主结果更新。v3 六条已结束，Calc 两个修复组均为 1，Writer 两个有效组为 0、反馈组为 UNKNOWN，详见 `validation/cua_protocol_gpu_v3.json`。正在原 30 分钟预算剩余时间内测试一次 Writer 近期反馈位置对照。
+2026-11-13 当前结果。单卡 v3 六条已结束，Calc 两个修复组均在 10 轮内得到原生评分 1，Writer 两个有效组为 0、反馈组为 UNKNOWN。额外一次近期反馈位置对照仍纠正耗尽。结果分别见 `validation/cua_protocol_gpu_v3.json` 与 `validation/cua_recent_feedback_gpu_v1.json`。两批共用原 30 分钟窗口，从原始配置写入至最终独立显存检查约 18.6 分钟，worker 均已退出，GPU 显存与利用率均为 0，已通知用户可关卡。
 
-2026-11-13 正常入口更新。v3 的六条 QZ CPU 验收已完成，完整修复配置下 Writer、Calc 均为 1，SFT 格式导出共 35 个已完成步骤，诊断训练资格为 false。结果见 `validation/cua_execution_pipeline_v3.json`。用户已恢复单卡 GPU 中转，正在运行 `configs/cua/protocol_diagnostic_v3.json` 的六条自主评估，整批上限 30 分钟，输出为 `.runtime/cua-host/protocol-v3-gpu-20261113`。完成后需核对原生评分、动作错误、候选计数和 worker 退出。
+真实模型生成的 Calc 成功轨迹已完成原生评分与 SFT 格式导出，共 10 步、699 个监督 token，保留开发诊断资格。下一步先在 CPU 排查 Writer 初始输入焦点，并核查更多干净开发任务，再安排扩大后的自主校准。研究数据与防御训练收益仍待后续实验。
 
-2026-11-13 执行级复查更新。Writer 增加正文点击后，原五条回复重放评分从 0 变为 1，等待对照仍为 0。Calc 原 30 条回复保持一致，补上真实 Shift 点击事件后评分变为 1。另一个受支持键盘选区对照也为 1。上述均为 CPU 脚本对照，六条真实模型自主结果仍为 0。具体证据见 `validation/cua_failure_rootcause_v1.json`。下一次开卡前先在正常批处理入口完成动作语义修复的 CPU 联测，再做限时干净任务自主执行验证。
-
-2026-11-13 更新。CUA 的三组单卡诊断已完成，两个任务共六条有效评分均为 0。原配置保存在 `configs/cua/protocol_diagnostic.json`。新增的动作参数兼容性检查配置为 `configs/cua/protocol_diagnostic_v2.json`，CPU 原生验证已通过，真实模型效果待新的 GPU 实测。结果与操作见 [CUA 防御训练准备与开卡操作](CUA_CPU_PREPARATION_20261112.md)。下文保留文本 RSD 路线的历史恢复配置。
+CPU 正常入口六条验收与脚本格式导出见 `validation/cua_execution_pipeline_v3.json`，执行断点的对照证据见 `validation/cua_failure_rootcause_v1.json`。完整操作记录见 [CUA 防御训练准备与开卡操作](CUA_CPU_PREPARATION_20261112.md)。
 
 2026-11-10 优先级更新：用户提出转向 CUA 攻击经验到防御训练的数据与算法联合设计。当前先完成[新方向研究与数据可行性设计](CUA_ATTACK_TO_DEFENSE_20261110.md)，不自动执行下面的文本 RSD 基线或六组训练。本文保留为原文本路线的恢复手册；当时的 CUA 开卡配置尚未建立。当前准备状态见顶部更新，真实 GPU 容量仍待联测。
 
