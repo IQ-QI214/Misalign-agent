@@ -21,6 +21,41 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_modifier_hook_accepts_native_positional_coordinates(self):
+        from scripts.qz_cua_focus_diagnostic import install_shift_click_control
+        original = AsyncMock()
+        interface = SimpleNamespace(left_click=original, key_down=AsyncMock(), key_up=AsyncMock())
+        state, events = {'shift': False, 'turn': 0}, []
+        install_shift_click_control(interface, state, events)
+        asyncio.run(interface.left_click(10, 20))
+        original.assert_awaited_with(x=10, y=20)
+        interface.key_down.assert_not_awaited()
+        state.update(shift=True, turn=6)
+        asyncio.run(interface.left_click(378, 674))
+        original.assert_awaited_with(x=378, y=674)
+        interface.key_down.assert_awaited_once_with('Shift_L')
+        interface.key_up.assert_awaited_once_with('Shift_L')
+        self.assertTrue(events[0]['completed'])
+
+    def test_modifier_click_releases_shift_when_click_fails(self):
+        from scripts.qz_cua_focus_diagnostic import shifted_click
+        interface = SimpleNamespace(key_down=AsyncMock(), key_up=AsyncMock())
+        click = AsyncMock(side_effect=RuntimeError('click failed'))
+        with self.assertRaisesRegex(RuntimeError, 'click failed'):
+            asyncio.run(shifted_click(interface, click, x=378, y=674))
+        interface.key_down.assert_awaited_once_with('Shift_L')
+        interface.key_up.assert_awaited_once_with('Shift_L')
+
+    def test_calc_control_replaces_modifier_click_with_supported_chords(self):
+        from scripts.qz_cua_focus_diagnostic import calc_selection_control
+        actions = calc_selection_control(23)
+        self.assertEqual(len(actions), 29)
+        self.assertEqual(sum('["shift", "down"]' in response for response in actions), 20)
+        self.assertFalse(any('shift_key' in response for response in actions))
+        self.assertIn('terminate', actions[-1])
+        with self.assertRaises(ValueError):
+            calc_selection_control(2)
+
     def test_keys_on_click_are_rejected_without_blocking_keyboard_chords(self):
         from cua_defense.action_contract import argument_issues
         schema = {'name': 'computer_use', 'parameters': {'properties': {'action': {}, 'coordinate': {}, 'keys': {}}}}

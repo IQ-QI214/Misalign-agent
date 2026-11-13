@@ -23,7 +23,53 @@ def fonts(data):
                         for node in document.findall('.//w:rFonts', namespace)))
 
 
-async def check(episode, output, repetitions=1, match_timing=False, original_only=False):
+def action_response(action, **arguments):
+    parameters = ''.join(f'<parameter={name}>{json.dumps(value)}</parameter>\n'
+                         for name, value in {'action': action, **arguments}.items())
+    return '<tool_call>\n<function=computer_use>\n' + parameters + '</function>\n</tool_call>'
+
+
+def calc_selection_control(last_row):
+    if last_row < 3:
+        raise ValueError('This selection control needs at least two data rows')
+    actions = [action_response('left_click', coordinate=[197, 234]),
+               action_response('type', text='=LOWER(B2)'),
+               action_response('key', keys=['return']),
+               action_response('left_click', coordinate=[197, 234]),
+               action_response('key', keys=['ctrl', 'c']),
+               action_response('left_click', coordinate=[197, 252])]
+    actions += [action_response('key', keys=['shift', 'down']) for _ in range(last_row - 3)]
+    actions += [action_response('key', keys=['ctrl', 'v']),
+                action_response('key', keys=['ctrl', 's']),
+                action_response('terminate', status='success')]
+    return actions
+
+
+async def shifted_click(interface, click, **coordinates):
+    await interface.key_down('Shift_L')
+    try:
+        return await click(**coordinates)
+    finally:
+        await interface.key_up('Shift_L')
+
+
+def install_shift_click_control(interface, state, events):
+    original_click = interface.left_click
+    async def click(x=None, y=None):
+        coordinates = {'x': x, 'y': y}
+        if not state['shift']:
+            return await original_click(**coordinates)
+        event = {'turn': state['turn'], 'coordinates': coordinates,
+                 'modifier': 'Shift_L', 'completed': False}
+        events.append(event)
+        result = await shifted_click(interface, original_click, **coordinates)
+        event['completed'] = True
+        return result
+    interface.left_click = click
+
+
+async def check(episode, output, repetitions=1, match_timing=False, original_only=False,
+                calc_control=False, wait_control=False, modifier_control=False):
     import lite.gym as gym
     from lite.agents.factory import make
     from lite.agents.core.agent.logger import TrajectoryLogger
@@ -32,7 +78,7 @@ async def check(episode, output, repetitions=1, match_timing=False, original_onl
     from cua_defense.replay import checkpoint, verify_checkpoint, file_fingerprint, focus_state
     source = json.loads((episode / 'receipt.json').read_text())
     task_id = source['task_id']
-    if not original_only and task_id != 'synth_writer_f_writer_93__doc_font_0001':
+    if not original_only and not calc_control and not modifier_control and task_id != 'synth_writer_f_writer_93__doc_font_0001':
         raise ValueError('This diagnostic is specific to the Origami font task')
     rows = load_rows(PROJECT / 'references/cua_lite', PROJECT / 'configs/cua/development_tasks_v1.json')
     row = next(row for row in rows if row['task_id'] == task_id)
@@ -50,14 +96,45 @@ async def check(episode, output, repetitions=1, match_timing=False, original_onl
                   ('document_focus_then_replay', [focus, *responses], [0, *waits])]
     if original_only:
         conditions = conditions[:1]
+    if wait_control:
+        if task_id != 'synth_writer_f_writer_93__doc_font_0001':
+            raise ValueError('The waiting control is specific to the Origami font task')
+        conditions = [('wait_then_replay', [action_response('wait', time=0.01), *responses], [0, *waits])]
+    if calc_control:
+        if task_id != 'synth_calc_f_calc_13__clean_titles_to_proper_0001':
+            raise ValueError('The Calc control is specific to the lowercase-title task')
+        import openpyxl
+        initial = json.loads((episode / 'checkpoint-0.json').read_text())
+        workbook = openpyxl.load_workbook(episode / initial['file_snapshots'][target], data_only=True)
+        sheet = workbook.worksheets[0]
+        if sheet['B1'].value != 'Raw' or sheet['D1'].value != 'Clean':
+            raise ValueError('Unexpected Calc input headers')
+        last_row = max(row for row in range(2, sheet.max_row + 1) if sheet.cell(row, 2).value is not None)
+        workbook.close()
+        sequence = calc_selection_control(last_row)
+        conditions = [('keyboard_range_selection', sequence, [*waits[:6], *([0] * (len(sequence) - 6))])]
+    if modifier_control:
+        if task_id != 'synth_calc_f_calc_13__clean_titles_to_proper_0001':
+            raise ValueError('The modifier control is specific to the lowercase-title task')
+        conditions = [('original_proposals_with_shift_execution', responses,
+                       [*waits[:6], *([0] * (len(responses) - 6))])]
     for repeat, (name, sequence, delays) in itertools.product(range(repetitions), conditions):
         directory = output / (name if repetitions == 1 else f'{name}-{repeat}')
         directory.mkdir()
-        env = gym.make(register_row(row), max_steps=len(sequence) + 1, seed=20261112,
+        env = gym.make(register_row(row), max_steps=len(sequence), seed=20261112,
                        loop_detect=0, extra_tools=['response', 'terminate'])
         turn = 0
         record = {'condition': name, 'repeat': repeat, 'match_prediction_timing': match_timing,
-                  'model_run': False, 'gpu_used': False, 'training_eligible': False, 'turns': []}
+                  'model_run': False, 'gpu_used': False, 'training_eligible': False,
+                  'control_valid': False, 'turns': []}
+        if calc_control:
+            record.update(last_data_row=last_row, range_source='Source initial input workbook Raw column',
+                timing_scope='Source waits for the shared first six actions; zero artificial waits for the control suffix')
+        if modifier_control:
+            record.update(modifier_events=[],
+                timing_scope='Source waits for the shared first six actions; zero artificial waits for the control suffix',
+                intervention='Replay original responses; hold and release Shift around requested modifier clicks')
+        modifier_state = {'shift': False, 'turn': 0}
         original_evaluator = env.unwrapped._evaluate_final_fn
 
         async def evaluate_and_capture(task, computer, actions=None, debug=False):
@@ -96,6 +173,17 @@ async def check(episode, output, repetitions=1, match_timing=False, original_onl
             if turn == 0:
                 point = await checkpoint(env, row, data['images'][-1], directory, turn)
                 record['initial_state_check'] = verify_checkpoint(episode, point, directory, turn)
+                if modifier_control:
+                    install_shift_click_control(env._computer.interface, modifier_state, record['modifier_events'])
+            if (calc_control or modifier_control) and turn == 6:
+                point = await checkpoint(env, row, data['images'][-1], directory, turn)
+                record['selection_branch_state_check'] = verify_checkpoint(episode, point, directory, turn)
+            if modifier_control:
+                action = json.loads((episode / f'turn_{turn:04d}/03_actions.json').read_text())['agent_message']['tool_calls'][0]
+                arguments = action.get('arguments', {})
+                modifier_state.update(turn=turn, shift=arguments.get('action') == 'left_click' and (
+                    arguments.get('shift_key') in [True, 'True', 'true'] or
+                    any(str(key).lower() == 'shift' for key in (arguments.get('keys') or []))))
             if turn == len(sequence) - 1:
                 result = await env._computer.interface.read_bytes(target)
                 (directory / ('before_termination' + Path(target).suffix)).write_bytes(result)
@@ -118,6 +206,10 @@ async def check(episode, output, repetitions=1, match_timing=False, original_onl
             record['summary'] = json.loads((directory / 'summary.json').read_text())
             record['task_score'] = record['summary']['episode_return']
             record['execution_valid'] = True
+            record['environment_action_errors'] = sum(
+                bool(result.get('error')) for path in directory.glob('turn_*/04_results.json')
+                for result in json.loads(path.read_text()).get('results', []))
+            record['control_valid'] = record['environment_action_errors'] == 0 and 'file_capture_error' not in record
         except Exception as error:
             record.update(execution_valid=False, error_type=type(error).__name__, error=str(error))
         finally:
@@ -137,7 +229,11 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--repetitions', type=int, default=1)
     parser.add_argument('--match-timing', action='store_true')
-    parser.add_argument('--original-only', action='store_true')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--original-only', action='store_true')
+    mode.add_argument('--calc-control', action='store_true')
+    mode.add_argument('--wait-control', action='store_true')
+    mode.add_argument('--modifier-control', action='store_true')
     args = parser.parse_args()
     if args.repetitions < 1:
         parser.error('--repetitions must be positive')
@@ -148,7 +244,8 @@ def main():
                 'replay_sha256_at_start': hashlib.sha256(
                     (PROJECT / 'cua_defense/replay.py').read_bytes()).hexdigest()}
     write_json(args.output / 'launch.json', identity)
-    record = asyncio.run(check(args.episode, args.output, args.repetitions, args.match_timing, args.original_only))
+    record = asyncio.run(check(args.episode, args.output, args.repetitions, args.match_timing,
+                               args.original_only, args.calc_control, args.wait_control, args.modifier_control))
     write_json(args.output / 'receipt.json', {**record, **identity})
 
 
