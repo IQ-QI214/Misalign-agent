@@ -1,5 +1,7 @@
 # 下一次开卡先做什么
 
+2026-11-13 自主结果更新。v3 六条已结束，Calc 两个修复组均为 1，Writer 两个有效组为 0、反馈组为 UNKNOWN，详见 `validation/cua_protocol_gpu_v3.json`。正在原 30 分钟预算剩余时间内测试一次 Writer 近期反馈位置对照。
+
 2026-11-13 正常入口更新。v3 的六条 QZ CPU 验收已完成，完整修复配置下 Writer、Calc 均为 1，SFT 格式导出共 35 个已完成步骤，诊断训练资格为 false。结果见 `validation/cua_execution_pipeline_v3.json`。用户已恢复单卡 GPU 中转，正在运行 `configs/cua/protocol_diagnostic_v3.json` 的六条自主评估，整批上限 30 分钟，输出为 `.runtime/cua-host/protocol-v3-gpu-20261113`。完成后需核对原生评分、动作错误、候选计数和 worker 退出。
 
 2026-11-13 执行级复查更新。Writer 增加正文点击后，原五条回复重放评分从 0 变为 1，等待对照仍为 0。Calc 原 30 条回复保持一致，补上真实 Shift 点击事件后评分变为 1。另一个受支持键盘选区对照也为 1。上述均为 CPU 脚本对照，六条真实模型自主结果仍为 0。具体证据见 `validation/cua_failure_rootcause_v1.json`。下一次开卡前先在正常批处理入口完成动作语义修复的 CPU 联测，再做限时干净任务自主执行验证。

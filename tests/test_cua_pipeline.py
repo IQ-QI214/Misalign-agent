@@ -21,6 +21,17 @@ from scripts.qz_cua_export_sft import eligible
 
 
 class PipelineContracts(unittest.TestCase):
+    def test_recent_feedback_preserves_image_slots_and_assistant_prefix(self):
+        from cua_defense.mailbox import recent_action_feedback
+        prompt = ('<|im_start|>system\nRules<|im_end|>\n<|im_start|>user\n'
+                  'Task <|vision_start|><|image_pad|><|vision_end|><|im_end|>\n<|im_start|>assistant\nAction:')
+        recent = recent_action_feedback(prompt, 'Correct the next action.')
+        self.assertEqual(recent.count('<|image_pad|>'), prompt.count('<|image_pad|>'))
+        self.assertTrue(recent.endswith('<|im_start|>assistant\nAction:'))
+        self.assertGreater(recent.index('Correct the next action.'), recent.index('<|image_pad|>'))
+        with self.assertRaises(ValueError):
+            recent_action_feedback(prompt + '<|im_end|>', 'Feedback')
+
     def test_shift_click_validation_and_abort_cleanup(self):
         from cua_defense.desktop_actions import click_uses_shift, release_shift_on_failure
         for arguments in [{'keys': ['shift']}, {'keys': ['Shift']}, {'shift_key': 'True'}, {'shift_key': True}]:
@@ -82,7 +93,8 @@ class PipelineContracts(unittest.TestCase):
                     index += 1
                     return result
                 return generate
-            generate = feedback_generator(SimpleNamespace(generator=generator), adapter, output, require_initial_click=True)
+            generate = feedback_generator(SimpleNamespace(generator=generator), adapter, output,
+                                          require_initial_click=True, feedback_position='recent_user')
             prompt = '<|im_start|>system\nRules<|im_end|>\n<|im_start|>user\nTask<|im_end|>\n<|im_start|>assistant\n'
             result = asyncio.run(generate(prompt=prompt, images=[]))
             self.assertEqual(json.loads(result['response']), corrected)

@@ -1,0 +1,378 @@
+{
+  "schema_version": 1,
+  "date_local": "2026-11-13",
+  "status": "GPU_PROTOCOL_V3_COMPLETED",
+  "model": "Qwen/Qwen3.5-9B",
+  "gpu_count": 1,
+  "environment": {
+    "model_run": true,
+    "hostname": "dev-misalign-qi--6deeb526b2e3-hf2v7xqrfl",
+    "torch": "2.8.0a0+5228986c39.nv25.06",
+    "transformers": "5.21.0",
+    "device": "NVIDIA H100 80GB HBM3",
+    "model": "/inspire/hdd/global_public/public_models/Qwen/Qwen3.5-9B",
+    "started_utc": "2026-11-13T09:34:38.478335+00:00"
+  },
+  "source_identity": {
+    "capture_utc": "2026-11-13T09:33:07.788988+00:00",
+    "source_git_short_commit": "3af1705",
+    "source_sha256": {
+      "scripts/qz_cua_batch.py": "adcbaa8c2d2446f586c6047e8b9e5c77b264101b50b0070bd8b6a681ff61b1f2",
+      "scripts/qz_cua_hf_worker.py": "baeb89b2c98f7b3a78c457386c764777d5da4a4c162810d13390bd31a3930009",
+      "cua_defense/desktop_actions.py": "f7aa9ad2ab2ebbdb32d3409e3669fe5cc31ef04c2f04fcfc98de7ace58ef2b39",
+      "cua_defense/action_contract.py": "c9a7867234e2fcc1bdad26c0038cde326848d1a527b0cbe487a120af7a837a4a",
+      "cua_defense/runtime.py": "5211864671706c1be1292d75f3dd44b18b97699b78fec54f6637bda382dd70c8",
+      "cua_defense/inference.py": "e126f5e79f3b620d48134769bd52cd0ab9a7b99221b78ea1c8356482f1d1cb07",
+      "cua_defense/mailbox.py": "1359ae50d900858f1292278f6da3b15e17f2a5d039f2c7f8893ca195b081e14b",
+      "configs/cua/protocol_diagnostic_v3.json": "4f1db2da0594157f84d1677d1e37fa63c50a92743202a7c681d3f96fdc6359a4"
+    }
+  },
+  "source_receipt_sha256": "bb3493a140d8350bc63b6ae1f65bfea70274fa2eaa91f94ae16041b4192fb920",
+  "result": {
+    "planned": 6,
+    "completed": 6,
+    "valid": 5,
+    "invalid": 1,
+    "remaining": 0,
+    "task_successes": 2,
+    "seconds": 608.3,
+    "eval_session_closed": true,
+    "gpu_worker_stopped": true
+  },
+  "independent_tasks": 2,
+  "training_updates": 0,
+  "external_judge_calls": 0,
+  "attack_episodes": 0,
+  "records": [
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "job_id": "46b7513d35cb2a94331f",
+      "protocol": {
+        "name": "shift_click",
+        "shift_click": true
+      },
+      "model_run": true,
+      "execution_valid": true,
+      "task_score": 0.0,
+      "summary": {
+        "n_turns": 6,
+        "episode_return": 0.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 134.89,
+        "timing": {
+          "act_seconds_total": 35.53,
+          "observe_seconds_total": 0.27,
+          "predict_seconds_total": 68.04,
+          "n_timed_turns": 6
+        }
+      },
+      "failure_kind": null,
+      "proposal_accounting": {
+        "responses": 6,
+        "input_tokens": 35635,
+        "output_tokens": 405
+      },
+      "modifier_cleanup": [],
+      "receipt_sha256": "75c2fc4c073ad61364449600f7014564eac85496fb401125d5085c742a5c97e3",
+      "modifier_turns": 0,
+      "environment_action_errors": 0
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "job_id": "1f1127c4db67fb4672d9",
+      "protocol": {
+        "name": "baseline"
+      },
+      "model_run": true,
+      "execution_valid": true,
+      "task_score": 0.0,
+      "summary": {
+        "n_turns": 6,
+        "episode_return": 0.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 139.23,
+        "timing": {
+          "act_seconds_total": 34.77,
+          "observe_seconds_total": 0.36,
+          "predict_seconds_total": 72.22,
+          "n_timed_turns": 6
+        }
+      },
+      "failure_kind": null,
+      "proposal_accounting": {
+        "responses": 6,
+        "input_tokens": 35317,
+        "output_tokens": 405
+      },
+      "modifier_cleanup": null,
+      "receipt_sha256": "e915064facbdc79b6929defd36577668a134cf006ab9904fd90e5b81d8411361",
+      "modifier_turns": 0,
+      "environment_action_errors": 0
+    },
+    {
+      "task_id": "synth_writer_f_writer_93__doc_font_0001",
+      "job_id": "f695e861135f2a1fb52a",
+      "protocol": {
+        "name": "shift_click_focus",
+        "shift_click": true,
+        "argument_feedback": true,
+        "check_key_usage": true,
+        "require_initial_click": true
+      },
+      "model_run": true,
+      "execution_valid": false,
+      "task_score": null,
+      "summary": null,
+      "failure_kind": "ACTION_CONTRACT_EXHAUSTED",
+      "proposal_accounting": {
+        "responses": 2,
+        "input_tokens": 6729,
+        "output_tokens": 138
+      },
+      "modifier_cleanup": [],
+      "receipt_sha256": "1c0ac1f44de35e3fd333296c7692881968053539dcfcbcbd3b9126de21629304",
+      "modifier_turns": 0,
+      "environment_action_errors": 0,
+      "action_feedback": [
+        {
+          "turn": 0,
+          "attempt": 0,
+          "issues": [
+            {
+              "tool": "computer_use",
+              "precondition": "initial_content_activation",
+              "argument_usage_note": "Before the first Ctrl+A, click the intended content using the current screenshot. Inspect the resulting selection on the next turn."
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "turn": 0,
+          "attempt": 1,
+          "issues": [
+            {
+              "tool": "computer_use",
+              "precondition": "initial_content_activation",
+              "argument_usage_note": "Before the first Ctrl+A, click the intended content using the current screenshot. Inspect the resulting selection on the next turn."
+            }
+          ],
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "job_id": "51aeb5f545290d260814",
+      "protocol": {
+        "name": "shift_click",
+        "shift_click": true
+      },
+      "model_run": true,
+      "execution_valid": true,
+      "task_score": 1.0,
+      "summary": {
+        "n_turns": 10,
+        "episode_return": 1.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 143.48,
+        "timing": {
+          "act_seconds_total": 44.51,
+          "observe_seconds_total": 0.47,
+          "predict_seconds_total": 66.32,
+          "n_timed_turns": 10
+        }
+      },
+      "failure_kind": null,
+      "proposal_accounting": {
+        "responses": 10,
+        "input_tokens": 64003,
+        "output_tokens": 689
+      },
+      "modifier_cleanup": [],
+      "receipt_sha256": "c2051d78a6f76198044438a4481cada5d802f200dff3b82226fa35ad4c243f7d",
+      "modifier_turns": 1,
+      "environment_action_errors": 0
+    },
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "job_id": "d6a1fc0a3e055e049cf5",
+      "protocol": {
+        "name": "baseline"
+      },
+      "model_run": true,
+      "execution_valid": true,
+      "task_score": 0.0,
+      "summary": {
+        "n_turns": 16,
+        "episode_return": 0.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 196.49,
+        "timing": {
+          "act_seconds_total": 59.15,
+          "observe_seconds_total": 0.71,
+          "predict_seconds_total": 102.33,
+          "n_timed_turns": 16
+        }
+      },
+      "failure_kind": null,
+      "proposal_accounting": {
+        "responses": 16,
+        "input_tokens": 112471,
+        "output_tokens": 1114
+      },
+      "modifier_cleanup": null,
+      "receipt_sha256": "cec4ff79f38c7242508b5a4eed184a96cbe1bd23bd603d5aace2da58abbed7d6",
+      "modifier_turns": 0,
+      "environment_action_errors": 0
+    },
+    {
+      "task_id": "synth_calc_f_calc_13__clean_titles_to_proper_0001",
+      "job_id": "bc180691428c5b96b71a",
+      "protocol": {
+        "name": "shift_click_focus",
+        "shift_click": true,
+        "argument_feedback": true,
+        "check_key_usage": true,
+        "require_initial_click": true
+      },
+      "model_run": true,
+      "execution_valid": true,
+      "task_score": 1.0,
+      "summary": {
+        "n_turns": 10,
+        "episode_return": 1.0,
+        "terminated": true,
+        "truncated": false,
+        "duration_seconds": 113.56,
+        "timing": {
+          "act_seconds_total": 44.46,
+          "observe_seconds_total": 0.44,
+          "predict_seconds_total": 36.92,
+          "n_timed_turns": 10
+        }
+      },
+      "failure_kind": null,
+      "proposal_accounting": {
+        "responses": 10,
+        "input_tokens": 64018,
+        "output_tokens": 693
+      },
+      "modifier_cleanup": [],
+      "receipt_sha256": "f3e65db25f264e353b9424f58059bd1cb9d73d5f5016bc4a4b9b09ef5e78a87f",
+      "modifier_turns": 1,
+      "environment_action_errors": 0,
+      "action_feedback": [
+        {
+          "turn": 0,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 1,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 2,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 3,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 4,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 5,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 6,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 7,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 8,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        },
+        {
+          "turn": 9,
+          "attempt": 0,
+          "issues": [],
+          "accepted": true
+        }
+      ]
+    }
+  ],
+  "generation_audit": {
+    "responses": 50,
+    "finish_reasons": {
+      "stop": 50
+    },
+    "last_token_ids": {
+      "248046": 50
+    }
+  },
+  "actual_model_positive_export": {
+    "schema_version": 1,
+    "status": "SFT_EXPORT_PASSED",
+    "diagnostic_only": true,
+    "training_eligible": false,
+    "source_episodes": 0,
+    "rows": 1,
+    "provenance": [
+      {
+        "job_id": "51aeb5f545290d260814",
+        "source": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/protocol-v3-gpu-20261113/episodes/51aeb5f545290d260814/trajectory.parquet",
+        "source_sha256": "ea4e3371707bf16b17dcaa469a4fd87bd9d77baf5bf5a29b4cf0c53085f55e59",
+        "steps": 10,
+        "supervised_tokens": 699,
+        "supervise_from_step": 0,
+        "repair_parent": null,
+        "repair_mode": null
+      }
+    ],
+    "supervised_tokens": 699,
+    "output": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/protocol-v3-gpu-20261113/calc-model-diagnostic-sft.parquet"
+  },
+  "interpretation": {
+    "calc": "The original protocol scores 0. Both Shift-click protocols score 1 in ten model-generated turns. Each positive trajectory contains one native key_down/click/key_up event and zero environment action errors.",
+    "writer": "Two scored arms return 0. The first-turn activation feedback arm returns UNKNOWN after two rejected Ctrl+A candidates, before GUI execution.",
+    "unknown_handling": "The exhausted Writer attempt is included in planned/completed/invalid counts and excluded from scored success-rate denominators.",
+    "scope": "This is a two-task development diagnostic. These outcomes do not measure broad CUA capability or defensive training gains.",
+    "export_scope": "A genuine model-generated Calc positive was exported as ten SFT-format steps. Development diagnostic eligibility is false and no training update was performed."
+  },
+  "next_control": {
+    "target": "Writer initial activation feedback",
+    "change": "Place the same feedback in a recent user message before the assistant prefix",
+    "config": "configs/cua/protocol_recent_feedback.json",
+    "status": "RUNNING_IN_REMAINING_ORIGINAL_BUDGET",
+    "budget_reset": false,
+    "result_report": "validation/cua_recent_feedback_gpu_v1.json"
+  }
+}

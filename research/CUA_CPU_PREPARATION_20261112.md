@@ -323,3 +323,11 @@ bash scripts/qz_cua_next.sh --config configs/cua/protocol_diagnostic_v3.json --r
 ```
 
 本次输出目录为 QZ CPU `.runtime/cua-host/protocol-v3-gpu-20261113`。自主结果将在运行完成后另行记录。
+
+### 同日真实模型 v3 结果
+
+首批六条自主尝试已完成，共 5 条有效评分、1 条 UNKNOWN。Calc 原配置为 0，两个 Shift 点击修复组均在 10 轮内得到评分 1，各实际执行一次完整修饰键点击。Writer 原配置与 Shift 点击组均为 0。Writer 首轮激活反馈组连续两次提出 Ctrl+A，触发纠正耗尽，保留为 UNKNOWN。
+
+共 50 次模型回复，全部正常停在 EOS 248046，环境动作错误为 0。批次结束后 worker 退出与独立显存检查均已完成。真实模型生成的 Calc 成功轨迹已导出 10 步、699 个监督 token，诊断训练资格为 false。完整结果见 `validation/cua_protocol_gpu_v3.json`。
+
+正在使用原 30 分钟窗口的剩余时间做一次 Writer 对照，仅把相同纠正内容从系统开头移至生成前最近的用户消息。配置为 `configs/cua/protocol_recent_feedback.json`。启动记录保存原始截止时间和剩余秒数，没有重置预算。提示重写通过 25 项 QZ 回归检查，并在实际保存的原生提示上验证图像占位符保持一致。

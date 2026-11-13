@@ -60,9 +60,11 @@ class ActionContractError(RuntimeError):
 
 
 def feedback_generator(client, adapter, output, *, check_key_usage=False,
-                       shift_click=False, require_initial_click=False, **options):
+                       shift_click=False, require_initial_click=False, feedback_position='system', **options):
     """Give one corrective generation opportunity before any GUI execution."""
     from cua_defense.mailbox import teacher_prompt
+    if feedback_position not in ['system', 'recent_user']:
+        raise ValueError('Unknown action feedback position')
     replay = options.pop('replay', [])
     prefix_generator = client.generator(output, replay=replay, **options)
     turn = 0
@@ -101,10 +103,13 @@ def feedback_generator(client, adapter, output, *, check_key_usage=False,
                 return result
             # Feedback contains schema/key diagnostics only, without evaluator data.
             detail = json.dumps(issues, ensure_ascii=True).replace('<', '\\u003c').replace('>', '\\u003e')
-            current_prompt = teacher_prompt(prompt,
-                'Action rejected before execution. ' + detail +
-                '\nRegenerate an action using the declared arguments and the current screenshot.',
-                heading='Action argument feedback')
+            feedback = ('Action rejected before execution. ' + detail +
+                        '\nRegenerate an action using the declared arguments and the current screenshot.')
+            if feedback_position == 'recent_user':
+                from cua_defense.mailbox import recent_action_feedback
+                current_prompt = recent_action_feedback(prompt, feedback)
+            else:
+                current_prompt = teacher_prompt(prompt, feedback, heading='Action argument feedback')
         raise ActionContractError('Unsupported action arguments persisted after one corrective attempt')
 
     return generate

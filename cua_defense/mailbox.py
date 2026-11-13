@@ -17,6 +17,16 @@ def teacher_prompt(prompt, feedback, heading='Offline repair feedback about prio
     return prompt[:index] + '\n' + heading + '\n' + feedback + '\n' + prompt[index:]
 
 
+def recent_action_feedback(prompt, feedback):
+    """Place trusted action feedback immediately before the generation prefix."""
+    marker = '<|im_start|>assistant\n'
+    index = prompt.rfind(marker)
+    if index < 0 or '<|im_end|>' in prompt[index:]:
+        raise ValueError('Recent feedback requires an open Qwen assistant prefix')
+    message = '<|im_start|>user\nAction argument feedback\n' + feedback + '\n<|im_end|>\n'
+    return prompt[:index] + message + prompt[index:]
+
+
 class MailboxClient:
     def __init__(self, directory, timeout=600):
         self.directory = Path(directory)

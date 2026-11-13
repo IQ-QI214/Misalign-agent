@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "model": "qwen35_9b",
+  "cohort": "configs/cua/development_tasks_v1.json",
+  "conditions": [
+    "clean"
+  ],
+  "repetitions": 1,
+  "max_steps": 30,
+  "loop_detect": 0,
+  "seed": 20261112,
+  "concurrency": 1,
+  "budget_minutes": 30,
+  "training_enabled": false,
+  "phase": "capability_protocol_feedback_position",
+  "data_role": "diagnostic",
+  "task_order": "configured",
+  "task_ids": [
+    "synth_writer_f_writer_93__doc_font_0001"
+  ],
+  "protocols": [
+    {
+      "name": "shift_click_focus_recent_feedback",
+      "shift_click": true,
+      "argument_feedback": true,
+      "check_key_usage": true,
+      "require_initial_click": true,
+      "feedback_position": "recent_user"
+    }
+  ]
+}

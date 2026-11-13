@@ -63,6 +63,8 @@ def protocol_arms(config):
                 raise ValueError('Protocol ' + option + ' must be boolean')
         if arm.get('require_initial_click') and not arm.get('argument_feedback'):
             raise ValueError('require_initial_click requires argument_feedback')
+        if arm.get('feedback_position', 'system') not in ['system', 'recent_user']:
+            raise ValueError('Unknown protocol feedback position')
     return arms
 
 
@@ -274,7 +276,8 @@ async def run(args, output, config, model):
                             seed=config['seed'] + repeat, feedback=feedback, replay=replay,
                             check_key_usage=protocol.get('check_key_usage', False),
                             shift_click=protocol.get('shift_click', False),
-                            require_initial_click=protocol.get('require_initial_click', False), sampling=record['sampling_params'])
+                            require_initial_click=protocol.get('require_initial_click', False),
+                            feedback_position=protocol.get('feedback_position', 'system'), sampling=record['sampling_params'])
                     remaining = max(1, deadline - time.monotonic())
                     await asyncio.wait_for(agent.sample(env, hooks=[logger]), timeout=remaining)
                     summary = json.loads((directory / 'summary.json').read_text())
