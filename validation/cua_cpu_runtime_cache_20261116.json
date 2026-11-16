@@ -1,0 +1,42 @@
+{
+  "status": "CACHED_RUNTIME_VERIFIED",
+  "source": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/venv",
+  "target": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-dind/cua-test-qi--91bb3a6ab7a7-oxj4j3ju6p/disk/cua-python-cache-v1",
+  "gpu_used": false,
+  "model_weights_copied": false,
+  "copy_workers": 8,
+  "started_at": "2026-11-16T14:49:14.160121+00:00",
+  "record_check": {
+    "hashed_files_verified": 41421,
+    "files_repaired": 3,
+    "record_disagreements_verified_against_installed_source": [
+      {
+        "path": "lib/python3.12/site-packages/cv2/version.py",
+        "installed_source_sha256": "e718587212508acdcb296839c287c7fa346edb621005ffb199c26397592544ed"
+      },
+      {
+        "path": "lib/python3.12/site-packages/cv2/typing/__init__.py",
+        "installed_source_sha256": "68724d42b4f7c1ae5f23cdf846a6caf0ea53743ebe4a72fb8ec30b03153fd669"
+      },
+      {
+        "path": "lib/python3.12/site-packages/cv2/cv2.abi3.so",
+        "installed_source_sha256": "9e29605abcc31c9942d0e7dffc53b4ccaa601676c794327b0ea71a570a0c26c2"
+      }
+    ]
+  },
+  "runtime_alias": "/run/cua-dind/python-cache",
+  "source_sha256": {
+    "torch/__init__.py": "7ed81103f3d256de131b886e67be458b3205784e3b4af9c495041282391e19db",
+    "transformers/__init__.py": "6b40e19de6b0cee8187d4d4f4f20cc4c1dd87e1ad0bc15ce9637f6c2e9134d22",
+    "PIL/Image.py": "04050c2d4dd67931ce8c3cfdbc49ac4a6944d379d037c8f1d5eeeb67fba29a10"
+  },
+  "copy_seconds": 5.483,
+  "import_check": {
+    "torch": "2.15.0+cpu",
+    "cuda": null,
+    "transformers": "5.22.2",
+    "prefix": "/run/cua-dind/python-cache/venv",
+    "seconds": 57.990438023000024
+  },
+  "allocated_bytes": 2838220800
+}

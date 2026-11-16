@@ -24,7 +24,9 @@ def fonts(data):
 
 
 def action_response(action, **arguments):
-    parameters = ''.join(f'<parameter={name}>{json.dumps(value)}</parameter>\n'
+    # Qwen3.5 XML carries string content verbatim; JSON-quoting a shell command
+    # leaves backslashes in the native parser's result instead of unescaping it.
+    parameters = ''.join(f'<parameter={name}>{value if isinstance(value, str) else json.dumps(value)}</parameter>\n'
                          for name, value in {'action': action, **arguments}.items())
     return '<tool_call>\n<function=computer_use>\n' + parameters + '</function>\n</tool_call>'
 

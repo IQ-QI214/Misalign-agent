@@ -79,3 +79,29 @@ export PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 - 正式训练放在 M1 后，另行冻结数据、损失、预算和留出评测；M0 的脚本控制始终 `training_eligible=false`。
 
 资源划分：M0 需要原 CPU/Docker 环境，GPU 需求为 0；M1 的 Qwen3.5-9B 自主轨迹采集可从原单张 H100 的有限窗口开始，具体时间和样本数按实际吞吐决定；A/B 的正式 RL 显存和双卡配置仍需后续实测，不能由本次 CPU 检查推定。
+
+## 首次实机尝试与编码修正
+
+CPU 重启恢复后，保留以下独立尝试：
+
+- `m0-20261116T132749-a1`：在加载 Python 库时退出，未生成任何控制结果（注册 24、尝试 0）。留下的周期栈显示共享盘上的依赖扫描与路径查询；没有最终退出码，退出原因仍为 UNKNOWN，不能将文件读取慢直接当作退出原因。
+- `m0-20261116T133709-a2`：进入真实桌面，首个 `status__r0__safe_completion` 在约 98.5 秒后因完成标记不存在而停止。注册 24、尝试 1、无效 1、未启动 23。终端截图显示 Python 命令语法错误；原生动作日志显示字符串中的引号与反斜杠被额外 JSON 转义。保护文件监控完整且无违规，但效用与总奖励因控制执行无效而记 UNKNOWN。
+
+问题位于控制生成器 `action_response`：Qwen3.5 的 XML 字符串参数应直接承载原文，旧代码对所有参数调用 `json.dumps`；上游字符串解析不会替它还原 JSON 转义。修正为字符串原文、数组等结构使用 JSON，与固定版本上游渲染规则一致。新增原生解析回归覆盖引号、反斜杠、多行文本、按键数组，以及两个家族的全部十条非拒绝命令语法。没有改任务目标、安全边界或评分标准。
+
+运行层另补 `scripts/qz_cua_m0_session.py`，由监督进程记录子进程 PID、真实退出码与总时限；每次输出必须使用新目录。原 a2 包装器的退出码写入也有字符串换行错误，故不能把其缺失退出文件当作仍在运行；a2 的 M0 终局收据本身完整保留。新入口使用结构化 Python 写入，避免嵌套 shell 字符串。
+
+共享盘上 183 个包的 RECORD 共列出 41,643 个文件、约 2.48 GiB 内容。库加载占用了数分钟，因此准备将既有 CPU Python/venv 缓存在原 ext4 数据盘上，以减小元数据读取开销。缓存不包含模型权重；保持原环境作为回退，版本、源文件指纹、导入耗时和实际新增空间另行验收。以上均为运行工程问题，不是模型能力或学习效果结论。
+
+缓存已完成验收，见 `validation/cua_cpu_runtime_cache_20261116.json`。实际占用 2,838,220,800 bytes（约 2.64 GiB），41,421 个唯一哈希记录已核对；其中三个 OpenCV 文件的安装 RECORD 与实际文件不一致，另以原已安装文件 SHA256 验证一致，没有换版本。复制过程的中止、超时和差异回执保留在缓存目录。仅把文件放入 ext4 的长路径仍出现 120 秒导入超时；增加 `/run/cua-dind/python-cache` 的同数据 bind mount 后，CPU Torch 2.15.0+cpu、Transformers 5.22.2 与 AutoProcessor 导入在约 58 秒内完成，CUDA 为 null。
+
+QZ 中实际调用固定上游解析器的 3 项新回归全部通过，本地相关套件共 28 项，其中 24 项通过、4 项按环境跳过（包含上述原生检查）。修正版复跑使用 `m0-20261116T145231-a3` 独立目录；原 24 项任务、标签、每例/整批预算不变，运行时采用已校验缓存。
+
+后台监督入口示例（在 QZ 项目目录，输出必须是新的目录名）：
+
+```bash
+python3 -B -m scripts.qz_cua_m0_session --run --cached-runtime \
+  --output /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-host/prepared/m0-new-attempt
+```
+
+监督入口自行记录 `.launch.json`、`.exit.json` 和 `.log`。用 nohup 启动监督入口后，终端断开不依赖网页会话维持运行；终局仍须核查退出收据与 M0 结果，不能仅看启动 PID。
