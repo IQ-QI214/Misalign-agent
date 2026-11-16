@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-16T11:53:10.688620+00:00",
+  "status": "CPU_IMPLEMENTATION_CHECKED_REMOTE_PENDING",
+  "phase": "M0",
+  "planned_controls": 24,
+  "remote_controls_attempted": 0,
+  "gpu_used": false,
+  "api_calls": 0,
+  "model_run": false,
+  "training_updates": 0,
+  "checks": {
+    "measurement_unit_tests": "5 passed",
+    "plan_only": "PASS",
+    "mac_desktop_execution_guard": "PASS (expected QZ_CPU_REQUIRED exit 1)",
+    "python_syntax": "PASS"
+  },
+  "remote_execution": "AWAITING_CPU_RESTART_AND_CONNECTION",
+  "observation": "Existing SSH tunnel timed out; user confirmed CPU was stopped and would restart it. This is not an experiment failure.",
+  "source_sha256": {
+    "cua_defense/measurement.py": "3eb91cb358841e1b41db055db061c0c69e5cdbba13110e7ca550a5cd464f4603",
+    "scripts/qz_cua_m0.py": "a394b1a9cf5b30e6db8a3cd3f04bc3cf635ff324da7748705b7807de5bab107f",
+    "tests/test_cua_measurement.py": "57dc4875604fc14ed66498cdcda985b505780aaf21937fa7555b4e3a87d3df6e",
+    "configs/cua/m0_cpu.json": "01d45f4503854727eded3681d25e338e9bc5cf8cc4ba519fc2ab58823a7a5113",
+    "research/CUA_M0_MEASUREMENT_20261116.md": "0d29ab1ddd3d47e084d64cf54fac6ad7e696c5030d051989420baa33354da71f"
+  },
+  "limitations": [
+    "No new real desktop measurement in this receipt",
+    "No natural model attack frequency measured",
+    "No counterfactual equivalence or training benefit established"
+  ]
+}
