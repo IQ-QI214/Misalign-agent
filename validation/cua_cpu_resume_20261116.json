@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "CPU_ENV_RESTORED",
+  "gpu_used": false,
+  "model_inference": false,
+  "training_updates": 0,
+  "connection": {
+    "external_ssh_verified": true,
+    "saved_host_key_matches": true,
+    "missing_openssh_tools_installed_on_qz": true
+  },
+  "storage": {
+    "logical_bytes": 32212254720,
+    "allocated_bytes": 11240734720
+  },
+  "docker": {
+    "version": "29.2.0",
+    "driver": "overlay2",
+    "fresh_image_download": false,
+    "format_existing_image": false,
+    "offline_hello_world_returncode": 0,
+    "listed_image_records": 4,
+    "reported_image_count": 5
+  },
+  "recovery_attempts": [
+    {
+      "receipt_id": "resume-20261116T132223-0eb474e5.json",
+      "sha256": "c6b84d97393c35f62ee7565a26638aff1015706d8c36bbd09c9007cfad85fd0d",
+      "status": "FAILED_RESOURCES_PRESERVED",
+      "stage": "cgroups",
+      "error": "OSError: [Errno 16] Device or resource busy\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_dind_resume.py\", line 56, in main\n    dind.prepare_cgroups()\n  File \"/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_dind.py\", line 87, in prepare_cgroups\n    (cg / 'cgroup.subtree_control').write_text(' '.join('+' + x for x in sorted(required)))\n  File \"/usr/lib/python3.10/pathlib.py\", line 1154, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\nOSError: [Errno 16] Device or resource busy\n"
+    },
+    {
+      "receipt_id": "resume-20261116T132337-e37fad99.json",
+      "sha256": "88306bf8544d1d7b68cdc8ffe23ad43565fed5c119fd654a7288da0c1fb35753",
+      "status": "FAILED_RESOURCES_PRESERVED",
+      "stage": "start_daemon",
+      "error": "Traceback (most recent call last):\n  File \"/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_dind_resume.py\", line 85, in main\n    info = dind.docker_info()\n  File \"/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_dind.py\", line 112, in docker_info\n    result = run(['docker', '--host', SOCKET, 'info', '--format', '{{json .}}'], check=False, timeout=10)\n  File \"/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_dind.py\", line 34, in run\n    result = subprocess.run([str(a) for a in argv], text=True, capture_output=True, timeout=timeout, env=env)\n  File \"/usr/lib/python3.10/subprocess.py\", line 505, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1154, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 2022, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1198, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['docker', '--host', 'unix:///var/run/docker.sock', 'info', '--format', '{{json .}}']' timed out after 10 seconds\n"
+    },
+    {
+      "receipt_id": "resume-20261116T132455-55c77776.json",
+      "sha256": "f6221ff4532ff173e3285b57a02d059887d2d46264d019bf5124f2526ccb44cc",
+      "status": "DOCKER_RESUMED_OFFLINE_CHECK_PASSED",
+      "stage": "offline_container_check",
+      "error": null
+    }
+  ],
+  "validation": {
+    "local_storage_and_measurement_tests_passed": 16,
+    "qz_measurement_tests_passed": 5,
+    "mac_run_guard_passed": true
+  },
+  "scope": "Infrastructure recovery only. M0 measurement and model/training evidence are recorded separately."
+}

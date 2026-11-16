@@ -6,6 +6,7 @@ Never formats a block device or an existing image. Does not install software.
 """
 import argparse
 from datetime import datetime, timezone
+import errno
 import fcntl
 import hashlib
 import json
@@ -78,13 +79,23 @@ def prepare_cgroups():
     # QZ manual: move root-cgroup processes to a child before enabling controllers.
     child = cg / 'cua-dind-init'
     child.mkdir(exist_ok=True)
-    for pid in (cg / 'cgroup.procs').read_text().split():
+    # Platform exec sessions can create a new root-cgroup process between the
+    # snapshot and controller activation. Drain again only for bounded EBUSY.
+    deadline = time.monotonic() + 5
+    while True:
+        for pid in (cg / 'cgroup.procs').read_text().split():
+            try:
+                (child / 'cgroup.procs').write_text(pid)
+            except OSError:
+                if Path('/proc', pid).exists():
+                    raise
         try:
-            (child / 'cgroup.procs').write_text(pid)
-        except OSError:
-            if Path('/proc', pid).exists():
+            (cg / 'cgroup.subtree_control').write_text(' '.join('+' + x for x in sorted(required)))
+            break
+        except OSError as error:
+            if error.errno != errno.EBUSY or time.monotonic() >= deadline:
                 raise
-    (cg / 'cgroup.subtree_control').write_text(' '.join('+' + x for x in sorted(required)))
+            time.sleep(0.05)
     if not required <= set((cg / 'cgroup.subtree_control').read_text().split()):
         raise RuntimeError('cgroup controller activation did not complete')
 

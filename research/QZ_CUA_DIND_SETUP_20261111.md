@@ -203,3 +203,13 @@ python3 -B scripts/qz_cua_reconnect.py --run --install-missing-ssh
 输出 `CUA_RELAY_READY` 仅表示 CPU 内两个端口已就绪，外部代理和 SSH 身份认证仍需随后实测。若平台同时更换了代理 URL，需要更新本机私有地址记录；不能用放宽主机密钥检查来绕过连接故障。
 
 用户执行首版 `edbc7ee` 后在密钥校验阶段收到 `FileNotFoundError: ssh-keygen`。该次未进入 sshd/fkqz 启动阶段，不能记作连接成功，也不能据此推断持久化数据丢失。首版漏检了系统 SSH 工具；修正版先查 PATH 和标准系统目录，再按 `--install-missing-ssh` 安装缺少的 OpenSSH client/server 包。已有工具时跳过安装；安装输出保存在当前状态目录的 `ssh-install.log`，成功后清理此脚本下载的 deb 缓存，连接继续使用原项目主机密钥。离线回归覆盖缺工具时的提前报错、安装后复查、安装失败留证、已有组件不重复安装；远端恢复结果仍待重试。
+
+### 本轮真实恢复结果
+
+用户执行修正版后，CPU 内 SSH/fkqz 启动成功；随后已通过原本机转发完成外部 SSH 登录，主机指纹与原记录一致。既有 venv 与 30 GiB 稀疏 Docker 数据文件保留，启动前后实际分配约 10.5 GiB；检查时共享项目盘剩余约 49.5 GiB。没有重新创建、格式化或复制 Docker 数据文件。
+
+新增 `scripts/qz_cua_dind_resume.py` 专门复用原数据文件与 daemon 配置。先核对 notebook、挂载与进程归属，再恢复控制器、loop 挂载和 daemon。可在项目目录执行 `python3 -B -m scripts.qz_cua_dind_resume --run`。默认只打印计划，Mac 禁止执行。
+
+首次恢复在启用 cgroup 控制器时收到 EBUSY，检查发现根 cgroup 仍有新出现的 bash 进程；增加仅针对 EBUSY 的 5 秒有界重新迁移后通过。第二次恢复成功挂载原镜像并启动 dockerd，但 10 秒健康探测超时；后续日志确认 daemon 在约 26 秒完成初始化。因此启动探测改为 90 秒总窗口，保留单次超时次数；未重复启动已运行 daemon。第三次复核确认 Docker 29.2.0 / overlay2，`--pull never` 的 hello-world 容器退出码为 0。Docker info 报告 5 个镜像，image ls 返回 4 条可见记录，两项分别保留。hello-world 自带说明文字提到 pull，不代表本次发生下载。
+
+前三次恢复回执全部保留，公开摘要在 `validation/cua_cpu_resume_20261116.json`。本地存储保护、cgroup 竞态与测量共 16 项测试通过，QZ 的 5 项测量测试通过。这些证据证明 CPU 基础设施恢复；M0 的执行结果另行记录，不计作模型训练或防御效果。

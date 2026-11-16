@@ -1,5 +1,6 @@
 """Storage guard tests. Standard library; never invokes Docker, mount or mkfs."""
 import importlib.util
+import errno
 from pathlib import Path
 import subprocess
 import tempfile
@@ -13,6 +14,44 @@ SPEC.loader.exec_module(D)
 
 
 class DindGuards(unittest.TestCase):
+    def test_cgroup_busy_race_drains_new_process_before_retry(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / 'cgroup.controllers').write_text('cpu memory io pids cpuset')
+            (root / 'cgroup.subtree_control').write_text('')
+            (root / 'cgroup.procs').write_text('12')
+            original_write = Path.write_text
+            moved = []
+            attempts = []
+
+            def write(path, text, *args, **kwargs):
+                if path == root / 'cua-dind-init/cgroup.procs':
+                    moved.append(text)
+                    return original_write(root / 'cgroup.procs', '')
+                if path == root / 'cgroup.subtree_control':
+                    attempts.append(text)
+                    if len(attempts) == 1:
+                        original_write(root / 'cgroup.procs', '13')
+                        raise OSError(errno.EBUSY, 'new root process arrived')
+                    return original_write(path, text.replace('+', ''))
+                return original_write(path, text, *args, **kwargs)
+
+            with patch.object(D, 'Path', side_effect=lambda p, *a: root if p == '/sys/fs/cgroup' else Path(p, *a)), \
+                    patch.object(Path, 'write_text', write), patch.object(D.time, 'sleep'):
+                D.prepare_cgroups()
+            self.assertEqual(moved, ['12', '13'])
+            self.assertEqual(len(attempts), 2)
+
+    def test_cgroup_busy_retry_has_a_deadline(self):
+        values = ['cpu memory io pids cpuset', '', '']
+        with patch.object(Path, 'read_text', side_effect=values), \
+                patch.object(Path, 'mkdir'), \
+                patch.object(Path, 'write_text', side_effect=OSError(errno.EBUSY, 'busy')), \
+                patch.object(D.time, 'monotonic', side_effect=[0, 6]):
+            with self.assertRaises(OSError) as caught:
+                D.prepare_cgroups()
+        self.assertEqual(caught.exception.errno, errno.EBUSY)
+
     def test_mac_apply_cannot_write_or_run_commands(self):
         with patch.object(D.platform, 'system', return_value='Darwin'), patch.object(D, 'run') as run, patch.object(Path, 'mkdir') as mkdir:
             self.assertEqual(D.main(['--apply', '--kata-confirmed']), 2)
