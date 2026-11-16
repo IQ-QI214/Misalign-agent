@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "created_at": "2026-11-16T16:52:08.923411+00:00",
-  "status": "LOCAL_STARTUP_TESTS_PASSED_REMOTE_PENDING",
+  "status": "REMOTE_CPU_RECOVERY_VERIFIED",
   "first_failure": {
     "command": "python3 -B -m scripts.qz_cua_m1_session --run",
     "stage": "bind_cached_runtime",
     "error": "mount exited 32: cache directory below the saved ext4 mount does not exist",
-    "cause_scope": "Startup tried the cached runtime before restoring the storage mount; remote disk state not yet verified"
+    "cause_scope": "Confirmed on restarted CUA CPU: saved ext4 was not mounted; restored existing disk and verified original cached runtime without recreating it."
   },
   "changes": [
     "Absolute-path entry works regardless of current directory",
@@ -28,7 +28,65 @@
     "scripts/qz_cua_runtime_cache.py": "6bb2af147e8ebe3a483dc3900e6ab8b880fc9b9b1563c24d7431783677570016",
     "tests/test_cua_start.py": "b625dc1bd433c02481b16fe817ce8ccd06257557fdad64d1119fd6cc16e50637"
   },
-  "remote_recovery": "PENDING_SSH_RECONNECT",
+  "remote_recovery": {
+    "bootstrap": {
+      "status": "CPU_ENVIRONMENT_READY",
+      "created_at": "2026-11-16T16:54:13.529393+00:00",
+      "gpu_dispatched_by_bootstrap": false,
+      "formatted": false,
+      "downloaded": false,
+      "bootstrap_sha256": "f48246576cce02e1efcdf3a776dcd5779ad91f5c793ddb550277f3ee31ae31b3",
+      "stage": "check_existing_qualification",
+      "runtime": {
+        "python": "3.12.16",
+        "torch": "2.15.0+cpu",
+        "transformers": "5.22.2",
+        "cuda": null
+      },
+      "qualification_sha256": "d912ccd2b4411b002e470af2f31304e8519cf67d5b1a6725478a60f1f4d85835"
+    },
+    "bootstrap_receipt": "cpu-start-20261116T165413-d083b421.json",
+    "docker_resume_receipt": "resume-20261116T165416-8db5e808.json",
+    "docker_resume": {
+      "status": "DOCKER_RESUMED_OFFLINE_CHECK_PASSED",
+      "gpu_used": false,
+      "formatted": false,
+      "downloaded": false,
+      "daemon": {
+        "ServerVersion": "29.2.0",
+        "Driver": "overlay2",
+        "DockerRootDir": "/inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/.runtime/cua-dind/cua-test-qi--91bb3a6ab7a7-oxj4j3ju6p/disk/docker",
+        "Images": 5
+      }
+    },
+    "offline_container_returncode": 0,
+    "startup_probe_timeouts": 2,
+    "outside_repo_plan": {
+      "status": "PLAN_ONLY",
+      "gpu_dispatched": false,
+      "cpu_notebook": "cua-test-qi (04ab0f8a)",
+      "next": "--prepare-cpu restores existing storage/runtime; --run then enters M1"
+    }
+  },
   "gpu_dispatched": false,
-  "training_updates": 0
+  "training_updates": 0,
+  "verified_at": "2026-11-16T16:56:44.055800+00:00",
+  "remote_tests": {
+    "tests": {
+      "run": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "details": ".................\n----------------------------------------------------------------------\nRan 17 tests in 0.107s\n\nOK\n"
+    },
+    "source_sha256": {
+      "scripts/qz_cua_start.py": "f48246576cce02e1efcdf3a776dcd5779ad91f5c793ddb550277f3ee31ae31b3",
+      "scripts/qz_cua_dind_resume.py": "ef670f981d3f0614b5afc4f4bb733f19e44441a0158029f7bfbcf06185a374c6",
+      "scripts/qz_cua_runtime_cache.py": "6bb2af147e8ebe3a483dc3900e6ab8b880fc9b9b1563c24d7431783677570016",
+      "scripts/qz_cua_dind.py": "11b1aa298e0d1f4a8bb4b2b2d735d92c56b13afc1b1c7a445190c2a289d2fe48",
+      "tests/test_cua_start.py": "b625dc1bd433c02481b16fe817ce8ccd06257557fdad64d1119fd6cc16e50637",
+      "tests/test_qz_cua_dind.py": "24344d4d813428c6f740480f5d12e798df7fe20549e2a7c18a6ef5be6e83dcd4"
+    }
+  },
+  "gpu_relay": "HEARTBEAT_EXPIRED_NO_GPU_DISPATCH"
 }
