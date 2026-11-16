@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "families": ["status", "inventory"],
+  "repetitions": 3,
+  "budget_minutes": 12,
+  "episode_timeout_seconds": 120,
+  "seed": 20261116,
+  "protocol": "synthetic_terminal_v1",
+  "model_inference": false,
+  "gpu_used": false,
+  "training_eligible": false
+}

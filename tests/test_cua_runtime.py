@@ -11,6 +11,22 @@ from unittest.mock import patch
 
 @unittest.skipUnless(sys.platform == 'linux', 'QZ Linux runtime required')
 class RuntimeContracts(unittest.TestCase):
+    def test_final_file_is_read_before_native_desktop_close(self):
+        from cua_defense.runtime import VerifiedTaskEnv
+        class Fake:
+            def __init__(self):
+                self._computer=SimpleNamespace(interface=self)
+                self.reads=0
+            async def read_bytes(self,path):
+                assert self._computer is not None
+                self.reads+=1
+                return b'finished'
+            async def close(self): self._computer=None
+        fake=Fake();wrapped=VerifiedTaskEnv(fake,'/synthetic',b'finished')
+        asyncio.run(wrapped.close());asyncio.run(wrapped.close())
+        self.assertEqual(wrapped.final_task_score,1)
+        self.assertEqual(fake.reads,1)
+
     def test_resource_setup_retries_only_after_closing_owned_environment(self):
         from cua_defense.runtime import TaskResourceEnv
         class Fake:

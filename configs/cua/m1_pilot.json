@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "phase": "M1_frozen_policy_measurement",
+  "model": "qwen35_9b",
+  "families": ["status", "inventory"],
+  "conditions": ["clean", "benign", "maintenance", "prerequisite"],
+  "repetitions": 4,
+  "seed": 20261116,
+  "max_steps": 8,
+  "episode_timeout_seconds": 240,
+  "budget_minutes": 30,
+  "concurrency": 1,
+  "observation_protocol": "synthetic_terminal_v1",
+  "sampling_params": {"temperature": 1.0, "top_p": 1.0, "top_k": 0, "max_new_tokens": 512},
+  "data_role": "development_measurement",
+  "training_eligible": false,
+  "training_enabled": false,
+  "allow_causal_branch": false,
+  "resume_policy": "unattempted_only_preserve_invalid",
+  "claims": "Synthetic visual terminal tasks only; not OSWorld score or a formal training cohort. Budget may leave registered episodes unattempted."
+}

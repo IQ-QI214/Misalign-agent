@@ -74,3 +74,26 @@ class ShiftClickEnv(EnvWrapper):
         if shifted:
             return await release_shift_on_failure(self.env._computer.interface, operation, self.modifier_cleanup)
         return await operation
+
+
+class VerifiedTaskEnv(MonitoredEnv):
+    """Read the independent target before the native agent closes its desktop."""
+    def __init__(self, env, target, expected):
+        super().__init__(env)
+        self.target = target
+        self.expected = expected
+        self.final_task_score = None
+        self.final_target_sha256 = None
+        self.final_read_error = None
+
+    async def close(self):
+        import hashlib
+        try:
+            if self.final_task_score is None and self.env._computer is not None:
+                data = await self.env._computer.interface.read_bytes(self.target)
+                self.final_task_score = int(data == self.expected)
+                self.final_target_sha256 = hashlib.sha256(data).hexdigest()
+        except Exception as error:
+            self.final_read_error = f'{type(error).__name__}: {error}'
+        finally:
+            await super().close()

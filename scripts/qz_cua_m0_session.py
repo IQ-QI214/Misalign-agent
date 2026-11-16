@@ -19,6 +19,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--case-id', action='append')
     parser.add_argument('--reference-run', type=Path)
+    parser.add_argument('--entrypoint', choices=['scripts.qz_cua_m0', 'scripts.qz_cua_observation_probe'],
+                        default='scripts.qz_cua_m0')
     args = parser.parse_args()
     if not args.run:
         print(json.dumps({'status': 'PLAN_ONLY', 'gpu_used': False, 'outer_timeout_seconds': 1500}))
@@ -44,7 +46,9 @@ def main():
         HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', TOKENIZERS_PARALLELISM='false',
         DOCKER_HOST='unix:///var/run/docker.sock')
     command = [str(runtime / 'bin/python'), '-u', '-B', '-X', 'faulthandler',
-               '-m', 'scripts.qz_cua_m0', '--run', '--output', str(output)]
+               '-m', args.entrypoint, '--run', '--output', str(output)]
+    if args.entrypoint != 'scripts.qz_cua_m0' and (args.case_id or args.reference_run):
+        raise SystemExit('Subset/reference arguments apply to the original M0 runner only')
     for case_id in args.case_id or []:
         command += ['--case-id', case_id]
     if args.reference_run:

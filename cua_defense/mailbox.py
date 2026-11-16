@@ -43,7 +43,7 @@ class MailboxClient:
     def close(self):
         self.lock.close()
 
-    def generator(self, output, seed=0, feedback='', replay=None, sampling=None):
+    def generator(self, output, seed=0, feedback='', replay=None, sampling=None, capture_policy=False):
         output = Path(output)
         replay = replay or []
         local_turn = 0
@@ -66,7 +66,8 @@ class MailboxClient:
                     image.save(path)
                     paths.append(str(path))
                 generated_prompt = teacher_prompt(prompt, feedback)
-                request = {'prompt': generated_prompt, 'images': paths, 'seed': seed,
+                request = {'prompt': generated_prompt, 'images': paths, 'seed': seed + turn if capture_policy else seed,
+                           'capture_policy': capture_policy,
                            'sampling_params': sampling or {'temperature': 0.0, 'max_new_tokens': 1024},
                            'student_prompt_sha256': hashlib.sha256(prompt.encode()).hexdigest(),
                            'generation_prompt_sha256': hashlib.sha256(generated_prompt.encode()).hexdigest()}
@@ -88,11 +89,21 @@ class MailboxClient:
                 result = json.loads(response.read_text())
                 if 'error' in result:
                     raise RuntimeError(result['error'])
+                if capture_policy:
+                    from cua_defense.policy_trace import validate_trace
+                    from cua_defense.observation import pixel_hash
+                    validate_trace(result['policy_trace'])
+                    if result['prompt_sha256'] != request['generation_prompt_sha256']:
+                        raise ValueError('Worker responded for a different prompt')
+                    if result['request_sha256'] != hashlib.sha256(json.dumps(request,sort_keys=True).encode()).hexdigest():
+                        raise ValueError('Worker responded for a different request')
+                    if result['image_pixel_sha256'] != [pixel_hash(im.convert('RGB')) for im in images or []]:
+                        raise ValueError('Worker processed different images')
                 target = output / f'response-{turn}.json'
                 if target.exists():
                     raise ValueError('Episode response already exists; resume via the batch ledger')
                 target.write_text(json.dumps({**result, 'request_id': number,
-                    'source': 'model', 'student_prompt_sha256': request['student_prompt_sha256'],
+                    'source': result.get('source','model'), 'student_prompt_sha256': request['student_prompt_sha256'],
                     'generation_prompt_sha256': request['generation_prompt_sha256']}, ensure_ascii=False) + '\n')
                 return {'response': result['response'], 'finish_reason': result['finish_reason']}
             except BaseException:

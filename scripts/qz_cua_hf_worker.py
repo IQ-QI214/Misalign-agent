@@ -34,6 +34,21 @@ def main():
         temporary.replace(target)
 
     try:
+        if not torch.cuda.is_available():
+            raise RuntimeError('A CUDA GPU is required before loading model weights')
+        import sys
+        if (args.mailbox/'expected_model.json').exists():
+            if sys.version_info[:2] != (3,12) or transformers.__version__!='5.21.0':
+                raise RuntimeError('Prepared M1 GPU runtime requires Python 3.12 and Transformers 5.21.0')
+            save_check={'python':sys.version,'torch':torch.__version__,'transformers':transformers.__version__,
+                        'cuda':torch.version.cuda,'visible_devices':torch.cuda.device_count(),
+                        'device':torch.cuda.get_device_name(0)}
+            write('runtime_preflight.json',save_check)
+        from cua_defense.assets import model_manifest
+        expected=args.mailbox/'expected_model.json'
+        assets=model_manifest(args.model) if expected.exists() else None
+        if expected.exists() and json.loads(expected.read_text())!=assets:
+            raise RuntimeError('Model asset metadata differs from the prepared CPU manifest')
         processor = AutoProcessor.from_pretrained(args.model, local_files_only=True)
         model = AutoModelForImageTextToText.from_pretrained(
             args.model, local_files_only=True, dtype=torch.bfloat16,
@@ -43,7 +58,8 @@ def main():
             model = PeftModel.from_pretrained(model, args.adapter).eval()
         write('ready.json', {'model_run': True, 'hostname': socket.gethostname(), 'torch': torch.__version__, 'transformers': transformers.__version__,
                              'device': torch.cuda.get_device_name(0), 'model': str(args.model),
-                             'started_utc': datetime.now(timezone.utc).isoformat()})
+                             'started_utc': datetime.now(timezone.utc).isoformat(),
+                             'policy_trace_schema':1,'model_assets':assets})
         from cua_defense.inference import serve_requests
         serve_requests(model, processor, args.mailbox, max_requests=args.max_requests,
                        idle_timeout=args.idle_timeout)
