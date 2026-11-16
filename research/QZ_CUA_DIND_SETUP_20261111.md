@@ -187,3 +187,17 @@ CPU Torch 重新安装完成，`torch==2.15.0+cpu`、`torchvision==0.29.2+cpu` �
 完整执行闭环为 CPU 截图→GPU 模型生成→原生动作解析→CPU GUI 执行→任务判分→原生轨迹保存。本轮采集的是干净任务轨迹，安全攻击、修复转化与训练评测待继续。验收见 `validation/cua_qwen3vl_pilot_v1.json`，文件哈希清单见 `validation/cua_qwen3vl_artifacts_v1.json`。
 
 `model_io` 在各次 QZ 输出目录保存了 GPU 请求、响应和输入图片。复放这些原始请求时，图片绝对路径应从原共享 mailbox 前缀映射到该次输出的 `model_io` 目录。初始环境重建仍采用新建容器，任意中间状态恢复需另行验证。
+
+## 2026-11-16：CPU 重启后的连接恢复
+
+历史连接最终使用本机 rtunnel 的 `127.0.0.1:2225`，经 QZ 代理端口 `30004`，到本 CPU 的 fkqz，再到 SSH `22224`。fkqz 曾从另一台 CPU 复制过来；该机器不是这条连接的数据中转节点。旧的标准 WebSocket `30003` 入口保留为备用。
+
+本轮用户已重新启动同一 notebook，但旧 SSH 入口握手超时，重新探测保存的 QZ 代理地址得到 HTTP 500，浏览器控制也超时。这些现象只说明当前无法建立连接，尚不能确定远端服务、代理地址或两者的恢复状态。M0 实机计数仍为 0/24。
+
+`scripts/qz_cua_reconnect.py` 用于在这个 CPU 的网页终端执行一次恢复。它复用项目中保存的 SSH 主机密钥、授权公钥和经过 SHA256 核验的 fkqz，在当前主机目录记录 PID、日志和回执；默认只打印计划，`--run` 才执行。Mac 执行模式被拒绝。脚本不启动 Docker，不下载模型，不使用 GPU。若已保存的程序/密钥或 sshd 缺失，会报告具体缺项，不生成替代身份。
+
+```bash
+python3 -B scripts/qz_cua_reconnect.py --run
+```
+
+输出 `CUA_RELAY_READY` 仅表示 CPU 内两个端口已就绪，外部代理和 SSH 身份认证仍需随后实测。若平台同时更换了代理 URL，需要更新本机私有地址记录；不能用放宽主机密钥检查来绕过连接故障。
