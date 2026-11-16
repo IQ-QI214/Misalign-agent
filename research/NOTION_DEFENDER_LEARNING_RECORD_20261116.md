@@ -4,6 +4,8 @@
 
 本文件由本次 Notion 页面最终回读内容转换为标准 Markdown。研究状态以源文档归档口径为准；公式、预算示例与实验门槛均为候选设计，没有新训练收益。
 
+主体为最初建页时的研究设计快照。11 月 16 日晚的 CPU 实机结果在文末单独续记；对应 Notion 总览与实验页已更新，避免把原设计快照误当作当前运行状态。
+
 | 操作 | Notion 页面 |
 | --- | --- |
 | 更新 | [CUA-Agent](https://app.notion.com/p/416e0ea5dc4580e1ba85e76cc12f5352) |
@@ -605,3 +607,17 @@ M1 的探索规模可参考源文档的 8–12 个任务家族、每家族 2 个
 主要来源：`/Users/zhujiaqi/Documents/ChatGPT/Safe Agent SAO/research/DEFENDER_LEARNING_CONVERGENCE_20261116.md`。源文档保留不改；本页中的 Q\_risk/Q\_joint 命名澄清、训练路径和实验组织是本次讨论中的候选细化，不是已完成实现。
 
 ---
+
+## 11 月 16 日晚续记：M0 实机终局
+
+已在 [CUA-Agent 总览](https://app.notion.com/p/416e0ea5dc4580e1ba85e76cc12f5352) 和 [实验记录](https://app.notion.com/p/41ae0ea5dc4581ceae05fc0f0c3549c4) 更新并回读确认。A/B/合成解释页的候选定义保持不变；本轮没有模型训练收益。
+
+- QZ CPU 的 SSH、原持久化 Docker 数据与已有 CUA-Lite 环境已恢复；没有在 Mac 安装环境，没有使用 GPU。
+- 原面板 24 项脚本控制，每项恰有一次有效结果且符合预期。六种控制各 4 项，包括违规后恢复文件；累计违规不会被最终文件恢复抹掉。
+- 四次尝试依次为：a1 启动退出、控制执行 0（原因 UNKNOWN）；a2 控制执行 1、无效 1（命令转义）；a3 执行 22、有效 21、无效 1（整批 20 分钟耗尽）；a4 续跑剩余 3 项、有效 3、退出码 0。实际共执行 26 次，2 次无效及首轮失败完整保留。
+- 原始视觉前缀一致性未通过：2 个固定参照之外的 22 组，非图像字段均相同，但截图全部不同。全部 44 帧审计显示 21 组差异只在顶部系统栏，另 1 组终端窗口位置变化。没有修改原图或以裁剪结果替代原始输入比较。
+- 当前结论是本面板的标签校准通过；`candidate_A_causal_branch_ready=false`、`full_environment_equivalence=NOT_ESTABLISHED`、`training_eligible=false`。本轮自主模型轨迹、API 调用和训练更新均为 0。
+- 下一步仍是 CPU：记录和固定窗口几何，版本化动态系统栏的观察处理，用重复 reset 面板验收，再补齐 M1 的 token/logprob 与冻结协议。新协议尚未实现，不能回填为本次已通过。
+- M0 原始目录约 313.3 MiB，CPU 运行缓存约 2.64 GiB；收尾时运行中的桌面容器为 0。原图与轨迹留在 QZ，GitHub 保留轻量结果。
+
+完整说明：[`CUA_M0_MEASUREMENT_20261116.md`](CUA_M0_MEASUREMENT_20261116.md)。可复算终局：[`cua_m0_results_20261116.json`](../validation/cua_m0_results_20261116.json)，含逐项来源、指纹、无效记录和全部像素比较。
