@@ -194,10 +194,12 @@ CPU Torch 重新安装完成，`torch==2.15.0+cpu`、`torchvision==0.29.2+cpu` �
 
 本轮用户已重新启动同一 notebook，但旧 SSH 入口握手超时，重新探测保存的 QZ 代理地址得到 HTTP 500，浏览器控制也超时。这些现象只说明当前无法建立连接，尚不能确定远端服务、代理地址或两者的恢复状态。M0 实机计数仍为 0/24。
 
-`scripts/qz_cua_reconnect.py` 用于在这个 CPU 的网页终端执行一次恢复。它复用项目中保存的 SSH 主机密钥、授权公钥和经过 SHA256 核验的 fkqz，在当前主机目录记录 PID、日志和回执；默认只打印计划，`--run` 才执行。Mac 执行模式被拒绝。脚本不启动 Docker，不下载模型，不使用 GPU。若已保存的程序/密钥或 sshd 缺失，会报告具体缺项，不生成替代身份。
+`scripts/qz_cua_reconnect.py` 用于在这个 CPU 的网页终端执行一次恢复。它复用项目中保存的 SSH 主机密钥、授权公钥和经过 SHA256 核验的 fkqz，在当前主机目录记录 PID、日志和回执；默认只打印计划，`--run` 才执行。Mac 执行模式被拒绝。脚本不启动 Docker，不下载模型，不使用 GPU。若已保存的程序/密钥缺失，会报告具体缺项，不生成替代项目身份。
 
 ```bash
-python3 -B scripts/qz_cua_reconnect.py --run
+python3 -B scripts/qz_cua_reconnect.py --run --install-missing-ssh
 ```
 
 输出 `CUA_RELAY_READY` 仅表示 CPU 内两个端口已就绪，外部代理和 SSH 身份认证仍需随后实测。若平台同时更换了代理 URL，需要更新本机私有地址记录；不能用放宽主机密钥检查来绕过连接故障。
+
+用户执行首版 `edbc7ee` 后在密钥校验阶段收到 `FileNotFoundError: ssh-keygen`。该次未进入 sshd/fkqz 启动阶段，不能记作连接成功，也不能据此推断持久化数据丢失。首版漏检了系统 SSH 工具；修正版先查 PATH 和标准系统目录，再按 `--install-missing-ssh` 安装缺少的 OpenSSH client/server 包。已有工具时跳过安装；安装输出保存在当前状态目录的 `ssh-install.log`，成功后清理此脚本下载的 deb 缓存，连接继续使用原项目主机密钥。离线回归覆盖缺工具时的提前报错、安装后复查、安装失败留证、已有组件不重复安装；远端恢复结果仍待重试。

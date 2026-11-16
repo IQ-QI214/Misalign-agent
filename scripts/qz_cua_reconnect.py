@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Restart this notebook's saved SSH/rtunnel bridge after a QZ CPU restart.
 
-Reuses existing keys and the verified binary. No packages, Docker changes or GPU.
+Reuses existing keys and the verified binary. Optional SSH package repair on QZ.
+No Docker changes or GPU work.
 """
 import argparse
 import fcntl
@@ -19,6 +20,56 @@ ROOT = Path('/inspire/hdd/project/independent-security-research/wenming-25310809
 ORIGINAL = ROOT / '.runtime/cua-ssh/cua-test-qi--91bb3a6ab7a7-oxj4j3ju6p'
 BINARY_SHA256 = '854e98eefee7f91d2716a9c7e06ce3181c53e4c2fbfd8b22731a0d1233d4695a'
 EXPECTED_HOST_KEY = 'SHA256:Eb0g5hAGBL5/nu/DiLpYQYKyic9LBznilSpPTRK/qTQ'
+
+
+def find_executable(name):
+    found = shutil.which(name)
+    if found:
+        return found
+    for directory in ('/usr/bin', '/usr/sbin', '/bin', '/sbin'):
+        candidate = Path(directory) / name
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return str(candidate)
+    return None
+
+
+def ensure_openssh(state, install_missing):
+    """Run only after the QZ notebook guard and reconnect lock are acquired."""
+    executables = {name: find_executable(name) for name in ('ssh-keygen', 'sshd')}
+    missing = [name for name, path in executables.items() if path is None]
+    if not missing:
+        return executables, False
+    if not install_missing:
+        raise SystemExit('SSH_TOOLS_MISSING: ' + ', '.join(missing)
+                         + '; rerun with --run --install-missing-ssh on this QZ CPU')
+    apt = find_executable('apt-get')
+    if apt is None:
+        raise SystemExit('APT_GET_MISSING: SSH packages were not installed')
+    package_for = {'ssh-keygen': 'openssh-client', 'sshd': 'openssh-server'}
+    packages = [package_for[name] for name in missing]
+    cache = state / 'apt-cache'
+    (cache / 'archives/partial').mkdir(parents=True, exist_ok=True)
+    log_path = state / 'ssh-install.log'
+    command = [apt, '-o', f'Dir::Cache={cache}',
+               '-o', 'Acquire::Retries=1', '-o', 'Acquire::http::Timeout=20',
+               '-o', 'Acquire::https::Timeout=20', '-o', 'DPkg::Lock::Timeout=30']
+    env = {**os.environ, 'DEBIAN_FRONTEND': 'noninteractive'}
+    print(json.dumps({'status': 'INSTALLING_MISSING_SSH', 'packages': packages,
+                      'log': str(log_path)}), flush=True)
+    with log_path.open('ab') as log:
+        for args in (['update'], ['install', '-y', '--no-install-recommends', *packages]):
+            try:
+                subprocess.run(command + args, env=env, stdin=subprocess.DEVNULL,
+                               stdout=log, stderr=log, check=True, timeout=240)
+            except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+                raise SystemExit(f'SSH_INSTALL_FAILED: {type(exc).__name__}; log={log_path}') from exc
+    executables = {name: find_executable(name) for name in executables}
+    if not all(executables.values()):
+        raise SystemExit(f'SSH_TOOLS_STILL_MISSING: inspect {log_path}')
+    # Only discard package downloads created in this script's private cache.
+    for archive in (cache / 'archives').glob('*.deb'):
+        archive.unlink()
+    return executables, True
 
 
 def listening(port):
@@ -43,10 +94,13 @@ def owned_process(pidfile, required):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run', action='store_true')
+    parser.add_argument('--install-missing-ssh', action='store_true',
+                        help='Install missing OpenSSH tools using apt, only on the guarded QZ CPU')
     args = parser.parse_args()
     if not args.run:
         print(json.dumps({'status': 'PLAN_ONLY', 'ports': [22224, 30004],
-                          'gpu_used': False, 'downloads': False, 'reuse_existing_keys': True}))
+                          'gpu_used': False, 'downloads': False, 'reuse_existing_keys': True,
+                          'ssh_install_if_missing': args.install_missing_ssh}))
         return 0
     host = platform.node()
     if (platform.system() != 'Linux' or os.geteuid() != 0 or not ROOT.is_dir()
@@ -59,13 +113,6 @@ def main():
         raise SystemExit('SAVED_BRIDGE_FILES_MISSING: no replacement keys or binaries created')
     if hashlib.sha256(binary.read_bytes()).hexdigest() != BINARY_SHA256:
         raise SystemExit('SAVED_BRIDGE_BINARY_HASH_MISMATCH')
-    pub = subprocess.check_output(['ssh-keygen', '-y', '-f', str(key)])
-    fingerprint = subprocess.check_output(['ssh-keygen', '-lf', '-'], input=pub).decode().split()[1]
-    if fingerprint != EXPECTED_HOST_KEY:
-        raise SystemExit('SAVED_HOST_KEY_MISMATCH')
-    sshd = shutil.which('sshd') or ('/usr/sbin/sshd' if Path('/usr/sbin/sshd').is_file() else None)
-    if sshd is None:
-        raise SystemExit('SSHD_MISSING: report this output; no packages were installed')
     state = ROOT / '.runtime/cua-ssh' / host
     if state.resolve() != state:
         raise SystemExit('STATE_PATH_ESCAPE')
@@ -73,6 +120,13 @@ def main():
     state.mkdir(parents=True, exist_ok=True)
     with (state / 'reconnect.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        executables, ssh_installed = ensure_openssh(state, args.install_missing_ssh)
+        pub = subprocess.check_output([executables['ssh-keygen'], '-y', '-f', str(key)])
+        fingerprint = subprocess.check_output(
+            [executables['ssh-keygen'], '-lf', '-'], input=pub).decode().split()[1]
+        if fingerprint != EXPECTED_HOST_KEY:
+            raise SystemExit('SAVED_HOST_KEY_MISMATCH')
+        sshd = executables['sshd']
         config = state / 'sshd_config'
         ssh_pidfile = state / 'sshd.pid'
         bridge_pidfile = state / 'fkqz.pid'
@@ -114,7 +168,8 @@ def main():
             raise RuntimeError('Bridge readiness failed; saved logs remain in ' + str(state))
         report = {'status': 'CUA_RELAY_READY', 'hostname': host,
                   'host_key_fingerprint': fingerprint, 'ssh_port': 22224, 'forward_port': 30004,
-                  'gpu_used': False, 'docker_touched': False, 'downloads': False}
+                  'gpu_used': False, 'docker_touched': False,
+                  'ssh_packages_installed': ssh_installed, 'downloads': ssh_installed}
         (state / 'reconnect.json').write_text(json.dumps(report, indent=2) + '\n')
         print(json.dumps(report), flush=True)
     return 0
