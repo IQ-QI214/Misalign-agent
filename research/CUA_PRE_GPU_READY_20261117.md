@@ -61,26 +61,30 @@ GPU 仍使用旧开发实例的现有环境：Python 3.12、Transformers 5.21.0�
 
 模型资产记录包括配置/分词器/权重索引的 SHA256，以及四个权重分片的大小和修改时间。未读取全部权重计算 SHA256，因此这不是权重内容的完整密码学指纹；GPU 加载前会与 CPU 清单核对。共享文件系统上的代码每次单独快照，旧运行不会被后续覆盖。
 
-## 开卡后的入口
+## 开卡前与开卡后的统一入口
 
-先在 GPU 实例恢复已有中转，沿用现有 `qz_cua_gpu_connect.sh`。不需要把 Docker 镜像搬到 GPU。
+**只在 [cua-test-qi 的网页终端](https://qz.sii.edu.cn/ide?notebook_id=04ab0f8a-6967-4d81-8cbc-91bb3a6ab7a7) 执行以下入口。** 它位于 CUA Docker CPU 实例；其他 CPU 中转和 `dev-misalign-qi` GPU 实例都不是这个入口的执行位置。提示符中的 `root:zjq` 只显示目录，不能识别实例。
 
-CPU 项目目录中的默认命令只展示计划：
+11 月 17 日用户实际启动暴露了两项遗漏：在仓库外使用 `-m scripts...` 找不到模块；进入正确仓库后，旧入口未先恢复数据盘挂载，因而找不到盘内的 Python 缓存。报错不证明缓存已删除，也没有启动模型。此次新增独立启动入口 `scripts/qz_cua_start.py`，先复用现有 ext4 和 Docker 恢复程序，再绑定原缓存、检查 CPU 解释器与已有资格记录，最后进入原 M1 会话。原测量代码、任务和资格指纹保持不变。启动修复的测试与远端验证状态单独记录在 `validation/cua_startup_recovery_20261117.json`。
+
+下面使用脚本绝对路径，**无需先切换目录**。部署新入口后，先只恢复并检查 CPU：
 
 ```bash
-python3 -B -m scripts.qz_cua_m1_session
+python3 -B /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_start.py --prepare-cpu
 ```
 
-GPU 已开启、中转正常且资格收据通过后，在 CPU 项目目录启动：
+应输出 `CPU_ENVIRONMENT_READY` 及新恢复收据路径。恢复阶段复用已有文件，不新建或格式化数据盘、不下载模型、不派发 GPU。若已有缓存或挂载不符合预期，保留现场并停止。默认不带参数只打印计划。
+
+随后在 GPU 实例恢复已有中转，沿用现有 `qz_cua_gpu_connect.sh`。GPU 已开启、中转正常且资格收据通过后，**仍在上述 CUA CPU** 启动模型测量：
 
 ```bash
-python3 -B -m scripts.qz_cua_m1_session --run
+python3 -B /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_start.py --run
 ```
 
 使用 `nohup` 运行该监督入口可脱离网页终端；后台启动不等于完成，最终需核查控制器退出记录、每条 episode 收据与 GPU worker 的真实退出码。若需要继续未尝试的注册项：
 
 ```bash
-python3 -B -m scripts.qz_cua_m1_session --run --resume --output <原输出目录>
+python3 -B /inspire/hdd/project/independent-security-research/wenming-253108090054/zjq/Misalign-agent/scripts/qz_cua_start.py --run --resume --output <原输出目录>
 ```
 
 配置、模型元数据或代码不同会拒绝续跑。已尝试但无效的项目不会自动重跑或被覆盖，仍留在原始分母中。只有训练后的完整起点评测，才能证明方法最终有效。
