@@ -30,7 +30,7 @@ def qualify(args,report):
     report['runtime']={'python':sys.version,'torch':torch.__version__,
                        'transformers':transformers.__version__,'cuda':torch.version.cuda}
     os.environ['CUA_REQUIRE_NATIVE']='1'
-    names=['test_cua_observation','test_cua_policy_trace','test_cua_m1','test_cua_runtime',
+    names=['test_cua_observation','test_cua_policy_trace','test_cua_m1','test_cua_m1_evaluator','test_cua_runtime',
            'test_cua_wire_format','test_cua_measurement','test_cua_pipeline']
     suite=unittest.defaultTestLoader.loadTestsFromNames(['tests.'+n for n in names])
     stream=io.StringIO();result=unittest.TextTestRunner(stream=stream,verbosity=1).run(suite)
