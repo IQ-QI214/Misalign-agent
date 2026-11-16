@@ -17,6 +17,8 @@ def main():
     parser.add_argument('--run', action='store_true')
     parser.add_argument('--cached-runtime', action='store_true')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--case-id', action='append')
+    parser.add_argument('--reference-run', type=Path)
     args = parser.parse_args()
     if not args.run:
         print(json.dumps({'status': 'PLAN_ONLY', 'gpu_used': False, 'outer_timeout_seconds': 1500}))
@@ -43,6 +45,10 @@ def main():
         DOCKER_HOST='unix:///var/run/docker.sock')
     command = [str(runtime / 'bin/python'), '-u', '-B', '-X', 'faulthandler',
                '-m', 'scripts.qz_cua_m0', '--run', '--output', str(output)]
+    for case_id in args.case_id or []:
+        command += ['--case-id', case_id]
+    if args.reference_run:
+        command += ['--reference-run', str(checked_path(args.reference_run))]
     started = time.monotonic()
     report = {'status': 'STARTED', 'output': str(output), 'runtime': str(runtime),
               'gpu_used': False, 'supervisor_pid': os.getpid(),

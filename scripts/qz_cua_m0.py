@@ -113,11 +113,32 @@ async def run_controls(config, output, report, tasks):
     processor = AutoProcessor.from_pretrained(model['processor_path'], local_files_only=True)
     records = report['results']
     references = {}
+    if report.get('reference_run'):
+        previous = json.loads((Path(report['reference_run']) / 'receipt.json').read_text())
+        if previous.get('status') not in ('M0_CONTROLS_COMPLETE', 'M0_SUBSET_COMPLETE', 'M0_INCOMPLETE'):
+            raise ValueError('Reference run must have a terminal control receipt')
+        if previous['config_sha256'] != report['config_sha256'] or any(
+            previous['source_sha256'].get(p) != h for p, h in report['source_sha256'].items()
+            if p != 'scripts/qz_cua_m0.py'):
+            raise ValueError('Reference run has different task, protocol or measurement sources')
+        report['reference_receipt_sha256'] = hashlib.sha256(
+            (Path(report['reference_run']) / 'receipt.json').read_bytes()).hexdigest()
+        for task in tasks:
+            fixed_id = f"{task['name']}__r0__{config['scenarios'][0]}"
+            for old in previous['results']:
+                if old['case_id'] == fixed_id and old.get('execution_valid') and old.get('branch_prefix'):
+                    old_dir = Path(old['output']).resolve()
+                    old_dir.relative_to(ROOT.resolve())
+                    if old['branch_prefix']['contract_sha256'] != digest_json(task_row(task)):
+                        raise ValueError('Fixed reference task contract differs')
+                    references[task['name']] = (fixed_id, old['branch_prefix'], old_dir)
     for task, repeat, scenario in itertools.product(tasks, range(config['repetitions']), config['scenarios']):
+        case_id = f"{task['name']}__r{repeat}__{scenario}"
+        if case_id not in report['execution_subset']:
+            continue
         if time.monotonic() >= deadline:
             report['budget_exhausted'] = True
             break
-        case_id = f"{task['name']}__r{repeat}__{scenario}"
         directory = output / case_id
         directory.mkdir()
         row = task_row(task)
@@ -156,7 +177,7 @@ async def run_controls(config, output, report, tasks):
                         record['branch_prefix'] = captured
                         # Fixed reference: first registered safe-completion control, not best outcome.
                         if repeat == 0 and scenario == config['scenarios'][0]:
-                            references[task['name']] = (case_id, captured)
+                            references[task['name']] = (case_id, captured, directory)
                             record['prefix_comparison'] = {'status': 'REFERENCE', 'causal_branch_eligible': False}
                         else:
                             ref = references.get(task['name'])
@@ -166,7 +187,7 @@ async def run_controls(config, output, report, tasks):
                             if ref:
                                 from PIL import Image
                                 from cua_defense.replay import visual_difference
-                                with Image.open(output / ref[0] / f'checkpoint-{turn}.png') as before:
+                                with Image.open(ref[2] / f'checkpoint-{turn}.png') as before:
                                     record['prefix_comparison']['diagnostic_cropped_last_frame_difference'] = (
                                         visual_difference(before, data['images'][-1]))
                                 record['prefix_comparison']['cropped_comparison_changes_gate'] = False
@@ -228,8 +249,9 @@ async def run_controls(config, output, report, tasks):
             report['stop_reason'] = 'FIRST_CONTROL_FAILURE'
             break
     report['counts'] = summarize_controls(records, report['planned_ids'])
-    complete = report['counts']['controls_matched'] == report['counts']['registered']
-    report['status'] = 'M0_CONTROLS_COMPLETE' if complete else 'M0_INCOMPLETE'
+    complete = report['counts']['controls_matched'] == len(report['execution_subset'])
+    report['status'] = ('M0_CONTROLS_COMPLETE' if len(report['execution_subset']) == len(report['planned_ids'])
+                        else 'M0_SUBSET_COMPLETE') if complete else 'M0_INCOMPLETE'
     report['prefix_comparisons'] = {s: sum(r.get('prefix_comparison', {}).get('status') == s for r in records)
         for s in ('REFERENCE', 'OBSERVED_PREFIX_MATCH', 'DIFFERENT', 'UNKNOWN')}
     report['full_environment_equivalence'] = 'NOT_ESTABLISHED'
@@ -241,6 +263,8 @@ def main():
     parser.add_argument('--config', type=Path, default=PROJECT / 'configs/cua/m0_cpu.json')
     parser.add_argument('--run', action='store_true')
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--case-id', action='append', help='Execute a registered subset without overwriting prior attempts')
+    parser.add_argument('--reference-run', type=Path, help='Reuse only the predefined family reference from a compatible attempt')
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
     validate_config(config)
@@ -248,10 +272,13 @@ def main():
     tasks = [next(t for t in TASKS if t['name'] == name) for name in config['families']]
     planned_ids = [f"{t['name']}__r{r}__{s}" for t, r, s in
                    itertools.product(tasks, range(config['repetitions']), config['scenarios'])]
+    selected = args.case_id if args.case_id is not None else planned_ids
+    if len(selected) != len(set(selected)) or not set(selected) <= set(planned_ids):
+        raise ValueError('Execution subset must contain unique registered control IDs')
     report = {'schema_version': 1, 'phase': 'M0', 'status': 'PLAN_ONLY',
         'created_at': datetime.now(timezone.utc).isoformat(), 'model_run': False,
         'gpu_used': False, 'api_calls': 0, 'training_updates': 0, 'training_eligible': False,
-        'config': config, 'planned_ids': planned_ids, 'results': [],
+        'config': config, 'planned_ids': planned_ids, 'execution_subset': selected, 'results': [],
         'scope': 'Scripted desktop control calibration, not model attack trajectories or training evidence.'}
     if not args.run:
         report['counts'] = summarize_controls([], planned_ids)
@@ -269,6 +296,10 @@ def main():
     report.update(status='STARTED', output=str(output),
         source_sha256={p: hashlib.sha256((PROJECT / p).read_bytes()).hexdigest() for p in sources},
         config_sha256=hashlib.sha256(args.config.read_bytes()).hexdigest())
+    if args.reference_run:
+        reference = args.reference_run.resolve()
+        reference.relative_to(ROOT.resolve())
+        report['reference_run'] = str(reference)
     save(output / 'receipt.json', report)
     print('OUTPUT=' + str(output), flush=True)
     try:
@@ -279,7 +310,7 @@ def main():
     save(output / 'receipt.json', report)
     print(json.dumps({k: v for k, v in report.items() if k not in ('results', 'config', 'planned_ids')},
                      ensure_ascii=False, indent=2))
-    return 0 if report['status'] == 'M0_CONTROLS_COMPLETE' else 1
+    return 0 if report['status'] in ('M0_CONTROLS_COMPLETE', 'M0_SUBSET_COMPLETE') else 1
 
 
 if __name__ == '__main__':
